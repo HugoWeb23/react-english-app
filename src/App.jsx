@@ -4,14 +4,17 @@ import { Navigation } from "./Components/Navigation"
 import {userContext} from './Contexts/Contexts'
 import {UserLoader} from './Loaders/UserLoader'
 import {Login} from './Components/Login'
+import {Test} from './Components/Test'
 import {Register} from './Components/Register'
 import {PrivateRoute} from './Components/PrivateRoute'
 import {Questions} from './Components/Questions'
 import {apiFetch} from './Utils/Api'
+import {ToastAlert} from './UI/Toast'
 
 export const App = () => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [alertDisconnect, setAlertDisconnect] = useState(false)
 
   useEffect(() => {
     (async() => {
@@ -27,10 +30,16 @@ export const App = () => {
     setUser(user)
   }
 
+  const toggleAlert = () => {
+    setAlertDisconnect(!alertDisconnect)
+  }
+
   const value = useMemo(() => {
     return {
       user,
-      toggleUser
+      alertDisconnect,
+      toggleUser,
+      toggleAlert
     }
   }, [user, toggleUser])
 
@@ -39,7 +48,9 @@ return loading ? <UserLoader/> :
   <Router>
   <userContext.Provider value={value}>
   <Navigation/>
+  <ToastAlert/>
   <PrivateRoute path="/questions" component={Questions}/>
+  <PrivateRoute path="/test" component={Test}/>
   <Route path="/login">{user ? <Redirect to="/questions"/> : <Login onConnect={toggleUser}/>}</Route>
   <Route path="/register">{user ? <Redirect to="/questions"/> : <Register onConnect={toggleUser}/>}</Route>
   </userContext.Provider>
