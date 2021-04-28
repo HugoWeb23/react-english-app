@@ -1,4 +1,4 @@
-import { useReducer } from "react"
+import { useReducer, useCallback } from "react"
 import { apiFetch } from "../Utils/Api";
 
 export const QuestionsHook = () => {
@@ -6,11 +6,16 @@ export const QuestionsHook = () => {
         switch(action.type) {
             case 'FETCH_QUESTIONS':
                 return {questions: action.payLoad}
-            case 'TEST':
-                return {...state, questions: state.questions.filter(q => q.intitule == 'Traduis ce mot en anglais')}
+            case 'DELETE_QUESTION':
+                return {...state, questions: state.questions.filter(q => q != action.payLoad)}
         }
     }
     const [state, dispatch] = useReducer(reducer, {questions: null});
+    const time = (time) => {
+        return new Promise((resolve) => {
+            setTimeout(resolve, time)
+        })
+    }
 
     return {
         questions: state.questions,
@@ -18,8 +23,9 @@ export const QuestionsHook = () => {
             const fetch = await apiFetch('/api/questions/all')
             dispatch({type: 'FETCH_QUESTIONS', payLoad: fetch});
         },
-        TEST: () => {
-            dispatch({type: 'TEST'});
-        }
+        deleteQuestion: useCallback(async(question) => {
+            await time(3000);
+            dispatch({type: 'DELETE_QUESTION', payLoad: question});
+        }, [])
     }
 }

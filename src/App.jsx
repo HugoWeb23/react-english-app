@@ -49,10 +49,12 @@ return loading ? <UserLoader/> :
   <userContext.Provider value={value}>
   <Navigation/>
   <ToastAlert/>
+  <div className="container-md">
   <PrivateRoute path="/questions" component={Questions}/>
   <PrivateRoute path="/test" component={Test}/>
   <Route path="/login">{user ? <Redirect to="/questions"/> : <Login onConnect={toggleUser}/>}</Route>
   <Route path="/register">{user ? <Redirect to="/questions"/> : <Register onConnect={toggleUser}/>}</Route>
+  </div>
   </userContext.Provider>
 </Router>
 </>

@@ -58,7 +58,7 @@ export const Register = ({onConnect}) => {
       {errors.repeatpass && <Form.Control.Feedback type="invalid">{errors.repeatpass.message}</Form.Control.Feedback>}
     </Form.Group>
     <Button variant="success" type="submit" disabled={isSubmitting}>
-      S'enregistrer
+      {isSubmitting ? 'Chargement...' : 'S\'enregistrer'}
     </Button>
   </Form>
   </>
