@@ -8,8 +8,6 @@ import Modal from 'react-bootstrap/Modal'
 export const Questions = () => {
    const {questions, getQuestions, deleteQuestion} = QuestionsHook();
    const [loader, setLoader] = useState(true);
-   const [alert, setAlert] = useState(false)
-   const [selectQuestion, setSelectQuestion] = useState({})
     useEffect(() => {
         (async() => {
             await getQuestions();
@@ -17,10 +15,6 @@ export const Questions = () => {
         })()
     }, [])
 
-    const toggleAlert = (question = {}) => {
-      setAlert(!alert)
-      setSelectQuestion(question)
-    }
     return <>
     <h1>Les questions</h1>
     <Table striped bordered hover>
@@ -33,44 +27,48 @@ export const Questions = () => {
     </tr>
   </thead>
   <tbody>
-    <ConfirmDelete show={alert} handleClose={toggleAlert} question={selectQuestion} confirmDelete={deleteQuestion}/>
-    {loader ? 'Chargement' : questions.map((question, index) => <Question question={question} onDelete={toggleAlert}/>)}
+    {loader ? 'Chargement' : questions.map((question, index) => <Question key={index} question={question} onDelete={deleteQuestion}/>)}
   </tbody>
 </Table>
     </>
 }
 
 const Question = ({question, onDelete}) => {
+  const [showAlert, setShowAlert] = useState(false)
+  const [loading, setLoading] = useState(false)
   const handleDelete = () => {
-    onDelete(question);
+    setShowAlert(!showAlert);
+  }
+  const Delete = async(question) => {
+    handleDelete();
+    setLoading(true)
+    await onDelete(question)
+    setLoading(false)
   }
 return <tr>
   <td>{question.intitule}</td>
   <td>{question.question}</td>
   <td>{question.reponse}</td>
-  <td><Button onClick={handleDelete} variant="danger">Supprimer</Button></td>
+  <td><Button onClick={handleDelete} variant="danger" disabled={loading}>{loading ? 'Chargement...' : 'Supprimer'}</Button></td>
+  {showAlert && <ConfirmDelete handleClose={handleDelete} question={question} confirmDelete={Delete}/>}
 </tr>
 }
 
-const ConfirmDelete = ({show, handleClose, question, confirmDelete}) => {
-  const [loading, setLoading] = useState(false);
-  const onDelete = async() => {
-    setLoading(true);
-    await confirmDelete(question);
-    handleClose();
-    setLoading(false);
+const ConfirmDelete = ({handleClose, question, confirmDelete}) => {
+  const onDelete = () => {
+  confirmDelete(question)
   }
-return  <Modal show={show} onHide={handleClose}>
+return  <Modal show={true} onHide={() => handleClose()}>
 <Modal.Header closeButton>
-  <Modal.Title>Question {question._id}</Modal.Title>
+  <Modal.Title>Confirmation</Modal.Title>
 </Modal.Header>
 <Modal.Body>Voulez-vous vraiment supprimer cette question ?</Modal.Body>
 <Modal.Footer>
-  <Button variant="secondary" onClick={handleClose}>
+  <Button variant="secondary" onClick={() => handleClose()}>
     Fermer
   </Button>
-  <Button variant="danger" onClick={onDelete} disabled={loading}>
-    {loading ? 'Chargement...' : 'Supprimer'}
+  <Button variant="danger" onClick={onDelete}>
+   Supprimer
   </Button>
 </Modal.Footer>
 </Modal>

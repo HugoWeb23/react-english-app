@@ -24,7 +24,7 @@ export const QuestionsHook = () => {
             dispatch({type: 'FETCH_QUESTIONS', payLoad: fetch});
         },
         deleteQuestion: useCallback(async(question) => {
-            await time(3000);
+            //await time(10000);
             dispatch({type: 'DELETE_QUESTION', payLoad: question});
         }, [])
     }
