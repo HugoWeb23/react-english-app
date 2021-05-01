@@ -8,6 +8,10 @@ export const QuestionsHook = () => {
                 return {questions: action.payLoad}
             case 'DELETE_QUESTION':
                 return {...state, questions: state.questions.filter(q => q != action.payLoad)}
+            case 'CREATE_QUESTION':
+                return {...state, questions: [...state.questions, action.payLoad]}
+            case 'UPDATE_QUESTION':
+                return {questions: state.questions.map(q => q._id == action.payLoad._id ? action.payLoad : q)}
         }
     }
     const [state, dispatch] = useReducer(reducer, {questions: null, errors: ['test']});
@@ -19,17 +23,26 @@ export const QuestionsHook = () => {
 
     return {
         questions: state.questions,
-        errors: state.errors,
         getQuestions: async() => {
             const fetch = await apiFetch('/api/questions/all')
             dispatch({type: 'FETCH_QUESTIONS', payLoad: fetch});
         },
         deleteQuestion: useCallback(async(question) => {
-            //const fetch = await apiFetch(`/api/question/${question._id}`, {
-                //method: 'DELETE'
-            //})
+            const fetch = await apiFetch(`/api/question/${question._id}`, {
+                method: 'DELETE'
+            })
             dispatch({type: 'DELETE_QUESTION', payLoad: question});
-            return {type: 'ok', message: 'Validé'}
+        }, []),
+        createQuestion: useCallback(async(question) => {
+            const fetch = await apiFetch('/api/questions/new', {
+                method: "POST",
+                body: JSON.stringify(question)
+            })
+            dispatch({type: 'CREATE_QUESTION', payLoad: question});
+        }, []),
+        updateQuestion: useCallback(async(question, data) => {
+           console.log(question, data)
+            dispatch({type: 'UPDATE_QUESTION', payLoad: question});
         }, [])
     }
 }
