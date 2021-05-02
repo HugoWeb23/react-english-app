@@ -4,6 +4,7 @@ import {QuestionsHook} from '../Hooks/QuestionsHook'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
+import Badge from 'react-bootstrap/Badge'
 import {ModalQuestion} from '../Questions/ModalQuestion'
 
 export const Questions = () => {
@@ -30,7 +31,8 @@ export const Questions = () => {
     <tr>
       <th>Intitulé</th>
       <th>Question</th>
-      <th>Réponse</th>
+      <th>Réponse(s)</th>
+      <th>Type</th>
       <th>Actions</th>
     </tr>
   </thead>
@@ -64,12 +66,14 @@ const Question = ({question, onDelete, onUpdate}) => {
   const updateQuestion = (data) => {
     onUpdate(question, data)
   }
+
 return <tr>
   <td>{question.intitule}</td>
   <td>{question.question}</td>
-  <td>{question.reponse}</td>
+  <td>{question.reponse || question.propositions.map(q => <p className={`mb-0 ${q.correcte ? "text-success" : "text-danger"}`}>{'['+q.proposition+']'}</p>)}</td>
+  <td>{question.type == 1 ? <Badge pill variant="primary">Réponse unique</Badge> : <Badge pill variant="secondary">Choix multiples</Badge>}</td>
   <td>
-    <Button onClick={handleDelete} variant="danger" disabled={loading}>{loading ? 'Chargement...' : 'Supprimer'}</Button> - <Button onClick={handleEditQuestion} variant="primary">Modifier</Button>
+    <Button onClick={handleDelete} variant="danger" style={{marginBottom: 0}} disabled={loading}>Supprimer</Button> - <Button onClick={handleEditQuestion} disabled={loading} variant="primary">Modifier</Button>
     </td>
   {showAlert && <ConfirmDelete handleClose={handleDelete} question={question} confirmDelete={Delete}/>}
   {editQuestion && <EditQuestion handleClose={handleEditQuestion} question={question} onSubmit={updateQuestion}/>}

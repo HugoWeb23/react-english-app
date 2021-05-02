@@ -7,11 +7,18 @@ import { useEffect } from "react"
 import { SelectThemes } from "../Themes/SelectThemes"
 
 export const QuestionForm = () => {
-    const {register, control, watch, Controller, formState} = useFormContext();
+    const {register, control, watch, Controller, formState, getValues} = useFormContext();
     const {errors} = formState;
     const {fields, append, remove} = useFieldArray({control, name: "propositions"})
     const questionType = watch('type');
-    console.log(errors)
+
+    const checkReponse = (value) => {
+        const questionType = watch('type');
+        if(value == null && questionType == "1") {
+            return "La réponse est obligatoire"
+        }
+        return true
+    }
 return <>
 <Form.Group controlId="type">
     <Form.Label>Type de question</Form.Label>
@@ -38,7 +45,9 @@ return <>
 {questionType == "1" && <>
 <Form.Group controlId="intitule">
     <Form.Label>Réponse à la question</Form.Label>
-    <Form.Control type="text" isInvalid={errors.reponse} placeholder="Réponse" {...register('reponse')}/>
+    <Form.Control type="text" isInvalid={errors.reponse} placeholder="Réponse" {...register('reponse', {
+          validate: checkReponse
+        })}/>
     {errors.reponse && <Form.Control.Feedback type="invalid">{errors.reponse.message}</Form.Control.Feedback>}
 </Form.Group>
 </>}

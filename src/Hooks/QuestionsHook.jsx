@@ -38,11 +38,15 @@ export const QuestionsHook = () => {
                 method: "POST",
                 body: JSON.stringify(question)
             })
-            dispatch({type: 'CREATE_QUESTION', payLoad: question});
+            dispatch({type: 'CREATE_QUESTION', payLoad: fetch});
         }, []),
         updateQuestion: useCallback(async(question, data) => {
-           console.log(question, data)
-            dispatch({type: 'UPDATE_QUESTION', payLoad: question});
+            const fetch = await apiFetch(`/api/questions/${question._id}`, {
+                method: 'PUT',
+                body: JSON.stringify(data)
+            })
+            dispatch({type: 'UPDATE_QUESTION', payLoad: fetch});
+            console.log(fetch);
         }, [])
     }
 }

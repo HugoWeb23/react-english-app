@@ -8,7 +8,7 @@ import {ApiErrors} from '../Utils/Api'
 export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
     const methods = useForm({
       defaultValues: {
-          type: question.type || 1,
+          type: question.type || "1",
           themeId: question.theme && question.theme._id || null,
           intitule: question.intitule || null,
           question: question.question || null,
@@ -18,12 +18,9 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
     })
     
     const submit = async(question) => {
-      console.log(JSON.stringify(question))
-      console.log(question)
       try {
        await onSubmit(question)
       handleClose()
-       console.log(methods.formState.isSubmitSuccessful)
       } catch(e) {
         if(e instanceof ApiErrors) {
           console.log('errors')
