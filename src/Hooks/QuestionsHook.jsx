@@ -14,7 +14,7 @@ export const QuestionsHook = () => {
                 return {questions: state.questions.map(q => q._id == action.payLoad._id ? action.payLoad : q)}
         }
     }
-    const [state, dispatch] = useReducer(reducer, {questions: null, errors: ['test']});
+    const [state, dispatch] = useReducer(reducer, {questions: null});
     const time = (time) => {
         return new Promise((resolve) => {
             setTimeout(resolve, time)
@@ -46,7 +46,6 @@ export const QuestionsHook = () => {
                 body: JSON.stringify(data)
             })
             dispatch({type: 'UPDATE_QUESTION', payLoad: fetch});
-            console.log(fetch);
         }, [])
     }
 }

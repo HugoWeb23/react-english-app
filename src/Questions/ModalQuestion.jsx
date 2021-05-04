@@ -20,10 +20,9 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
     const submit = async(question) => {
       try {
        await onSubmit(question)
-      handleClose()
+       handleClose()
       } catch(e) {
         if(e instanceof ApiErrors) {
-          console.log('errors')
           e.errorsPerField.forEach(err => {
             methods.setError(err.field, {
               type: "manual",

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { apiFetch } from "../Utils/Api"
 import Form from 'react-bootstrap/Form'
-import Spinner from 'react-bootstrap/Spinner'
+import {Loader} from '../UI/Loader'
 
 export const SelectThemes = ({register, errors}) => {
     const [themes, setThemes] = useState([])
@@ -16,9 +16,7 @@ export const SelectThemes = ({register, errors}) => {
     }, [])
 
     return <>
-    {loading ? <><Spinner animation="border" role="status">
-  <div className="sr-only">Chargement...</div>
-</Spinner></> :
+    {loading ? <><Loader display="block" animation="border" variant="primary" /></> :
 <Form.Group controlId="themeId">
     <Form.Control as="select" isInvalid={errors.themeId} {...register('themeId', {required: "Le thème est obligatoire"})}>
         <option value="">Sélectionner un thème</option>

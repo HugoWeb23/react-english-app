@@ -22,13 +22,13 @@ export const QuestionForm = () => {
 return <>
 <Form.Group controlId="type">
     <Form.Label>Type de question</Form.Label>
-    <Form.Control as="select" isInvalid={errors.type} {...register('type', {required: "Le type de question est obligatoire", min: 1, max: 2})}>
+    <Form.Control as="select" isInvalid={errors.type} {...register('type', {required: "Le type est obligatoire", min: 1, max: 2})}>
       <option value="1">Réponse à écrire</option>
       <option value="2">Choix multiples</option>
     </Form.Control>
     {errors.type && <Form.Control.Feedback type="invalid">{errors.type.message}</Form.Control.Feedback>}
 </Form.Group>
-<Form.Group>
+<Form.Group controlId="themeId">
     <Form.Label>Thème de la question</Form.Label>
     <SelectThemes register={register} errors={errors}/>
 </Form.Group>
@@ -43,7 +43,7 @@ return <>
     {errors.question && <Form.Control.Feedback type="invalid">{errors.question.message}</Form.Control.Feedback>}
 </Form.Group>
 {questionType == "1" && <>
-<Form.Group controlId="intitule">
+<Form.Group controlId="reponse">
     <Form.Label>Réponse à la question</Form.Label>
     <Form.Control type="text" isInvalid={errors.reponse} placeholder="Réponse" {...register('reponse', {
           validate: checkReponse

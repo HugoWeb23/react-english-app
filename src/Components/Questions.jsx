@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button'
 import Modal from 'react-bootstrap/Modal'
 import Badge from 'react-bootstrap/Badge'
 import {ModalQuestion} from '../Questions/ModalQuestion'
+import {Loader} from '../UI/Loader'
 
 export const Questions = () => {
    const {questions, getQuestions, deleteQuestion, createQuestion, updateQuestion} = QuestionsHook();
@@ -23,8 +24,10 @@ export const Questions = () => {
     }
 
     return <>
+    <div className="d-flex justify-content-between align-items-center mb-2 mt-2">
     <h1>Les questions</h1>
     <Button variant="primary" onClick={handleCreateQuestion}>Créer une question</Button>
+    </div>
    {newQuestion && <CreateQuestion handleClose={handleCreateQuestion} onSubmit={createQuestion}/>}
     <Table striped bordered hover>
   <thead>
@@ -37,7 +40,7 @@ export const Questions = () => {
     </tr>
   </thead>
   <tbody>
-    {loader ? 'Chargement' : questions.sort((a, b) => a.reponse > b.reponse ? 1 : -1).map((question, index) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion}/>)}
+    {loader ? <Loader display="block" animation="border" variant="primary" /> : questions.sort((a, b) => a.reponse > b.reponse ? 1 : -1).map((question, index) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion}/>)}
   </tbody>
 </Table>
     </>
@@ -63,14 +66,14 @@ const Question = ({question, onDelete, onUpdate}) => {
     setEditQuestion(!editQuestion)
   }
 
-  const updateQuestion = (data) => {
-    onUpdate(question, data)
+  const updateQuestion = async(data) => {
+    await onUpdate(question, data)
   }
 
 return <tr>
   <td>{question.intitule}</td>
   <td>{question.question}</td>
-  <td>{question.reponse || question.propositions.map(q => <p className={`mb-0 ${q.correcte ? "text-success" : "text-danger"}`}>{'['+q.proposition+']'}</p>)}</td>
+  <td>{question.reponse || question.propositions.map((q, index) => <p key={index} className={`mb-0 ${q.correcte ? "text-success" : "text-danger"}`}>{'['+q.proposition+']'}</p>)}</td>
   <td>{question.type == 1 ? <Badge pill variant="primary">Réponse unique</Badge> : <Badge pill variant="secondary">Choix multiples</Badge>}</td>
   <td>
     <Button onClick={handleDelete} variant="danger" style={{marginBottom: 0}} disabled={loading}>Supprimer</Button> - <Button onClick={handleEditQuestion} disabled={loading} variant="primary">Modifier</Button>

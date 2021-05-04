@@ -25,6 +25,7 @@ return <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
       <>
     <NavDropdown title="Administration" id="collasible-nav-dropdown">
         <LinkContainer to="/questions"><NavDropdown.Item>Gestion des questions</NavDropdown.Item></LinkContainer>
+        <LinkContainer to="/themes"><NavDropdown.Item>Gestion des thèmes</NavDropdown.Item></LinkContainer>
         <LinkContainer to="/test"><NavDropdown.Item>Test</NavDropdown.Item></LinkContainer>
       <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
       <NavDropdown.Divider />

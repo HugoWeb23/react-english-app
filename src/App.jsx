@@ -8,6 +8,7 @@ import {Test} from './Components/Test'
 import {Register} from './Components/Register'
 import {PrivateRoute} from './Components/PrivateRoute'
 import {Questions} from './Components/Questions'
+import {Themes} from './Components/Themes'
 import {apiFetch} from './Utils/Api'
 import {ToastAlert} from './UI/Toast'
 
@@ -51,6 +52,7 @@ return loading ? <UserLoader/> :
   <ToastAlert/>
   <div className="container-md">
   <PrivateRoute path="/questions" component={Questions}/>
+  <PrivateRoute path="/themes" component={Themes}/>
   <PrivateRoute path="/test" component={Test}/>
   <Route path="/login">{user ? <Redirect to="/questions"/> : <Login onConnect={toggleUser}/>}</Route>
   <Route path="/register">{user ? <Redirect to="/questions"/> : <Register onConnect={toggleUser}/>}</Route>
