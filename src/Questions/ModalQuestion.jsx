@@ -4,6 +4,7 @@ import Button from 'react-bootstrap/Button'
 import {QuestionForm} from '../Questions/QuestionForm'
 import { Form } from "react-bootstrap";
 import {ApiErrors} from '../Utils/Api'
+import { useState } from "react";
 
 export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
     const methods = useForm({
@@ -16,11 +17,17 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
           reponse: question.reponse ||null
       }
     })
+
+    const [loading, setLoading] = useState(false)
     
-    const submit = async(question) => {
+    const submit = async(question, options) => {
       try {
+       setLoading(true)
        await onSubmit(question)
-       handleClose()
+       if(options == true) {
+        handleClose()
+       }
+       setLoading(false)
       } catch(e) {
         if(e instanceof ApiErrors) {
           e.errorsPerField.forEach(err => {
@@ -30,6 +37,7 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
             });
           })
          }
+         setLoading(false)
       }
     }
     
@@ -38,7 +46,7 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
       <Modal.Title>{type == 'create' ? "Créer une question" : "Éditer une question"}</Modal.Title>
     </Modal.Header>
     <FormProvider {...methods}>
-    <Form  onSubmit={methods.handleSubmit(submit)}>
+    <Form onSubmit={methods.handleSubmit(data => submit(data, true))}>
     <Modal.Body>
       <QuestionForm/>
     </Modal.Body>
@@ -46,8 +54,9 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
       <Button variant="secondary" onClick={() => handleClose()}>
         Annuler
       </Button>
-      <Button variant="success" type="submit">
-      {type == 'create' ? "Créer" : "Éditer"}
+      <Button variant="success" onClick={methods.handleSubmit(data => submit(data, false))} disabled={loading}>Créer</Button>
+      <Button variant="success" type="submit" disabled={loading}>
+      {type == 'create' ? "Créer et fermer" : "Éditer"}
       </Button>
     </Modal.Footer>
     </Form>

@@ -58,5 +58,6 @@ return <>
 })}
 <Button variant="info" onClick={() => append({})}>Ajouter une proposition</Button>
 </>}
+<Form.Check custom type="checkbox" label="Rester sur cette page" id="fermer" {...register('fermer')}/>
 </>
 }

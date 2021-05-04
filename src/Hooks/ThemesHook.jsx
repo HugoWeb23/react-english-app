@@ -10,6 +10,8 @@ export const useThemes = () => {
                 return {themes: state.themes.map(t => t._id == action.payLoad._id ? action.payLoad : t)}
             case 'CREATE_THEME':
                 return {themes: [...state.themes, action.payLoad]}
+            case 'DELETE_THEME':
+                return {themes: state.themes.filter(t => t != action.payLoad)}
         }
     }
     const [state, dispatch] = useReducer(reducer, {themes: null});
@@ -33,6 +35,12 @@ export const useThemes = () => {
                 body: JSON.stringify(data)
             });
             dispatch({type: 'CREATE_THEME', payLoad: fetch})
+        },
+        deleteTheme: async(theme) => {
+            const fetch = await apiFetch(`/api/themes/${theme._id}`, {
+                method: 'DELETE'
+            })
+            dispatch({type: 'DELETE_THEME', payLoad: theme})
         }
     }
 }

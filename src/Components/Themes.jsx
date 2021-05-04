@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 import { useThemes } from "../Hooks/ThemesHook"
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import {Loader} from '../UI/Loader'
-import { ModalTheme } from "../Themes/ModalTheme";
+import { ModalTheme } from "../Themes/ModalTheme"
+import {DeleteModal} from '../UI/DeleteModal'
 
 export const Themes = () => {
-    const {themes, getThemes, editTheme, createTheme} = useThemes();
+    const {themes, getThemes, editTheme, createTheme, deleteTheme} = useThemes();
     const [loading, setLoading] = useState(true);
     const [modalCreate, setModalCreate] = useState(false)
 
@@ -36,14 +37,15 @@ export const Themes = () => {
     </tr>
   </thead>
   <tbody>
-    {loading ? <Loader display="block" animation="border" variant="primary" /> : themes.map((theme, index) => <Theme key={index} theme={theme} index={index} onEdit={editTheme}/>)}
+    {loading ? <Loader display="block" animation="border" variant="primary" /> : themes.map((theme, index) => <Theme key={index} theme={theme} index={index} onEdit={editTheme} onDelete={deleteTheme}/>)}
   </tbody>
 </Table>
     </>
 }
 
-const Theme = ({theme, index, onEdit}) => {
+const Theme = ({theme, index, onEdit, onDelete}) => {
     const [editModal, setEditModal] = useState(false)
+    const [deleteModal, setDeleteModal] = useState(false)
 
     const editTheme = async(data) => {
         await onEdit(theme, data);
@@ -55,8 +57,9 @@ const Theme = ({theme, index, onEdit}) => {
 return <tr>
     <td>{index+1}</td>
     <td>{theme.theme}</td>
-    <td><Button variant="info" onClick={() => setEditModal(true)}>Modifier</Button></td>
+    <td><Button variant="info" onClick={() => setEditModal(true)}>Modifier</Button> - <Button variant="danger" onClick={() => setDeleteModal(true)}>Supprimer</Button></td>
     {editModal && <EditTheme handleClose={closeEditModal} theme={theme} onEdit={editTheme}/>}
+    {deleteModal && <DeleteModal element={theme} handleClose={() => setDeleteModal(false)} onConfirm={onDelete}/>}
 </tr>
 }
 

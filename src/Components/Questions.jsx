@@ -3,10 +3,12 @@ import { apiFetch } from "../Utils/Api";
 import {QuestionsHook} from '../Hooks/QuestionsHook'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import Dropdown from 'react-bootstrap/Dropdown'
 import Badge from 'react-bootstrap/Badge'
 import {ModalQuestion} from '../Questions/ModalQuestion'
 import {Loader} from '../UI/Loader'
+import { DeleteModal } from "../UI/DeleteModal";
 
 export const Questions = () => {
    const {questions, getQuestions, deleteQuestion, createQuestion, updateQuestion} = QuestionsHook();
@@ -76,9 +78,12 @@ return <tr>
   <td>{question.reponse || question.propositions.map((q, index) => <p key={index} className={`mb-0 ${q.correcte ? "text-success" : "text-danger"}`}>{'['+q.proposition+']'}</p>)}</td>
   <td>{question.type == 1 ? <Badge pill variant="primary">Réponse unique</Badge> : <Badge pill variant="secondary">Choix multiples</Badge>}</td>
   <td>
-    <Button onClick={handleDelete} variant="danger" style={{marginBottom: 0}} disabled={loading}>Supprimer</Button> - <Button onClick={handleEditQuestion} disabled={loading} variant="primary">Modifier</Button>
+    <DropdownButton variant="info" title="Actions" disabled={loading}>
+        <Dropdown.Item eventKey="1" onClick={handleEditQuestion}>Modifier</Dropdown.Item>
+        <Dropdown.Item eventKey="2"  onClick={handleDelete}>Supprimer</Dropdown.Item>
+      </DropdownButton>
     </td>
-  {showAlert && <ConfirmDelete handleClose={handleDelete} question={question} confirmDelete={Delete}/>}
+  {showAlert && <DeleteModal handleClose={handleDelete} element={question} onConfirm={Delete}/>}
   {editQuestion && <EditQuestion handleClose={handleEditQuestion} question={question} onSubmit={updateQuestion}/>}
 </tr>
 }
@@ -89,25 +94,5 @@ const CreateQuestion = ({handleClose, onSubmit}) => {
 
 const EditQuestion = ({handleClose, question, onSubmit}) => {
   return <ModalQuestion handleClose={handleClose} question={question} onSubmit={onSubmit} type="edit"/>
-}
-
-const ConfirmDelete = ({handleClose, question, confirmDelete}) => {
-  const onDelete = () => {
-  confirmDelete(question)
-  }
-return  <Modal show={true} onHide={() => handleClose()}>
-<Modal.Header closeButton>
-  <Modal.Title>Confirmation</Modal.Title>
-</Modal.Header>
-<Modal.Body>Voulez-vous vraiment supprimer cette question ?</Modal.Body>
-<Modal.Footer>
-  <Button variant="secondary" onClick={() => handleClose()}>
-    Fermer
-  </Button>
-  <Button variant="danger" onClick={onDelete}>
-   Supprimer
-  </Button>
-</Modal.Footer>
-</Modal>
 }
 
