@@ -19,6 +19,13 @@ export const QuestionForm = () => {
         }
         return true
     }
+
+    const removeField = field => {
+        if(fields.length > 1) {
+            remove(field)
+        }
+    }
+
 return <>
 <Form.Group controlId="type">
     <Form.Label>Type de question</Form.Label>
@@ -54,10 +61,9 @@ return <>
 {questionType == "2" && <>
 <Form.Label>Propositions de réponses</Form.Label>
 {fields.map((field, index) => {
-        return <MultiChoices field={field} index={index} errors={errors} register={register} remove={remove}/>
+        return <MultiChoices field={field} key={index} index={index} errors={errors} register={register} remove={removeField}/>
 })}
 <Button variant="info" onClick={() => append({})}>Ajouter une proposition</Button>
 </>}
-<Form.Check custom type="checkbox" label="Rester sur cette page" id="fermer" {...register('fermer')}/>
 </>
 }

@@ -3,6 +3,8 @@ import { useThemes } from "../Hooks/ThemesHook"
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import {Loader} from '../UI/Loader'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import Dropdown from 'react-bootstrap/Dropdown'
 import { ModalTheme } from "../Themes/ModalTheme"
 import {DeleteModal} from '../UI/DeleteModal'
 
@@ -46,9 +48,17 @@ export const Themes = () => {
 const Theme = ({theme, index, onEdit, onDelete}) => {
     const [editModal, setEditModal] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const editTheme = async(data) => {
         await onEdit(theme, data);
+    }
+
+    const deleteTheme = async(theme) => {
+      setLoading(true)
+      setDeleteModal(false)
+      await onDelete(theme)
+      setLoading(false)
     }
 
     const closeEditModal = () => {
@@ -57,9 +67,13 @@ const Theme = ({theme, index, onEdit, onDelete}) => {
 return <tr>
     <td>{index+1}</td>
     <td>{theme.theme}</td>
-    <td><Button variant="info" onClick={() => setEditModal(true)}>Modifier</Button> - <Button variant="danger" onClick={() => setDeleteModal(true)}>Supprimer</Button></td>
+    <td>
+    <DropdownButton variant="info" title="Actions" disabled={loading}>
+        <Dropdown.Item eventKey="1" onClick={() => setEditModal(true)}>Modifier</Dropdown.Item>
+        <Dropdown.Item eventKey="2"  onClick={() => setDeleteModal(true)}>Supprimer</Dropdown.Item>
+      </DropdownButton></td>
     {editModal && <EditTheme handleClose={closeEditModal} theme={theme} onEdit={editTheme}/>}
-    {deleteModal && <DeleteModal element={theme} handleClose={() => setDeleteModal(false)} onConfirm={onDelete}/>}
+    {deleteModal && <DeleteModal element={theme} handleClose={() => setDeleteModal(false)} onConfirm={deleteTheme}/>}
 </tr>
 }
 

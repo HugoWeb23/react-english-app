@@ -49,23 +49,16 @@ export const Questions = () => {
 }
 
 const Question = ({question, onDelete, onUpdate}) => {
-  const [showAlert, setShowAlert] = useState(false)
+  const [deleteModal, setDeleteModal] = useState(false)
   const [loading, setLoading] = useState(false)
   const [editQuestion, setEditQuestion] = useState(false)
 
-  const handleDelete = () => {
-    setShowAlert(!showAlert);
-  }
 
   const Delete = async(question) => {
-    handleDelete();
+    setDeleteModal(false)
     setLoading(true)
     const result = await onDelete(question)
     setLoading(false)
-  }
-
-  const handleEditQuestion = () => {
-    setEditQuestion(!editQuestion)
   }
 
   const updateQuestion = async(data) => {
@@ -79,12 +72,12 @@ return <tr>
   <td>{question.type == 1 ? <Badge pill variant="primary">Réponse unique</Badge> : <Badge pill variant="secondary">Choix multiples</Badge>}</td>
   <td>
     <DropdownButton variant="info" title="Actions" disabled={loading}>
-        <Dropdown.Item eventKey="1" onClick={handleEditQuestion}>Modifier</Dropdown.Item>
-        <Dropdown.Item eventKey="2"  onClick={handleDelete}>Supprimer</Dropdown.Item>
+        <Dropdown.Item eventKey="1" onClick={() => setEditQuestion(true)}>Modifier</Dropdown.Item>
+        <Dropdown.Item eventKey="2"  onClick={() => setDeleteModal(true)}>Supprimer</Dropdown.Item>
       </DropdownButton>
     </td>
-  {showAlert && <DeleteModal handleClose={handleDelete} element={question} onConfirm={Delete}/>}
-  {editQuestion && <EditQuestion handleClose={handleEditQuestion} question={question} onSubmit={updateQuestion}/>}
+  {deleteModal && <DeleteModal handleClose={() => setDeleteModal(false)} element={question} onConfirm={Delete}/>}
+  {editQuestion && <EditQuestion handleClose={() => setEditQuestion(false)} question={question} onSubmit={updateQuestion}/>}
 </tr>
 }
 

@@ -20,12 +20,15 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
 
     const [loading, setLoading] = useState(false)
     
-    const submit = async(question, options) => {
+    const submit = async(question, close) => {
       try {
        setLoading(true)
        await onSubmit(question)
-       if(options == true) {
+       if(close == true) {
         handleClose()
+       }
+       if(type != 'edit') {
+        methods.reset()
        }
        setLoading(false)
       } catch(e) {
@@ -54,9 +57,9 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
       <Button variant="secondary" onClick={() => handleClose()}>
         Annuler
       </Button>
-      <Button variant="success" onClick={methods.handleSubmit(data => submit(data, false))} disabled={loading}>Créer</Button>
+      <Button variant="success" onClick={methods.handleSubmit(data => submit(data, false))} disabled={loading}>{type == 'create' ? "Créer" : "Éditer"}</Button>
       <Button variant="success" type="submit" disabled={loading}>
-      {type == 'create' ? "Créer et fermer" : "Éditer"}
+      {type == 'create' ? "Créer et fermer" : "Éditer et fermer"}
       </Button>
     </Modal.Footer>
     </Form>
