@@ -12,6 +12,8 @@ export const QuestionsHook = () => {
                 return {...state, questions: [...state.questions, action.payLoad]}
             case 'UPDATE_QUESTION':
                 return {questions: state.questions.map(q => q._id == action.payLoad._id ? action.payLoad : q)}
+            case 'SEARCH_QUESTION':
+                return {questions: state.questions.filter(q => q.reponse == action.payLoad)}
         }
     }
     const [state, dispatch] = useReducer(reducer, {questions: null});
@@ -46,6 +48,9 @@ export const QuestionsHook = () => {
                 body: JSON.stringify(data)
             })
             dispatch({type: 'UPDATE_QUESTION', payLoad: fetch});
-        }, [])
+        }, []),
+        searchQuestion: async(search) => {
+            dispatch({type: 'SEARCH_QUESTION', payLoad: search.value})
+        }
     }
 }

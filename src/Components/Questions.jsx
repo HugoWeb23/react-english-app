@@ -8,10 +8,11 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import Badge from 'react-bootstrap/Badge'
 import {ModalQuestion} from '../Questions/ModalQuestion'
 import {Loader} from '../UI/Loader'
-import { DeleteModal } from "../UI/DeleteModal";
+import { DeleteModal } from "../UI/DeleteModal"
+import {Search} from './Search'
 
 export const Questions = () => {
-   const {questions, getQuestions, deleteQuestion, createQuestion, updateQuestion} = QuestionsHook();
+   const {questions, getQuestions, deleteQuestion, createQuestion, updateQuestion, searchQuestion} = QuestionsHook();
    const [loader, setLoader] = useState(true);
    const [newQuestion, setnewQuestion] = useState(false)
     useEffect(() => {
@@ -30,6 +31,7 @@ export const Questions = () => {
     <h1>Les questions</h1>
     <Button variant="primary" onClick={handleCreateQuestion}>Créer une question</Button>
     </div>
+    <Search size="lg" onSearch={searchQuestion}/>
    {newQuestion && <CreateQuestion handleClose={handleCreateQuestion} onSubmit={createQuestion}/>}
     <Table striped bordered hover>
   <thead>
