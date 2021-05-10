@@ -5,12 +5,22 @@ import {useFieldArray, useForm, useFormContext} from 'react-hook-form'
 import {MultiChoices} from './MultiChoices'
 import { useEffect } from "react"
 import { SelectThemes } from "../Themes/SelectThemes"
+import {Themes} from '../Hooks/GetThemes'
 
 export const QuestionForm = () => {
     const {register, control, watch, Controller, formState, getValues} = useFormContext();
     const {errors} = formState;
     const {fields, append, remove} = useFieldArray({control, name: "propositions"})
     const questionType = watch('type');
+
+    // A changer
+    const {themes, GetThemes} = Themes();
+
+    useEffect(() => {
+        (async() => {
+            await GetThemes();
+        })()
+    }, [])
 
     const checkReponse = (value) => {
         const questionType = watch('type');
@@ -37,7 +47,7 @@ return <>
 </Form.Group>
 <Form.Group controlId="themeId">
     <Form.Label>Thème de la question</Form.Label>
-    <SelectThemes register={register} errors={errors}/>
+    <SelectThemes themes={themes} name="themeId" register={register} errors={errors}/>
 </Form.Group>
 <Form.Group controlId="intitule">
     <Form.Label>Intitulé de la question</Form.Label>

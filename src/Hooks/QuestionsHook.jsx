@@ -11,14 +11,14 @@ export const QuestionsHook = () => {
             case 'CREATE_QUESTION':
                 return {...state, questions: [...state.questions, action.payLoad]}
             case 'UPDATE_QUESTION':
-                return {questions: state.questions.map(q => q._id == action.payLoad._id ? action.payLoad : q)}
+                return {...state, questions: state.questions.map(q => q._id == action.payLoad._id ? action.payLoad : q)}
             case 'SEARCH_QUESTION':
-                return {questions: state.questions.filter(q => q.reponse == action.payLoad)}
+                return {...state, filteredQuestions: state.questions.filter(q => q.reponse ? q.reponse.toLowerCase().indexOf(action.payLoad) > -1 : false)}
         }
     }
     const [state, dispatch] = useReducer(reducer, {questions: null});
     const time = (time) => {
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
             setTimeout(resolve, time)
         })
     }

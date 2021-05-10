@@ -37,7 +37,9 @@ return <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
   <Nav>
       {user ? 
       <>
-      <Nav.Link href="#deets">Bonjour {user.prenom}</Nav.Link>
+      <NavDropdown title={user.prenom} id="collasible-nav-dropdown">
+        <LinkContainer to="/questions"><NavDropdown.Item>Mon profil</NavDropdown.Item></LinkContainer>
+    </NavDropdown>
       <Nav.Link href="#" onClick={userLogout}>Déconnexion</Nav.Link>
       </> :
       <>

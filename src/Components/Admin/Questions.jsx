@@ -1,20 +1,22 @@
-import { useEffect, useState } from "react"
-import { apiFetch } from "../Utils/Api";
-import {QuestionsHook} from '../Hooks/QuestionsHook'
+import { useEffect, useState, useMemo, memo } from "react"
+import { apiFetch } from "../../Utils/Api";
+import {QuestionsHook} from '../../Hooks/QuestionsHook'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Badge from 'react-bootstrap/Badge'
-import {ModalQuestion} from '../Questions/ModalQuestion'
-import {Loader} from '../UI/Loader'
-import { DeleteModal } from "../UI/DeleteModal"
+import {ModalQuestion} from '../../Questions/ModalQuestion'
+import {Loader} from '../../UI/Loader'
+import { DeleteModal } from "../../UI/DeleteModal"
 import {Search} from './Search'
+import { usePagination, useSortBy, useTable } from 'react-table'
 
 export const Questions = () => {
-   const {questions, getQuestions, deleteQuestion, createQuestion, updateQuestion, searchQuestion} = QuestionsHook();
+   const {questions, filteredQuestions, getQuestions, deleteQuestion, createQuestion, updateQuestion, searchQuestion} = QuestionsHook();
    const [loader, setLoader] = useState(true);
    const [newQuestion, setnewQuestion] = useState(false)
+
     useEffect(() => {
         (async() => {
             await getQuestions();
@@ -44,22 +46,21 @@ export const Questions = () => {
     </tr>
   </thead>
   <tbody>
-    {loader ? <Loader display="block" animation="border" variant="primary" /> : questions.sort((a, b) => a.reponse > b.reponse ? 1 : -1).map((question, index) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion}/>)}
+    {loader ? <Loader display="block" animation="border" variant="primary" /> : questions.map((question, index) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion}/>)}
   </tbody>
 </Table>
     </>
 }
 
-const Question = ({question, onDelete, onUpdate}) => {
+const Question = memo(({question, onDelete, onUpdate}) => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [loading, setLoading] = useState(false)
   const [editQuestion, setEditQuestion] = useState(false)
 
 
   const Delete = async(question) => {
-    setDeleteModal(false)
     setLoading(true)
-    const result = await onDelete(question)
+    await onDelete(question)
     setLoading(false)
   }
 
@@ -81,7 +82,7 @@ return <tr>
   {deleteModal && <DeleteModal handleClose={() => setDeleteModal(false)} element={question} onConfirm={Delete}/>}
   {editQuestion && <EditQuestion handleClose={() => setEditQuestion(false)} question={question} onSubmit={updateQuestion}/>}
 </tr>
-}
+})
 
 const CreateQuestion = ({handleClose, onSubmit}) => {
   return <ModalQuestion handleClose={handleClose} onSubmit={onSubmit} type="create"/>

@@ -7,10 +7,11 @@ import {Login} from './Components/Login'
 import {Test} from './Components/Test'
 import {Register} from './Components/Register'
 import {PrivateRoute} from './Components/PrivateRoute'
-import {Questions} from './Components/Questions'
-import {Themes} from './Components/Themes'
+import {Questions} from './Components/Admin/Questions'
+import {Themes} from './Components/Admin/Themes'
 import {apiFetch} from './Utils/Api'
 import {ToastAlert} from './UI/Toast'
+import {Part} from './Components/Part'
 
 export const App = () => {
   const [user, setUser] = useState(null);
@@ -51,6 +52,7 @@ return loading ? <UserLoader/> :
   <Navigation/>
   <ToastAlert/>
   <div className="container-md">
+  <PrivateRoute path="/part" exact component={Part}/>
   <PrivateRoute path="/questions" component={Questions}/>
   <PrivateRoute path="/themes" component={Themes}/>
   <PrivateRoute path="/test" component={Test}/>

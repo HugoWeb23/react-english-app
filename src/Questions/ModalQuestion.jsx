@@ -14,7 +14,7 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
           intitule: question.intitule || null,
           question: question.question || null,
           propositions: question.propositions || [{}],
-          reponse: question.reponse ||null
+          reponse: question.reponse || null
       }
     })
 

@@ -3,22 +3,13 @@ import { apiFetch } from "../Utils/Api"
 import Form from 'react-bootstrap/Form'
 import {Loader} from '../UI/Loader'
 
-export const SelectThemes = ({register, errors}) => {
-    const [themes, setThemes] = useState([])
+export const SelectThemes = ({themes = null, name, register, errors}) => {
     const [loading, setLoading] = useState(true)
 
-    useEffect(() => {
-        (async() => {
-            const fetchThemes = await apiFetch('/api/themes/all');
-            setThemes(fetchThemes)
-            setLoading(false)
-        })()
-    }, [])
-
     return <>
-    {loading ? <><Loader display="block" animation="border" variant="primary" /></> :
-<Form.Group controlId="themeId">
-    <Form.Control as="select" isInvalid={errors.themeId} {...register('themeId', {required: "Le thème est obligatoire"})}>
+    {themes == null ? <><Loader display="block" animation="border" variant="primary" /></> :
+    <Form.Group controlId="themeId">
+    <Form.Control as="select" isInvalid={errors.themeId} {...register(name, {required: "Le thème est obligatoire"})}>
         <option value="">Sélectionner un thème</option>
     {themes.map((theme, index) => {
         return <option key={theme._id} value={theme._id}>{theme.theme}</option>

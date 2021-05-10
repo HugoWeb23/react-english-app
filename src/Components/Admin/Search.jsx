@@ -13,7 +13,7 @@ export const Search = ({onSearch, size}) => {
     return <>
     <Form onSubmit={handleSubmit(submit)}>
     <Form.Group controlId="search">
-    <Form.Label>Rechercher un question</Form.Label>
+    <Form.Label>Rechercher une question</Form.Label>
     <Form.Control {...register('value')} size={size}/>
     <Button variant="info" type="submit">Chercher</Button>
     </Form.Group>

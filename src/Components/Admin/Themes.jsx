@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
-import { useThemes } from "../Hooks/ThemesHook"
+import { useThemes } from "../../Hooks/ThemesHook"
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
-import {Loader} from '../UI/Loader'
+import {Loader} from '../../UI/Loader'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
-import { ModalTheme } from "../Themes/ModalTheme"
-import {DeleteModal} from '../UI/DeleteModal'
+import { ModalTheme } from "../../Themes/ModalTheme"
+import {DeleteModal} from '../../UI/DeleteModal'
 
 export const Themes = () => {
     const {themes, getThemes, editTheme, createTheme, deleteTheme} = useThemes();
