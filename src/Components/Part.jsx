@@ -8,6 +8,7 @@ import {Loader} from '../UI/Loader'
 import {CloseIcon} from '../Icons/Close'
 import Modal from 'react-bootstrap/Modal'
 import { apiFetch } from '../Utils/Api'
+import ListGroup from 'react-bootstrap/ListGroup'
 
 export const Part = () => {
     const {register, handleSubmit, control, watch, Controller, formState, getValues} = useForm({defaultValues: {
@@ -19,9 +20,9 @@ export const Part = () => {
     const {errors} = formState;
     const {themes, GetThemes} = Themes();
     const types = [{type: 1, title: "Réponse à écrire"}, {type: 2, title: "Choix multiples"}]
-
     const {selectedThemes, selectedTypes, addOption, deleteOption} = useOptions();
     const [modal, setModal] = useState(false)
+    const [selectedQuestions, setSelectedQuestions] = useState([]);
 
     useEffect(() => {
         (async() => {
@@ -29,7 +30,7 @@ export const Part = () => {
         })()
     }, [])
 
-    const submit = e => console.log('submit', e)
+    const submit = e => console.log({types: selectedTypes}, {themes: selectedThemes}, {questions: selectedQuestions})
 
     const filteredThemes = (themes || []).filter(theme => {
         return !selectedThemes.some(t => t._id === theme._id);
@@ -50,7 +51,6 @@ export const Part = () => {
     const handleManualQuestions = () => {
         setModal(true)
     }
-
     return <>
     <h1>Nouvelle partie</h1>
     <Form onSubmit={handleSubmit(submit)}>
@@ -75,7 +75,7 @@ export const Part = () => {
     <Form.Label>Questions</Form.Label>
    <Button variant="warning" onClick={handleManualQuestions}>Sélection manuelle</Button>
     </Form.Group>
-    {modal &&<ManualQuestionsModal handleClose={() => setModal(false)} themes={selectedThemes.map(t => t._id)}/>}
+    {modal &&<ManualQuestionsModal handleClose={() => setModal(false)} themes={selectedThemes.map(t => t._id)} onConfirm={(e) => setSelectedQuestions(e)}/>}
     </>
     }
     <Form.Group controlId="types">
@@ -123,8 +123,9 @@ const useOptions = () => {
     }
 }
 
-const ManualQuestionsModal = ({handleClose, themes = null}) => {
+const ManualQuestionsModal = ({handleClose, themes = null, onConfirm}) => {
     const [questions, setQuestions] = useState(null);
+    const [selectedQuestions, setSelectedQuestions] = useState([]);
     useEffect(() => {
         (async() => {
             const questions = await apiFetch('/api/questions', {
@@ -133,6 +134,9 @@ const ManualQuestionsModal = ({handleClose, themes = null}) => {
             })
             setQuestions(questions)
         })()
+        return () => {
+            console.log('component unmount')
+        }
     }, [])
 
     const groupThemes = []
@@ -143,24 +147,48 @@ const ManualQuestionsModal = ({handleClose, themes = null}) => {
             }
         })
     }
-    console.log(groupThemes)
+
+    const handleQuestionChange = (value, question) => {
+        if(value === true) {
+            setSelectedQuestions(questions => [...questions, question])
+           
+        } else if(value === false) {
+           setSelectedQuestions(questions => questions.filter(q => q != question))
+        }
+    }
+
+    const handleConfirm = () => {
+        onConfirm(selectedQuestions)
+    }
     return <Modal show={true} onHide={() => handleClose()}>
     <Modal.Header closeButton>
-      <Modal.Title>Modal heading</Modal.Title>
+      <Modal.Title>Sélection manuelle des questions</Modal.Title>
     </Modal.Header>
-    <Modal.Body>{groupThemes.map(t => {
+    <Modal.Body>{questions === null ? <Loader/> : groupThemes.map(t => {
         return <>
         <div style={{fontWeight: 'bold'}}>{t.theme}</div>
-        {questions.map(q => q.theme._id === t._id ? <div>{q.question}</div> : null)}
+        <ListGroup>{questions.map(q => q.theme._id === t._id ? <Question question={q} onChange={handleQuestionChange}/> : null)}</ListGroup>
         </>
     })}</Modal.Body>
     <Modal.Footer>
       <Button variant="secondary" onClick={() => handleClose()}>
-        Close
+        Fermer
       </Button>
-      <Button variant="primary">
-        Save Changes
+      <Button variant="primary" onClick={handleConfirm}>
+        Valider
       </Button>
     </Modal.Footer>
   </Modal>
+}
+
+const Question = ({question, onChange}) => {
+const handleQuestionChange = (e) => {
+    onChange(e.target.checked, question)
+}
+    return <>
+    <ListGroup.Item>
+      {question.question}
+      <Form.Check custom type="checkbox" id={question._id} onChange={handleQuestionChange}/>
+    </ListGroup.Item>
+  </>
 }
