@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react'
 import {Themes} from '../Hooks/GetThemes'
 import {Loader} from '../UI/Loader'
 import {CloseIcon} from '../Icons/Close'
+import Modal from 'react-bootstrap/Modal'
+import { apiFetch } from '../Utils/Api'
 
 export const Part = () => {
     const {register, handleSubmit, control, watch, Controller, formState, getValues} = useForm({defaultValues: {
@@ -19,6 +21,7 @@ export const Part = () => {
     const types = [{type: 1, title: "Réponse à écrire"}, {type: 2, title: "Choix multiples"}]
 
     const {selectedThemes, selectedTypes, addOption, deleteOption} = useOptions();
+    const [modal, setModal] = useState(false)
 
     useEffect(() => {
         (async() => {
@@ -44,6 +47,10 @@ export const Part = () => {
         addOption(filteredTypes[parseInt(e.target.value, 10)], 'types')
     }
 
+    const handleManualQuestions = () => {
+        setModal(true)
+    }
+
     return <>
     <h1>Nouvelle partie</h1>
     <Form onSubmit={handleSubmit(submit)}>
@@ -57,11 +64,20 @@ export const Part = () => {
     </Form.Group>
     <Form.Group controlId="selected-themes">
     <div className="d-flex flex-wrap">
-    {selectedThemes.map(theme => {
-        return <a href="#" onClick={() => deleteOption(theme, 'themes')} className="badge badge-primary mr-2 mb-2">{theme.theme} <CloseIcon/></a>
+    {selectedThemes.map((theme, index) => {
+        return <a href="#" key={index} onClick={() => deleteOption(theme, 'themes')} className="badge badge-primary mr-2 mb-2">{theme.theme} <CloseIcon/></a>
     })}
     </div>
     </Form.Group>
+    {selectedThemes.length > 0 &&
+    <>
+    <Form.Group controlId="theme">
+    <Form.Label>Questions</Form.Label>
+   <Button variant="warning" onClick={handleManualQuestions}>Sélection manuelle</Button>
+    </Form.Group>
+    {modal &&<ManualQuestionsModal handleClose={() => setModal(false)} themes={selectedThemes.map(t => t._id)}/>}
+    </>
+    }
     <Form.Group controlId="types">
     <Form.Label>Type(s)</Form.Label>
     <Form.Control as="select" onChange={handleTypeChange} disabled={filteredTypes.length == 0}>
@@ -71,8 +87,8 @@ export const Part = () => {
     </Form.Group>
     <Form.Group controlId="selected-themes">
     <div className="d-flex flex-wrap">
-    {selectedTypes.map(type => {
-        return <a href="#" onClick={() => deleteOption(type, 'types')} className="badge badge-primary mr-2 mb-2">{type.title} <CloseIcon/></a>
+    {selectedTypes.map((type, index) => {
+        return <a href="#" key={index} onClick={() => deleteOption(type, 'types')} className="badge badge-primary mr-2 mb-2">{type.title} <CloseIcon/></a>
     })}
     </div>
     </Form.Group>
@@ -105,4 +121,46 @@ const useOptions = () => {
                 })
         }
     }
+}
+
+const ManualQuestionsModal = ({handleClose, themes = null}) => {
+    const [questions, setQuestions] = useState(null);
+    useEffect(() => {
+        (async() => {
+            const questions = await apiFetch('/api/questions', {
+                method: 'POST',
+                body: JSON.stringify({themes: themes})
+            })
+            setQuestions(questions)
+        })()
+    }, [])
+
+    const groupThemes = []
+    if(questions != null) {
+        questions.map(q => {
+            if(groupThemes.length === 0 || !groupThemes.some((t, index) => t._id == q.theme._id)) {
+                groupThemes.push(q.theme);
+            }
+        })
+    }
+    console.log(groupThemes)
+    return <Modal show={true} onHide={() => handleClose()}>
+    <Modal.Header closeButton>
+      <Modal.Title>Modal heading</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>{groupThemes.map(t => {
+        return <>
+        <div style={{fontWeight: 'bold'}}>{t.theme}</div>
+        {questions.map(q => q.theme._id === t._id ? <div>{q.question}</div> : null)}
+        </>
+    })}</Modal.Body>
+    <Modal.Footer>
+      <Button variant="secondary" onClick={() => handleClose()}>
+        Close
+      </Button>
+      <Button variant="primary">
+        Save Changes
+      </Button>
+    </Modal.Footer>
+  </Modal>
 }
