@@ -30,7 +30,10 @@ export const Part = () => {
         })()
     }, [])
 
-    const submit = e => console.log({types: selectedTypes}, {themes: selectedThemes}, {questions: selectedQuestions})
+    const submit = e => {
+        console.log({types: selectedTypes}, {themes: selectedThemes}, {questions: selectedQuestions})
+        console.log('form', e)
+     }
 
     const filteredThemes = (themes || []).filter(theme => {
         return !selectedThemes.some(t => t._id === theme._id);
@@ -51,6 +54,7 @@ export const Part = () => {
     const handleManualQuestions = () => {
         setModal(true)
     }
+
     return <>
     <h1>Nouvelle partie</h1>
     <Form onSubmit={handleSubmit(submit)}>
@@ -75,7 +79,7 @@ export const Part = () => {
     <Form.Label>Questions</Form.Label>
    <Button variant="warning" onClick={handleManualQuestions}>Sélection manuelle</Button>
     </Form.Group>
-    {modal &&<ManualQuestionsModal handleClose={() => setModal(false)} themes={selectedThemes.map(t => t._id)} onConfirm={(e) => setSelectedQuestions(e)}/>}
+    {modal &&<ManualQuestionsModal handleClose={() => setModal(false)} register={register} themes={selectedThemes.map(t => t._id)} onConfirm={(e) => setSelectedQuestions(e)}/>}
     </>
     }
     <Form.Group controlId="types">
@@ -123,7 +127,7 @@ const useOptions = () => {
     }
 }
 
-const ManualQuestionsModal = ({handleClose, themes = null, onConfirm}) => {
+const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, register}) => {
     const [questions, setQuestions] = useState(null);
     const [selectedQuestions, setSelectedQuestions] = useState([]);
     useEffect(() => {
@@ -142,7 +146,7 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm}) => {
     const groupThemes = []
     if(questions != null) {
         questions.map(q => {
-            if(groupThemes.length === 0 || !groupThemes.some((t, index) => t._id == q.theme._id)) {
+            if(groupThemes.length === 0 || !groupThemes.some(t => t._id == q.theme._id)) {
                 groupThemes.push(q.theme);
             }
         })
@@ -159,6 +163,7 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm}) => {
 
     const handleConfirm = () => {
         onConfirm(selectedQuestions)
+        handleClose()
     }
     return <Modal show={true} onHide={() => handleClose()}>
     <Modal.Header closeButton>
@@ -167,7 +172,7 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm}) => {
     <Modal.Body>{questions === null ? <Loader/> : groupThemes.map(t => {
         return <>
         <div style={{fontWeight: 'bold'}}>{t.theme}</div>
-        <ListGroup>{questions.map(q => q.theme._id === t._id ? <Question question={q} onChange={handleQuestionChange}/> : null)}</ListGroup>
+        <ListGroup>{questions.map((q, i) => q.theme._id === t._id ? <Question register={register} index={i} question={q} onChange={handleQuestionChange}/> : null)}</ListGroup>
         </>
     })}</Modal.Body>
     <Modal.Footer>
@@ -181,14 +186,14 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm}) => {
   </Modal>
 }
 
-const Question = ({question, onChange}) => {
+const Question = ({register, index, question, onChange}) => {
 const handleQuestionChange = (e) => {
     onChange(e.target.checked, question)
 }
     return <>
     <ListGroup.Item>
       {question.question}
-      <Form.Check custom type="checkbox" id={question._id} onChange={handleQuestionChange}/>
+      <Form.Check custom type="checkbox" id={question._id} onChange={handleQuestionChange} {...register(`questions.${index}`)}/>
     </ListGroup.Item>
   </>
 }
