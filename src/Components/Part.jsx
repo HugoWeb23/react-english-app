@@ -15,8 +15,6 @@ export const Part = () => {
         themes: [{}],
         types: [{}]
     }});
-    const {fields: themeFields, append: themesAppend, remove: themesRemove} = useFieldArray({control, name: "themes"})
-    const {fields: typesFields, append: typesAppend, remove: typesRemove} = useFieldArray({control, name: "types"})
     const {errors} = formState;
     const {themes, GetThemes} = Themes();
     const types = [{type: 1, title: "Réponse à écrire"}, {type: 2, title: "Choix multiples"}]
@@ -77,9 +75,13 @@ export const Part = () => {
     <>
     <Form.Group controlId="theme">
     <Form.Label>Questions</Form.Label>
-   <Button variant="warning" onClick={handleManualQuestions}>Sélection manuelle</Button>
+   <Button variant="warning" onClick={handleManualQuestions}>Sélection manuelle ({selectedQuestions.length})</Button>
     </Form.Group>
-    {modal &&<ManualQuestionsModal handleClose={() => setModal(false)} register={register} themes={selectedThemes.map(t => t._id)} onConfirm={(e) => setSelectedQuestions(e)}/>}
+    {modal &&<ManualQuestionsModal 
+        handleClose={() => setModal(false)} 
+        themes={selectedThemes} 
+        onConfirm={(e) => setSelectedQuestions(e)}
+        checkedQuestions={selectedQuestions}/>}
     </>
     }
     <Form.Group controlId="types">
@@ -127,14 +129,14 @@ const useOptions = () => {
     }
 }
 
-const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, register}) => {
+const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, checkedQuestions}) => {
     const [questions, setQuestions] = useState(null);
-    const [selectedQuestions, setSelectedQuestions] = useState([]);
+    const [selectedQuestions, setSelectedQuestions] = useState(checkedQuestions || []);
     useEffect(() => {
         (async() => {
             const questions = await apiFetch('/api/questions', {
                 method: 'POST',
-                body: JSON.stringify({themes: themes})
+                body: JSON.stringify({themes: themes.map(t => t._id)})
             })
             setQuestions(questions)
         })()
@@ -143,21 +145,12 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, register})
         }
     }, [])
 
-    const groupThemes = []
-    if(questions != null) {
-        questions.map(q => {
-            if(groupThemes.length === 0 || !groupThemes.some(t => t._id == q.theme._id)) {
-                groupThemes.push(q.theme);
-            }
-        })
-    }
-
     const handleQuestionChange = (value, question) => {
         if(value === true) {
-            setSelectedQuestions(questions => [...questions, question])
+            setSelectedQuestions(questions => [...questions, question._id])
            
         } else if(value === false) {
-           setSelectedQuestions(questions => questions.filter(q => q != question))
+           setSelectedQuestions(questions => questions.filter(q => q != question._id))
         }
     }
 
@@ -169,10 +162,10 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, register})
     <Modal.Header closeButton>
       <Modal.Title>Sélection manuelle des questions</Modal.Title>
     </Modal.Header>
-    <Modal.Body>{questions === null ? <Loader/> : groupThemes.map(t => {
+    <Modal.Body>{questions === null ? <Loader/> : themes.map(t => {
         return <>
         <div style={{fontWeight: 'bold'}}>{t.theme}</div>
-        <ListGroup>{questions.map((q, i) => q.theme._id === t._id ? <Question register={register} index={i} question={q} onChange={handleQuestionChange}/> : null)}</ListGroup>
+        <ListGroup>{questions.map((q, i) => q.theme._id === t._id ? <Question index={i} question={q} onChange={handleQuestionChange} checkedQuestions={checkedQuestions}/> : null)}</ListGroup>
         </>
     })}</Modal.Body>
     <Modal.Footer>
@@ -186,14 +179,18 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, register})
   </Modal>
 }
 
-const Question = ({register, index, question, onChange}) => {
+const Question = ({index, question, onChange, checkedQuestions}) => {
 const handleQuestionChange = (e) => {
     onChange(e.target.checked, question)
 }
+const isChecked = () => {
+    return checkedQuestions.some(q => q === question._id) ? "checked" : null
+}
+
     return <>
     <ListGroup.Item>
       {question.question}
-      <Form.Check custom type="checkbox" id={question._id} onChange={handleQuestionChange} {...register(`questions.${index}`)}/>
+      <Form.Check custom type="checkbox" id={question._id} onChange={handleQuestionChange} defaultChecked={isChecked()}/>
     </ListGroup.Item>
   </>
 }
