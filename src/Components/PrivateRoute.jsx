@@ -7,12 +7,14 @@ const {user} = useContext(userContext);
   return (
     <Route
       {...rest}
-      render={props =>
-        user ? (
+      render={props => <>
+      {user && user.admin == false && <Redirect to={{ pathname: '/acces_denied', state: { from: props.location } }} />}
+        {user ? (
           <Component {...props} />
         ) : (
           <Redirect to={{ pathname: '/login', state: { from: props.location } }} />
-        )
+        )}
+        </>
       }
     />
   )

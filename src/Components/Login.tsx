@@ -1,19 +1,28 @@
 import { createRef, useContext, useState } from "react"
-import {ConnecteContext} from '../Contexts/Contexts'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form'
 import Alert from 'react-bootstrap/Alert'
-import { useForm } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import {apiFetch, ApiErrors} from '../Utils/Api'
+import {UserType} from '../Types/User'
 
-export const Login = ({onConnect}) => {
+interface LoginProps {
+  onConnect: (user: UserType) => void
+}
+
+type FormValues = {
+  email: string,
+  pass: string
+}
+
+export const Login = ({onConnect}: LoginProps) => {
    const [errorsPerField, setErrorsPerField] = useState({});
-   const [globalErrors, setGlobalErrors] = useState(null);
+   const [globalErrors, setGlobalErrors] = useState<{message: string} | null>(null);
 
    const {watch, register, formState, handleSubmit, setError} = useForm();
    const {errors, isSubmitting} = formState;
 
-   const onSubmit = async(data) => {
+   const onSubmit:SubmitHandler<FormValues> = async data => {
       try {
          const user = await apiFetch('/login', {
             method: 'POST',

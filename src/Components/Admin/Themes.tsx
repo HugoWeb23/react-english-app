@@ -7,6 +7,7 @@ import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
 import { ModalTheme } from "../../Themes/ModalTheme"
 import {DeleteModal} from '../../UI/DeleteModal'
+import {ThemeType} from '../../Types/Themes'
 
 export const Themes = () => {
     const {themes, getThemes, editTheme, createTheme, deleteTheme} = useThemes();
@@ -39,22 +40,29 @@ export const Themes = () => {
     </tr>
   </thead>
   <tbody>
-    {loading ? <Loader display="block" animation="border" variant="primary" /> : themes.map((theme, index) => <Theme key={index} theme={theme} index={index} onEdit={editTheme} onDelete={deleteTheme}/>)}
+    {loading ? <Loader display="block" animation="border" variant="primary" /> : themes.map((theme: ThemeType, index: number) => <Theme key={index} theme={theme} index={index} onEdit={editTheme} onDelete={deleteTheme}/>)}
   </tbody>
 </Table>
     </>
 }
 
-const Theme = ({theme, index, onEdit, onDelete}) => {
+interface ThemeProps {
+  theme: ThemeType,
+  index: number,
+  onEdit: (theme: ThemeType, data: ThemeType) => Promise<void>,
+  onDelete: (theme: ThemeType) => Promise<void>
+}
+
+const Theme = ({theme, index, onEdit, onDelete}: ThemeProps) => {
     const [editModal, setEditModal] = useState(false)
     const [deleteModal, setDeleteModal] = useState(false)
     const [loading, setLoading] = useState(false)
 
-    const editTheme = async(data) => {
+    const editTheme = async(data: ThemeType) => {
         await onEdit(theme, data);
     }
 
-    const deleteTheme = async(theme) => {
+    const deleteTheme = async(theme: ThemeType) => {
       setLoading(true)
       setDeleteModal(false)
       await onDelete(theme)
@@ -77,10 +85,21 @@ return <tr>
 </tr>
 }
 
-const CreateTheme = ({onCreate, handleClose}) => {
+interface CreateThemeProps {
+  onCreate: () => Promise<void>,
+  handleClose: () => void
+}
+
+const CreateTheme = ({onCreate, handleClose}: CreateThemeProps) => {
 return <ModalTheme onSubmit={onCreate} handleClose={handleClose} type="create"/>
 }
 
-const EditTheme = ({handleClose, theme, onEdit}) => {
+interface EditThemeProps {
+  handleClose: () => void,
+  theme: ThemeType,
+  onEdit: (data: ThemeType) => Promise<void>
+}
+
+const EditTheme = ({handleClose, theme, onEdit}: EditThemeProps) => {
 return <ModalTheme handleClose={handleClose} theme={theme} onSubmit={onEdit} type="edit"/>
 }

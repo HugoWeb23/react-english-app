@@ -10,12 +10,12 @@ import {ModalQuestion} from '../../Questions/ModalQuestion'
 import {Loader} from '../../UI/Loader'
 import { DeleteModal } from "../../UI/DeleteModal"
 import {Search} from './Search'
-import { usePagination, useSortBy, useTable } from 'react-table'
+import {QuestionType, PropositionType} from '../../Types/Questions'
 
 export const Questions = () => {
-   const {questions, filteredQuestions, getQuestions, deleteQuestion, createQuestion, updateQuestion, searchQuestion} = QuestionsHook();
-   const [loader, setLoader] = useState(true);
-   const [newQuestion, setnewQuestion] = useState(false)
+   const {questions, getQuestions, deleteQuestion, createQuestion, updateQuestion, searchQuestion} = QuestionsHook();
+   const [loader, setLoader] = useState<boolean>(true);
+   const [newQuestion, setnewQuestion] = useState<boolean>(false)
 
     useEffect(() => {
         (async() => {
@@ -46,32 +46,38 @@ export const Questions = () => {
     </tr>
   </thead>
   <tbody>
-    {loader ? <Loader display="block" animation="border" variant="primary" /> : questions.map((question, index) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion}/>)}
+    {loader ? <Loader display="block" animation="border" variant="primary" /> : questions.map((question: QuestionType, index: number) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion}/>)}
   </tbody>
 </Table>
     </>
 }
 
-const Question = memo(({question, onDelete, onUpdate}) => {
+interface QuestionProps {
+  question: QuestionType,
+  onDelete: (question: QuestionType) => Promise<void>,
+  onUpdate: (question: QuestionType, daya: QuestionType) => Promise<void>
+}
+
+const Question = memo(({question, onDelete, onUpdate}: QuestionProps) => {
   const [deleteModal, setDeleteModal] = useState(false)
   const [loading, setLoading] = useState(false)
   const [editQuestion, setEditQuestion] = useState(false)
 
 
-  const Delete = async(question) => {
+  const Delete = async(question: QuestionType) => {
     setLoading(true)
     await onDelete(question)
     setLoading(false)
   }
 
-  const updateQuestion = async(data) => {
+  const updateQuestion = async(data: QuestionType) => {
     await onUpdate(question, data)
   }
 
 return <tr>
   <td>{question.intitule}</td>
   <td>{question.question}</td>
-  <td>{question.reponse || question.propositions.map((q, index) => <p key={index} className={`mb-0 ${q.correcte ? "text-success" : "text-danger"}`}>{'['+q.proposition+']'}</p>)}</td>
+  <td>{question.reponse || question.propositions.map((p: PropositionType, index: number) => <p key={index} className={`mb-0 ${p.correcte ? "text-success" : "text-danger"}`}>{'['+p.proposition+']'}</p>)}</td>
   <td>{question.type == 1 ? <Badge pill variant="primary">Réponse unique</Badge> : <Badge pill variant="secondary">Choix multiples</Badge>}</td>
   <td>
     <DropdownButton variant="info" title="Actions" disabled={loading}>
@@ -84,11 +90,22 @@ return <tr>
 </tr>
 })
 
-const CreateQuestion = ({handleClose, onSubmit}) => {
+interface CreateQuestionProps {
+  handleClose: () => void,
+  onSubmit: () => void
+}
+
+const CreateQuestion = ({handleClose, onSubmit} : CreateQuestionProps) => {
   return <ModalQuestion handleClose={handleClose} onSubmit={onSubmit} type="create"/>
 }
 
-const EditQuestion = ({handleClose, question, onSubmit}) => {
+interface EditQuestionProps {
+  handleClose: () => void,
+  question: QuestionType,
+  onSubmit: (data: any) => Promise<any>
+}
+
+const EditQuestion = ({handleClose, question, onSubmit} : EditQuestionProps) => {
   return <ModalQuestion handleClose={handleClose} question={question} onSubmit={onSubmit} type="edit"/>
 }
 

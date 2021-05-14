@@ -1,15 +1,28 @@
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import { useEffect } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import {apiFetch, ApiErrors} from '../Utils/Api'
+import {UserType} from '../Types/User'
 
-export const Register = ({onConnect}) => {
+interface RegisterProps {
+  onConnect: (user: UserType) => void
+}
+
+type FormValues = {
+  nom: string,
+  prenom: string,
+  email: string,
+  pass: string,
+  repeatpass?: string
+}
+
+export const Register = ({onConnect}: RegisterProps) => {
   const {watch, register, formState, handleSubmit, setError} = useForm({mode: 'onTouched'});
   const {errors, isSubmitting} = formState;
   const password = watch('pass');
   console.log(password);
-  const onSubmit = async data => {
+  const onSubmit:SubmitHandler<FormValues> = async data => {
     delete data.repeatpass
     try {
       const user = await apiFetch('/register', {

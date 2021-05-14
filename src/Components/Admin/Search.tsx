@@ -1,12 +1,17 @@
 import {useForm} from 'react-hook-form'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
+import { JsxAttribute } from 'typescript'
 
-export const Search = ({onSearch, size}) => {
+interface SearchProps {
+    onSearch: (e: object) => Promise<void>,
+    size: 'sm' | 'lg'
+}
+
+export const Search = ({onSearch, size}: SearchProps) => {
     const {register, handleSubmit} = useForm()
 
-    const submit = e => {
-        console.log(e)
+    const submit = (e: object) => {
         onSearch(e)
     }
 

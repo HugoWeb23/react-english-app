@@ -12,12 +12,14 @@ import {Themes} from './Components/Admin/Themes'
 import {apiFetch} from './Utils/Api'
 import {ToastAlert} from './UI/Toast'
 import {Part} from './Components/Part'
+import {Play} from './Components/Game/Play'
+import {UserType} from './Types/User'
 
 export const App = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<null | UserType>(null);
   const [loading, setLoading] = useState(true);
   const [alertDisconnect, setAlertDisconnect] = useState(false)
-
+  console.log(user)
   useEffect(() => {
     (async() => {
       const user = await apiFetch('/api/user', {
@@ -28,7 +30,7 @@ export const App = () => {
     })()
   }, [])
 
-  const toggleUser = (user) => {
+  const toggleUser = (user: UserType) => {
     setUser(user)
   }
 
@@ -58,6 +60,7 @@ return loading ? <UserLoader/> :
   <PrivateRoute path="/test" component={Test}/>
   <Route path="/login">{user ? <Redirect to="/questions"/> : <Login onConnect={toggleUser}/>}</Route>
   <Route path="/register">{user ? <Redirect to="/questions"/> : <Register onConnect={toggleUser}/>}</Route>
+  <Route path="/play" component={Play}/>
   </div>
   </userContext.Provider>
 </Router>
