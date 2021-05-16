@@ -1,23 +1,34 @@
 import { useReducer, useCallback } from "react"
 import { apiFetch } from "../Utils/Api";
+import {QuestionType} from '../Types/Questions'
+
+type State = {
+    questions: QuestionType[]
+}
+
+type ActionType = {
+type: 'FETCH_QUESTIONS' | 'DELETE_QUESTION' | 'CREATE_QUESTION' | 'UPDATE_QUESTION' | 'SEARCH_QUESTION',
+payLoad: any | []
+}
 
 export const QuestionsHook = () => {
-    const reducer = (state, action) => {
+    const reducer = (state: State, action: ActionType): State => {
         switch(action.type) {
             case 'FETCH_QUESTIONS':
-                return {questions: action.payLoad}
+                return {...state, questions: action.payLoad}
             case 'DELETE_QUESTION':
                 return {...state, questions: state.questions.filter(q => q != action.payLoad)}
             case 'CREATE_QUESTION':
                 return {...state, questions: [...state.questions, action.payLoad]}
             case 'UPDATE_QUESTION':
                 return {...state, questions: state.questions.map(q => q._id == action.payLoad._id ? action.payLoad : q)}
-            case 'SEARCH_QUESTION':
-                return {...state, filteredQuestions: state.questions.filter(q => q.reponse ? q.reponse.toLowerCase().indexOf(action.payLoad) > -1 : false)}
+            default:
+                return state
         }
     }
-    const [state, dispatch] = useReducer(reducer, {questions: null});
-    const time = (time) => {
+    const [state, dispatch] = useReducer(reducer, {questions: []});
+
+    const time = (time: number) => {
         return new Promise(resolve => {
             setTimeout(resolve, time)
         })
@@ -48,9 +59,6 @@ export const QuestionsHook = () => {
                 body: JSON.stringify(data)
             })
             dispatch({type: 'UPDATE_QUESTION', payLoad: fetch});
-        }, []),
-        searchQuestion: async(search) => {
-            dispatch({type: 'SEARCH_QUESTION', payLoad: search.value})
-        }
+        }, [])
     }
 }

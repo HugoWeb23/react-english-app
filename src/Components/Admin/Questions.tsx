@@ -13,7 +13,7 @@ import {Search} from './Search'
 import {QuestionType, PropositionType} from '../../Types/Questions'
 
 export const Questions = () => {
-   const {questions, getQuestions, deleteQuestion, createQuestion, updateQuestion, searchQuestion} = QuestionsHook();
+   const {questions, getQuestions, deleteQuestion, createQuestion, updateQuestion} = QuestionsHook();
    const [loader, setLoader] = useState<boolean>(true);
    const [newQuestion, setnewQuestion] = useState<boolean>(false)
 
@@ -33,7 +33,6 @@ export const Questions = () => {
     <h1>Les questions</h1>
     <Button variant="primary" onClick={handleCreateQuestion}>Créer une question</Button>
     </div>
-    <Search size="lg" onSearch={searchQuestion}/>
    {newQuestion && <CreateQuestion handleClose={handleCreateQuestion} onSubmit={createQuestion}/>}
     <Table striped bordered hover>
   <thead>
@@ -92,7 +91,7 @@ return <tr>
 
 interface CreateQuestionProps {
   handleClose: () => void,
-  onSubmit: () => void
+  onSubmit: (question: QuestionType) => void
 }
 
 const CreateQuestion = ({handleClose, onSubmit} : CreateQuestionProps) => {
@@ -102,7 +101,7 @@ const CreateQuestion = ({handleClose, onSubmit} : CreateQuestionProps) => {
 interface EditQuestionProps {
   handleClose: () => void,
   question: QuestionType,
-  onSubmit: (data: any) => Promise<any>
+  onSubmit: (data: QuestionType) => Promise<any>
 }
 
 const EditQuestion = ({handleClose, question, onSubmit} : EditQuestionProps) => {

@@ -1,8 +1,9 @@
 import { useState } from "react"
-import {apiFetch, ApiFetch} from '../Utils/Api'
+import {apiFetch} from '../Utils/Api'
+import {ThemeType} from '../Types/Themes'
 
 export const Themes = () => {
-    const [themes, setThemes] = useState();
+    const [themes, setThemes] = useState<ThemeType | null>();
 
     return {
         themes, 
