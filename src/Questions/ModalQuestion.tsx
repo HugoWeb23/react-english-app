@@ -1,12 +1,20 @@
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
-import {QuestionForm} from '../Questions/QuestionForm'
+import {QuestionForm} from './QuestionForm'
 import { Form } from "react-bootstrap";
 import {ApiErrors} from '../Utils/Api'
 import { useState } from "react";
+import {QuestionType} from '../Types/Questions'
 
-export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
+interface IModalQuestion {
+  handleClose: () => void,
+  onSubmit: (question: any) => Promise<any>,
+  question?: QuestionType,
+  type: 'edit' | 'create'
+}
+
+export const ModalQuestion = ({handleClose, onSubmit, question = {} as QuestionType, type}: IModalQuestion) => {
     const methods = useForm({
       defaultValues: {
           type: question.type || "1",
@@ -20,13 +28,16 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
 
     const [loading, setLoading] = useState(false)
     
-    const submit = async(question, close) => {
+    const submit: SubmitHandler<QuestionType> = async(question) => {
       try {
        setLoading(true)
        await onSubmit(question)
-       if(close == true) {
+       handleClose()
+       /*
+       if(close === true) {
         handleClose()
        }
+       */
        if(type != 'edit') {
         methods.reset()
        }
@@ -49,7 +60,7 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
       <Modal.Title>{type == 'create' ? "Créer une question" : "Éditer une question"}</Modal.Title>
     </Modal.Header>
     <FormProvider {...methods}>
-    <Form onSubmit={methods.handleSubmit(data => submit(data, true))}>
+    <Form onSubmit={methods.handleSubmit(submit)}>
     <Modal.Body>
       <QuestionForm/>
     </Modal.Body>
@@ -57,7 +68,7 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {}, type}) => {
       <Button variant="secondary" onClick={() => handleClose()}>
         Annuler
       </Button>
-      <Button variant="success" onClick={methods.handleSubmit(data => submit(data, false))} disabled={loading}>{type == 'create' ? "Créer" : "Éditer"}</Button>
+      <Button variant="success" onClick={methods.handleSubmit(submit)} disabled={loading}>{type == 'create' ? "Créer" : "Éditer"}</Button>
       <Button variant="success" type="submit" disabled={loading}>
       {type == 'create' ? "Créer et fermer" : "Éditer et fermer"}
       </Button>

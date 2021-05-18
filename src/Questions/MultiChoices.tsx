@@ -1,8 +1,17 @@
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Col from 'react-bootstrap/Col'
+import { FieldValue } from 'react-hook-form'
 
-export const MultiChoices = ({register, errors, remove, field, index}) => {
+interface IMultiChoices {
+    register: any,
+    errors: any,
+    remove: (index: number) => void,
+    field: any,
+    index: number
+}
+
+export const MultiChoices = ({register, errors, remove, field, index}: IMultiChoices) => {
     return <Form.Group key={field.id}>
     <Form.Row>
     <Col xs={10}>

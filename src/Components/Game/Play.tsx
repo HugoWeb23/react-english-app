@@ -7,6 +7,7 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import {WriteResponse} from './WriteResponse'
 import {MultiChoices} from './MultiChoices'
 import { apiFetch } from '../../Utils/Api'
+import {Loader} from '../../UI/Loader'
 
 interface IPlayProps {
     location: any
@@ -14,10 +15,14 @@ interface IPlayProps {
 
 interface IDataType {
     id_part: string,
-    questions: QuestionType[]
+    questions: QuestionType[],
+    score: {
+        points: number,
+        totalPoints: number
+    }
 }
 
-export const Play = ({ location }: IPlayProps) => {
+export const Play = ({ location = {} }: IPlayProps) => {
     const history = useHistory();
     const [data, setData] = useState<IDataType | null>(null);
     const [indexQuestion, setIndexQuestion] = useState<number>(0)
@@ -27,10 +32,15 @@ export const Play = ({ location }: IPlayProps) => {
 
     useEffect(() => {
         setData(location.state)
+        setLoading(false)
     }, [])
 
+    if(loading === true || data === null) {
+        return <Loader/>
+    }
+
     const nextQuestion = (): void => {
-        if (data != null && indexQuestion < data.questions.length - 1) {
+        if (indexQuestion < data.questions.length - 1) {
             setCurrentQuestion(data.questions[indexQuestion + 1])
             setIndexQuestion(index => index + 1)
             reset()
@@ -47,10 +57,13 @@ export const Play = ({ location }: IPlayProps) => {
             response = { ...response, propositions: props }
         }
 
-        await apiFetch('/api/questions/checkreply', {
+        const fetch = await apiFetch('/api/questions/checkreply', {
             method: 'POST',
             body: JSON.stringify(response)
         })
+        if(fetch.isCorrect) {
+            setData({...data, score: {...data.score, points: data.score.points + 1}})
+        }
         nextQuestion()
         if (data != null && indexQuestion == data.questions.length - 1) {
             history.push('/part')
@@ -65,6 +78,7 @@ export const Play = ({ location }: IPlayProps) => {
                 {currentQuestion.type === 2 && <MultiChoices question={currentQuestion} register={register} />}
                 <Button type="submit" variant="danger">Valider</Button>
             </Form>
+            {JSON.stringify(data)}
         </>}
     </>
 }

@@ -40,7 +40,7 @@ export const Part = () => {
                 method: 'POST',
                 body: JSON.stringify(values)
             })
-            history.push({pathname: '/play', state: reponse})
+            history.push({pathname: '/play', state: {...reponse, score: {points: 0, totalPoints: reponse.questions.length}}})
         } catch(e) {
 
         }
@@ -174,7 +174,7 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, checkedQue
             setSelectedQuestions(questions => [...questions, {questionId: question._id, themeId: question.theme._id}])
            
         } else if(value === false) {
-           setSelectedQuestions(questions => questions.filter(q => q != question._id))
+           setSelectedQuestions(questions => questions.filter(q => q.questionId != question._id))
         }
     }
 

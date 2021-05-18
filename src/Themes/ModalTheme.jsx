@@ -32,7 +32,7 @@ export const ModalTheme = ({handleClose, onSubmit, theme = {}, type}) => {
       <Modal.Title>{type == 'create' ? "Créer un thème" : "Éditer un thème"}</Modal.Title>
     </Modal.Header>
     <FormProvider {...methods}>
-    <Form  onSubmit={methods.handleSubmit(submit)}>
+    <Form onSubmit={methods.handleSubmit(submit)}>
     <Modal.Body>
      <ThemeForm/>
     </Modal.Body>

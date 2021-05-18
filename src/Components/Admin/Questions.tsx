@@ -91,7 +91,7 @@ return <tr>
 
 interface CreateQuestionProps {
   handleClose: () => void,
-  onSubmit: (question: QuestionType) => void
+  onSubmit: (question: QuestionType) => Promise<void>
 }
 
 const CreateQuestion = ({handleClose, onSubmit} : CreateQuestionProps) => {
