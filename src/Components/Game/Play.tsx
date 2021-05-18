@@ -8,6 +8,7 @@ import {WriteResponse} from './WriteResponse'
 import {MultiChoices} from './MultiChoices'
 import { apiFetch } from '../../Utils/Api'
 import {Loader} from '../../UI/Loader'
+import {Results} from './Results'
 
 interface IPlayProps {
     location: any
@@ -28,6 +29,7 @@ export const Play = ({ location = {} }: IPlayProps) => {
     const [indexQuestion, setIndexQuestion] = useState<number>(0)
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType>(location.state.questions[0])
     const [loading, setLoading] = useState<boolean>(true);
+    const [endGame, setEndGame] = useState(false);
     const { register, handleSubmit, control, reset } = useForm();
 
     useEffect(() => {
@@ -44,6 +46,8 @@ export const Play = ({ location = {} }: IPlayProps) => {
             setCurrentQuestion(data.questions[indexQuestion + 1])
             setIndexQuestion(index => index + 1)
             reset()
+        } else if(indexQuestion == data.questions.length - 1) {
+            setEndGame(true)
         }
     }
 
@@ -65,13 +69,14 @@ export const Play = ({ location = {} }: IPlayProps) => {
             setData({...data, score: {...data.score, points: data.score.points + 1}})
         }
         nextQuestion()
-        if (data != null && indexQuestion == data.questions.length - 1) {
-            history.push('/part')
-        }
+    }
+
+    if (endGame) {
+        return <Results score={data.score}/>
     }
 
     return <>
-        {data != null && data.questions.length > 0 && <>
+        {data.questions.length > 0 && <>
             <Form onSubmit={handleSubmit(submit)}>
                 <h3>{currentQuestion.intitule} : {currentQuestion.question}</h3>
                 {currentQuestion.type === 1 && <WriteResponse question={currentQuestion} register={register} />}

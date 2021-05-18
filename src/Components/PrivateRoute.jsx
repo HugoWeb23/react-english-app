@@ -4,11 +4,13 @@ import {userContext} from '../Contexts/Contexts'
 
 export const PrivateRoute = ({ component: Component, ...rest }) => {
 const {user} = useContext(userContext);
+if(user && user.admin == false) {
+  return <Redirect to={{ pathname: '/acces_denied' }} />
+}
   return (
     <Route
       {...rest}
       render={props => <>
-      {user && user.admin == false && <Redirect to={{ pathname: '/acces_denied', state: { from: props.location } }} />}
         {user ? (
           <Component {...props} />
         ) : (
