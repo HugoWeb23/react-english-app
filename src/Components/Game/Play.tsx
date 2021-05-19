@@ -72,7 +72,7 @@ export const Play = ({ location = {} }: IPlayProps) => {
     }
 
     if (endGame) {
-        return <Results score={data.score}/>
+        return <Redirect to={{pathname: `/results/${data.id_part}`}}/>
     }
 
     return <>

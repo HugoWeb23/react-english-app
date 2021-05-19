@@ -62,7 +62,7 @@ return loading ? <UserLoader/> :
   <Route path="/login">{user ? <Redirect to="/questions"/> : <Login onConnect={toggleUser}/>}</Route>
   <Route path="/register">{user ? <Redirect to="/questions"/> : <Register onConnect={toggleUser}/>}</Route>
   <Route path="/play" component={Play}/>
-  <Route path="/results" component={Results}/>
+  <Route path="/results/:id" exact component={Results}/>
   </div>
   </userContext.Provider>
 </Router>
