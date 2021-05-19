@@ -54,11 +54,11 @@ export const Play = ({ location = {} }: IPlayProps) => {
     const submit = async (e: any) => {
         let response: any = { id_part: data?.id_part, id_question: currentQuestion._id, type: currentQuestion.type }
         if (currentQuestion.type === 1) {
-            response = { ...response, reponse: e.reponse }
+            response = { ...response, reponseEcrite: e.reponse }
         }
         if (currentQuestion.type === 2) {
             const props = e.propositions.filter((p: any) => p.proposition === true).map((p: any) => p._id)
-            response = { ...response, propositions: props }
+            response = { ...response, propositionsSelect: props }
         }
 
         const fetch = await apiFetch('/api/questions/checkreply', {
@@ -83,7 +83,6 @@ export const Play = ({ location = {} }: IPlayProps) => {
                 {currentQuestion.type === 2 && <MultiChoices question={currentQuestion} register={register} />}
                 <Button type="submit" variant="danger">Valider</Button>
             </Form>
-            {JSON.stringify(data)}
         </>}
     </>
 }
