@@ -27,6 +27,7 @@ return <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
         <LinkContainer to="/questions"><NavDropdown.Item>Gestion des questions</NavDropdown.Item></LinkContainer>
         <LinkContainer to="/themes"><NavDropdown.Item>Gestion des thèmes</NavDropdown.Item></LinkContainer>
         <LinkContainer to="/part"><NavDropdown.Item>Lancer une partie</NavDropdown.Item></LinkContainer>
+        <LinkContainer to="/gamehistory"><NavDropdown.Item>Historique des parties</NavDropdown.Item></LinkContainer>
         <LinkContainer to="/test"><NavDropdown.Item>Test</NavDropdown.Item></LinkContainer>
       <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
       <NavDropdown.Divider />

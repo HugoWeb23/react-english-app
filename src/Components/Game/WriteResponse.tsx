@@ -9,6 +9,6 @@ interface WriteProps {
 export const WriteResponse = ({ question, register }: WriteProps) => {
     return <Form.Group controlId="reponse">
         <Form.Label>Répnse :</Form.Label>
-        <Form.Control type="text" {...register('reponse', { required: 'La réponse est obligatoire' })} />
+        <Form.Control type="text" {...register('reponse', { required: 'La réponse est obligatoire' })} autoComplete="off" />
     </Form.Group>
 }

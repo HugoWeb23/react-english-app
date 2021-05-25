@@ -8,6 +8,6 @@ interface IChoicesProps {
 
 export const MultiChoices = ({ question, register }: IChoicesProps) => {
     return <div>
-        {question.propositions.map((p, index) => <><Form.Check {...register(`propositions.${index}.proposition`)} type="checkbox" id={`check-${index}`} label={p.proposition} custom /> <input {...register(`propositions.${index}._id`)} type="hidden" value={p._id} /></>)}
+        {question.propositions.map((p, index) => <><Form.Check key={index} {...register(`propositions.${index}.proposition`)} type="checkbox" id={`check-${index}`} label={p.proposition} custom /> <input {...register(`propositions.${index}._id`)} type="hidden" value={p._id} /></>)}
     </div>
 }

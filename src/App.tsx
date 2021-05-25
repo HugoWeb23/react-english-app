@@ -15,6 +15,7 @@ import {Part} from './Components/Part'
 import {Play} from './Components/Game/Play'
 import {UserType} from './Types/User'
 import {Results} from './Components/Game/Results'
+import {GameHistory} from './Components/GameHistory'
 
 export const App = () => {
   const [user, setUser] = useState<null | UserType>(null);
@@ -63,6 +64,7 @@ return loading ? <UserLoader/> :
   <Route path="/register">{user ? <Redirect to="/questions"/> : <Register onConnect={toggleUser}/>}</Route>
   <Route path="/play" component={Play}/>
   <Route path="/results/:id" exact component={Results}/>
+  <Route path="/gamehistory" exact component={GameHistory}/>
   </div>
   </userContext.Provider>
 </Router>
