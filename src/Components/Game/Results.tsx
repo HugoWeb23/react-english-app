@@ -5,12 +5,11 @@ import Card from 'react-bootstrap/Card'
 import ListGroup from 'react-bootstrap/ListGroup'
 import { Link, RouteComponentProps } from 'react-router-dom'
 import Badge from 'react-bootstrap/Badge'
-import From from 'react-bootstrap/Form'
 import { QuestionType } from '../../Types/Questions'
 import { Smile } from '../../Icons/Smile'
 import { Frown } from '../../Icons/Frown'
 import { Paginate } from '../../UI/Pagination'
-import Form from "react-bootstrap/Form"
+import {ElementsPerPage} from '../../UI/ElementsPerPage'
 import {usePagination} from '../../Hooks/usePagination'
 
 interface IResults extends QuestionType {
@@ -46,8 +45,8 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
         return <Loader />
     }
 
-    const handleElementsChange = (e: any) => {
-        setElementsPerPage(e.target.value)
+    const handleElementsChange = (page: number) => {
+        setElementsPerPage(page)
     }
 
     const handlePageChange = (page: number): any => {
@@ -60,16 +59,7 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
             <Link to="/gamehistory" className="card-link">Retour à l'historique des parties</Link>
         </div>
         <div className="d-flex justify-content-end mb-3">
-            <Form inline>
-                <Form.Label className="my-1 mr-2" htmlFor="numberofresults">
-                    Afficher
-             </Form.Label>
-                <Form.Control as="select" id="numberofresults" onChange={handleElementsChange} custom>
-                    {[2, 5, 10, 15, 25, 50].map((n: number, index: number) => {
-                        return <option key={index} value={n} selected={elementsPerPage == n}>{`${n} éléments`}</option>
-                    })}
-                </Form.Control>
-            </Form>
+        <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange}/>
         </div>
 
         {partInfo.questions.map((question: IResults) => <>

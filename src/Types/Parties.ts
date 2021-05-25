@@ -3,5 +3,6 @@ export interface IParty {
     date: Date,
     totalQuestions: number,
     trueQuestions: number,
-    falseQuestions: number
+    falseQuestions: number,
+    isFinished: boolean
 }
