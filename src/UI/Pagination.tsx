@@ -68,10 +68,10 @@ export const Paginate = ({ totalPages, currentPage: pageCourante, pageChange }: 
 
         {pages.map((page: number | string, index: number) => {
             if (page === 'LEFT') {
-                return <Pagination.Prev onClick={() => pageChange((page: number) => page - 2)} disabled={pageCourante === 1} />
+                return <Pagination.Prev onClick={() => pageChange(pageCourante - 2)} disabled={pageCourante === 1} />
             }
             if (page === 'RIGHT') {
-                return <Pagination.Next onClick={() => pageChange((page: number) => page + 2)} disabled={pageCourante === totalPages} />
+                return <Pagination.Next onClick={() => pageChange(pageCourante + 2)} disabled={pageCourante === totalPages} />
             }
             return <Pagination.Item key={index} active={page === pageCourante} onClick={() => pageChange(page)}>{page}</Pagination.Item>
         })}

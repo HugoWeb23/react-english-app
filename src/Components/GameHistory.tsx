@@ -9,17 +9,25 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import { ElementsPerPage } from '../UI/ElementsPerPage'
 import { usePagination } from '../Hooks/usePagination'
 import { Paginate } from '../UI/Pagination'
+import '../assets/css/styles.css'
 
 export const GameHistory = () => {
   const [parties, setParties] = useState<IParty[]>([])
-  const [loading, setLoading] = useState<boolean>(true)
+  const [dataLoading, setDataLoading] = useState<boolean>(true)
+  const [loadingNextPage, setLoadingNextPage] = useState(false)
   const { totalPages, currentPage, elementsPerPage, setTotalPages, setCurrentPage, setElementsPerPage } = usePagination()
 
   useEffect(() => {
     (async () => {
+      setLoadingNextPage(true)
       const fetch = await apiFetch(`/api/parts?limit=${elementsPerPage}&page=${currentPage}`)
       setParties(fetch.allParts)
-      setLoading(false)
+      if (fetch.allParts.length === 0) {
+        setCurrentPage(fetch.totalPages)
+      }
+      setTotalPages(fetch.totalPages)
+      setLoadingNextPage(false)
+      setDataLoading(false)
     })()
   }, [elementsPerPage, currentPage])
 
@@ -31,7 +39,7 @@ export const GameHistory = () => {
     setCurrentPage(page)
   }
 
-  if (loading) {
+  if (dataLoading) {
     return <Loader />
   }
 
@@ -39,7 +47,7 @@ export const GameHistory = () => {
     <div className="d-flex justify-content-end mb-3">
       <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange} />
     </div>
-    <Table striped bordered hover>
+    <Table striped bordered hover className={loadingNextPage ? "opacity-table" : ''}>
       <thead>
         <tr>
           <th>Date</th>
@@ -72,12 +80,13 @@ const Party = ({ party }: PartyProps) => {
     {party.isFinished ? <>
       <td>{party.trueQuestions}</td>
       <td>{party.falseQuestions}</td>
-    </> : <td colSpan={2} className="table-danger">Cette partie n'est pas terminée <a href="#" className="card-link">Terminer la partie</a></td>
+    </> : <td colSpan={2} style={{ textAlign: 'center' }} className="table-danger">Cette partie n'est pas terminée <a href="#" className="card-link">Terminer la partie</a></td>
     }
-    <td> <DropdownButton variant="info" title="Actions">
-      {party.isFinished && <Dropdown.Item eventKey="1" onClick={handleRedirect}>Consulter</Dropdown.Item>}
-      <Dropdown.Item eventKey="2">Supprimer</Dropdown.Item>
-    </DropdownButton>
+    <td>
+      <DropdownButton variant="info" title="Actions">
+        {party.isFinished && <Dropdown.Item eventKey="1" onClick={handleRedirect}>Consulter</Dropdown.Item>}
+        <Dropdown.Item eventKey="2">Supprimer</Dropdown.Item>
+      </DropdownButton>
     </td>
   </tr>
 }

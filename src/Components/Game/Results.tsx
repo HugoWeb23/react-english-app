@@ -11,6 +11,7 @@ import { Frown } from '../../Icons/Frown'
 import { Paginate } from '../../UI/Pagination'
 import {ElementsPerPage} from '../../UI/ElementsPerPage'
 import {usePagination} from '../../Hooks/usePagination'
+import {AbsoluteLoader} from '../../Loaders/AbsoluteLoader'
 
 interface IResults extends QuestionType {
     propositionsSelect: string[],
@@ -26,17 +27,19 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
     const idPart: string = match.params.id;
     const [partInfo, setPartInfo] = useState<any>({})
     const [loader, setLoader] = useState<boolean>(true)
+    const [loadingNextPage, setLoadingNextPage] = useState(false)
     const {totalPages, currentPage, elementsPerPage, setTotalPages, setCurrentPage, setElementsPerPage} = usePagination()
 
     useEffect(() => {
         (async () => {
-            setLoader(true)
+            setLoadingNextPage(true)
             const part = await apiFetch(`/api/part/${idPart}?limit=${elementsPerPage}&page=${currentPage}`)
             if (part.questions.length === 0) {
                 setCurrentPage(part.totalPages)
             }
             setPartInfo(part);
             setTotalPages(part.totalPages)
+            setLoadingNextPage(false)
             setLoader(false)
         })()
     }, [elementsPerPage, currentPage])
@@ -51,6 +54,7 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
 
     const handlePageChange = (page: number): any => {
         setCurrentPage(page)
+        console.log(page)
     }
 
     return <>
@@ -62,8 +66,9 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
         <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange}/>
         </div>
 
+        <div className={`position-relative ${loadingNextPage && "opacity-table"}`} style={{zIndex: 1}}>
         {partInfo.questions.map((question: IResults) => <>
-            <Card key={question._id} border={question.correcte ? "success" : "danger"} className="mb-3 position-relative">
+            <Card key={question._id} border={question.correcte ? "success" : "danger"} className="mb-3 position-relative" style={{zIndex: 1}}>
                 <div style={{ position: 'absolute', top: "-13px", right: "-20px" }}>{question.correcte ? <Smile /> : <Frown />}</div>
                 <Card.Body>
                     <Card.Title>{question.intitule} - {question.question}</Card.Title>
@@ -75,6 +80,7 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
                 </Card.Body>
             </Card>
         </>)}
+        </div>
         <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={handlePageChange} />
     </>
 }
