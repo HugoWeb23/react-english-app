@@ -164,9 +164,6 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, checkedQue
             })
             setQuestions(questions)
         })()
-        return () => {
-            console.log('component unmount')
-        }
     }, [])
 
     const handleQuestionChange = (value, question) => {

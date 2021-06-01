@@ -1,4 +1,4 @@
-import { useEffect, useState, FC } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
 import { useHistory, Redirect } from 'react-router-dom'
@@ -8,7 +8,7 @@ import {WriteResponse} from './WriteResponse'
 import {MultiChoices} from './MultiChoices'
 import { apiFetch } from '../../Utils/Api'
 import {Loader} from '../../UI/Loader'
-import {Results} from './Results'
+import '../../assets/css/styles.css'
 
 interface IPlayProps {
     location: any
@@ -30,15 +30,26 @@ export const Play = ({ location = {} }: IPlayProps) => {
     const [currentQuestion, setCurrentQuestion] = useState<QuestionType>(location.state.questions[0])
     const [loading, setLoading] = useState<boolean>(true);
     const [endGame, setEndGame] = useState(false);
-    const { register, handleSubmit, control, reset } = useForm();
+    const { register, handleSubmit, control, reset, formState } = useForm();
+    const [selectedProps, setSelectedProps] = useState<any[]>([])
 
     useEffect(() => {
+        document.body.className = "game-body"
         setData(location.state)
         setLoading(false)
+        return () => {
+        document.body.classList.remove("game-body")
+        }
     }, [])
 
     if(loading === true || data === null) {
         return <Loader/>
+    }
+
+    const handlePropsChange = (prop: any, e: any) => {
+       const {checked}: {checked: boolean} = e.target
+       checked && setSelectedProps((props: any) => [...props, prop._id])
+       checked === false && setSelectedProps((props: any) => props.filter((p: any) => p != prop._id))
     }
 
     const nextQuestion = (): void => {
@@ -52,12 +63,12 @@ export const Play = ({ location = {} }: IPlayProps) => {
     }
 
     const submit = async (e: any) => {
-        let response: any = { id_part: data?.id_part, id_question: currentQuestion._id, type: currentQuestion.type }
+        let response: any = { id_part: data.id_part, id_question: currentQuestion._id, type: currentQuestion.type }
         if (currentQuestion.type === 1) {
             response = { ...response, reponseEcrite: e.reponse }
         }
         if (currentQuestion.type === 2) {
-            const props = e.propositions.filter((p: any) => p.proposition === true).map((p: any) => p._id)
+            const props = selectedProps
             response = { ...response, propositionsSelect: props }
         }
 
@@ -68,6 +79,7 @@ export const Play = ({ location = {} }: IPlayProps) => {
         if(fetch.isCorrect) {
             setData({...data, score: {...data.score, points: data.score.points + 1}})
         }
+        setSelectedProps([])
         nextQuestion()
     }
 
@@ -76,14 +88,22 @@ export const Play = ({ location = {} }: IPlayProps) => {
     }
 
     return <>
-        {data.questions.length > 0 && <>
+        <div className="game">
+            <div className="back">
+                <button onClick={() => history.goBack()}>Menu principal</button>
+            </div>
+            <div className="game-container">
+            {data.questions.length > 0 && <>
             <Form onSubmit={handleSubmit(submit)}>
                 <h3>{currentQuestion.intitule} : {currentQuestion.question}</h3>
+                <p>Question {indexQuestion + 1} / {data.questions.length}</p>
                 {currentQuestion.type === 1 && <WriteResponse question={currentQuestion} register={register} />}
-                {currentQuestion.type === 2 && <MultiChoices question={currentQuestion} register={register} />}
-                <Button type="submit" variant="danger">Valider</Button>
+                {currentQuestion.type === 2 && <MultiChoices question={currentQuestion} handleChange={handlePropsChange} />}
+                <button type="submit">Valider</button>
             </Form>
         </>}
+            </div>
+        </div>
     </>
 }
 

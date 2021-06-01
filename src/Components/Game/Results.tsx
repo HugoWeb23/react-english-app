@@ -11,7 +11,6 @@ import { Frown } from '../../Icons/Frown'
 import { Paginate } from '../../UI/Pagination'
 import {ElementsPerPage} from '../../UI/ElementsPerPage'
 import {usePagination} from '../../Hooks/usePagination'
-import {AbsoluteLoader} from '../../Loaders/AbsoluteLoader'
 
 interface IResults extends QuestionType {
     propositionsSelect: string[],

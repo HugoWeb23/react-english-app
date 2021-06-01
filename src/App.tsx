@@ -53,8 +53,11 @@ return loading ? <UserLoader/> :
 <>
   <Router>
   <userContext.Provider value={value}>
-  <Navigation/>
   <ToastAlert/>
+  <Switch>
+  <Route path="/play" component={Play}/>
+  <Route path="/*" component={Navigation}/>
+  </Switch>
   <div className="container-md">
   <PrivateRoute path="/part" exact component={Part}/>
   <PrivateRoute path="/questions" component={Questions}/>
@@ -62,7 +65,6 @@ return loading ? <UserLoader/> :
   <PrivateRoute path="/test" component={Test}/>
   <Route path="/login">{user ? <Redirect to="/questions"/> : <Login onConnect={toggleUser}/>}</Route>
   <Route path="/register">{user ? <Redirect to="/questions"/> : <Register onConnect={toggleUser}/>}</Route>
-  <Route path="/play" component={Play}/>
   <Route path="/results/:id" exact component={Results}/>
   <Route path="/gamehistory" exact component={GameHistory}/>
   </div>

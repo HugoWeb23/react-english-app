@@ -1,13 +1,25 @@
 import {QuestionType} from '../../Types/Questions'
-import Form from 'react-bootstrap/Form'
+import '../../assets/css/styles.css'
 
 interface IChoicesProps {
     question: QuestionType,
-    register: any
+    handleChange: (prop: any, e: any) => void
 }
 
-export const MultiChoices = ({ question, register }: IChoicesProps) => {
-    return <div>
-        {question.propositions.map((p, index) => <><Form.Check key={index} {...register(`propositions.${index}.proposition`)} type="checkbox" id={`check-${index}`} label={p.proposition} custom /> <input {...register(`propositions.${index}._id`)} type="hidden" value={p._id} /></>)}
+export const MultiChoices = ({ question, handleChange }: IChoicesProps) => {
+
+    const Change = (p: any, e: any) => {
+        handleChange(p, e)
+    }
+
+    return <div className="selection-wrapper">
+        {question.propositions.map((p, index) => <>
+        <label htmlFor={`check-${index}`} className="selected-label">
+        <input type="checkbox" key={p._id} onChange={(e: any) => Change(p, e)} id={`check-${index}`} />
+        <div className="selected-content">
+            {p.proposition}
+        </div>
+        </label>
+        </>)}
     </div>
 }

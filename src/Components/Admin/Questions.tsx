@@ -11,21 +11,69 @@ import { Loader } from '../../UI/Loader'
 import { DeleteModal } from "../../UI/DeleteModal"
 import { QuestionType, PropositionType } from '../../Types/Questions'
 import {QuestionFilters} from './QuestionFilters'
+import {IFiletredQuestions} from '../../Types/Interfaces'
+import {ElementsPerPage} from '../../UI/ElementsPerPage'
+import {Paginate} from '../../UI/Pagination'
+
 
 export const Questions = () => {
-  const { questions, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
+  const { questions, totalPages, currentPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
   const [loader, setLoader] = useState<boolean>(true);
   const [newQuestion, setnewQuestion] = useState<boolean>(false)
+  const [filteredQuestions, setFilteredQuestions] = useState<IFiletredQuestions>({
+    type: [],
+    theme: [],
+    limit: 10,
+    page: 1
+  });
 
   useEffect(() => {
     (async () => {
-      await getQuestions();
+      await getQuestions(filteredQuestions);
       setLoader(false);
     })()
-  }, [])
+  }, [filteredQuestions])
 
   const handleCreateQuestion = () => {
     setnewQuestion(!newQuestion)
+  }
+
+  const handleThemeChange = (theme: any, type?: string) => {
+    setFilteredQuestions((filters: IFiletredQuestions) => {
+      if(type === 'delete') {
+        return {...filters, theme: filters.theme.filter(t => t != theme)}
+      } else {
+        return {...filters, theme: theme}
+      }
+    })
+  }
+
+  const handleTypeChange = (checked: any, type: any) => {
+    setFilteredQuestions((filters: IFiletredQuestions) => {
+     if(checked && !filters.type.includes(type)) {
+      return {...filters, type: [...filters.type, type]}
+     } else {
+       return {...filters, type: filters.type.filter(f => f != type)}
+     }
+    })
+  }
+
+  const resetFilters = () => {
+    setFilteredQuestions((filters: IFiletredQuestions) => {
+      return {...filters, theme: [], type: []}
+    })
+  }
+
+  const handleElementsChange = (elements: number) => {
+    setFilteredQuestions((filters: IFiletredQuestions) => {
+      return {...filters, limit: elements}
+    })
+  }
+
+  const handlePageChange = (page: number) => {
+    setFilteredQuestions((filters: IFiletredQuestions) => {
+      return {...filters, page: page}
+    })
   }
 
   return <>
@@ -33,10 +81,19 @@ export const Questions = () => {
       <h1>Les questions</h1>
       <Button variant="primary" onClick={handleCreateQuestion}>Créer une question</Button>
     </div>
+    <div className="d-flex justify-content-end mb-3">
+        <ElementsPerPage elementsPerPage={filteredQuestions.limit} onChange={handleElementsChange}/>
+        </div>
     {newQuestion && <CreateQuestion handleClose={handleCreateQuestion} onSubmit={createQuestion} />}
     <div className="row">
       <div className="col-md-2">
-        <QuestionFilters/>
+        <QuestionFilters
+        selectedTypes={filteredQuestions.type}
+        selectedThemes={filteredQuestions.theme} 
+        typeChange={handleTypeChange}
+        themeChanges={handleThemeChange}
+        resetFilters={resetFilters}
+        />
      </div>
       <div className="col-md-10">
     <Table striped bordered hover>
@@ -50,9 +107,11 @@ export const Questions = () => {
         </tr>
       </thead>
       <tbody>
-        {loader ? <Loader display="block" animation="border" variant="primary" /> : questions.map((question: QuestionType, index: number) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion} />)}
+        {loader && <Loader display="block" animation="border" variant="primary" />} 
+        {questions && questions.map((question: QuestionType, index: number) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion} />)}
       </tbody>
     </Table>
+    <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={handlePageChange} />
     </div>
     </div>
   </>

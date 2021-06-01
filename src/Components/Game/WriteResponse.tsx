@@ -1,5 +1,4 @@
 import {QuestionType} from '../../Types/Questions'
-import Form from 'react-bootstrap/Form'
 
 interface WriteProps {
     question: QuestionType,
@@ -7,8 +6,8 @@ interface WriteProps {
 }
 
 export const WriteResponse = ({ question, register }: WriteProps) => {
-    return <Form.Group controlId="reponse">
-        <Form.Label>Répnse :</Form.Label>
-        <Form.Control type="text" {...register('reponse', { required: 'La réponse est obligatoire' })} autoComplete="off" />
-    </Form.Group>
+    return <>
+        <label>Répnse :</label>
+        <input type="text" {...register('reponse', { required: 'La réponse est obligatoire' })} autoComplete="off" />
+    </>
 }
