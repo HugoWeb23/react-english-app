@@ -56,10 +56,10 @@ return loading ? <UserLoader/> :
   <ToastAlert/>
   <Switch>
   <Route path="/play" component={Play}/>
+  <PrivateRoute path="/part" exact component={Part}/>
   <Route path="/*" component={Navigation}/>
   </Switch>
   <div className="container-md">
-  <PrivateRoute path="/part" exact component={Part}/>
   <PrivateRoute path="/questions" component={Questions}/>
   <PrivateRoute path="/themes" component={Themes}/>
   <PrivateRoute path="/test" component={Test}/>

@@ -95,7 +95,14 @@ export const Play = ({ location = {} }: IPlayProps) => {
             <div className="game-container">
             {data.questions.length > 0 && <>
             <Form onSubmit={handleSubmit(submit)}>
-                <h3>{currentQuestion.intitule} : {currentQuestion.question}</h3>
+                <div className="game-title">
+                <div className="game-title-intitule">
+                    {currentQuestion.intitule}
+                </div>
+                <div className="game-title-question">
+                    {currentQuestion.question}
+                </div>
+                </div>
                 <p>Question {indexQuestion + 1} / {data.questions.length}</p>
                 {currentQuestion.type === 1 && <WriteResponse question={currentQuestion} register={register} />}
                 {currentQuestion.type === 2 && <MultiChoices question={currentQuestion} handleChange={handlePropsChange} />}

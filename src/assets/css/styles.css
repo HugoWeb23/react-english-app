@@ -1,6 +1,6 @@
 .game-body {
     position: relative;
-    background: #2977c5;
+    background: #5cc29f;
 }
 
 .game {
@@ -16,9 +16,28 @@
     right: 0;
 }
 
+.game-title {
+    position: relative;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.20);
+    border-radius: 5px;
+    font-size: 1.8rem;
+    color: #FFF;
+}
+
+.game-title-intitule {
+    display: block;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+.game-title-question {
+    display: block;
+    text-align: center;
+}
+
 .game-container {
     width: 600px;
-    transform: translateY(-50%);
 }
 
 .selection-wrapper {
@@ -40,6 +59,10 @@
     border: solid 2px red;
   }
 
+.proposition {
+    font-size: 1.5rem;
+}
+
 .selected-content {
     text-align: center;
 	border-radius: 3px;
@@ -51,4 +74,26 @@
 	grid-gap: 15px;
 	place-content: center;
 	transition: .1s ease-in-out all;
+}
+
+.proposition-infos {
+    margin-top: 15px;
+}
+
+.numero-proposition {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    font-size: 1.2rem;
+    color: #bdbdbd;
+}
+
+.proposition-infos::after {
+    content: '';
+    position: absolute;
+    width: calc(100% - 60px);
+    height: 2px;
+    border: 2px solid #bdbdbd;
+    left: 35px;
+    bottom: 15px;
 }

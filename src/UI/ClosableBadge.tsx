@@ -1,11 +1,11 @@
 import {CloseIcon} from '../Icons/Close'
 
 interface IClosableBadge {
-    element: object,
+    element: any,
     elementName: string,
     index?: number,
     variant?: string,
-    handleClose: (element: object) => void
+    handleClose: (element: any) => void
 }
 
 export const ClosableBadge = ({element, elementName, index, variant = "primary", handleClose}: IClosableBadge) => {

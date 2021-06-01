@@ -1,4 +1,4 @@
-import {QuestionType} from '../../Types/Questions'
+import { QuestionType } from '../../Types/Questions'
 import '../../assets/css/styles.css'
 
 interface IChoicesProps {
@@ -13,13 +13,20 @@ export const MultiChoices = ({ question, handleChange }: IChoicesProps) => {
     }
 
     return <div className="selection-wrapper">
-        {question.propositions.map((p, index) => <>
-        <label htmlFor={`check-${index}`} className="selected-label">
-        <input type="checkbox" key={p._id} onChange={(e: any) => Change(p, e)} id={`check-${index}`} />
-        <div className="selected-content">
-            {p.proposition}
-        </div>
-        </label>
+        {question.propositions.map((p, index: number) => <>
+            <label htmlFor={`check-${index}`} className="selected-label">
+                <input type="checkbox" key={p._id} onChange={(e: any) => Change(p, e)} id={`check-${index}`} />
+                <div className="selected-content">
+                    <div className="proposition">
+                        {p.proposition}
+                    </div>
+                    <div className="proposition-infos">
+                        <div className="numero-proposition">
+                            {index + 1}
+                        </div>
+                    </div>
+                </div>
+            </label>
         </>)}
     </div>
 }
