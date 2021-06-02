@@ -94,8 +94,10 @@ export const Play = ({ location = {} }: IPlayProps) => {
             </div>
             <div className="game-container">
             {data.questions.length > 0 && <>
+            {JSON.stringify(data)}
             <Form onSubmit={handleSubmit(submit)}>
                 <div className="game-title">
+                <div className="game-score">Score {data.score.points} / {data.score.totalPoints}</div>
                     <div className="game-questions-counter">
                     Question {indexQuestion + 1} / {data.questions.length}
                     </div>
