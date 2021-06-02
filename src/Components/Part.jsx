@@ -10,6 +10,7 @@ import Modal from 'react-bootstrap/Modal'
 import { apiFetch } from '../Utils/Api'
 import ListGroup from 'react-bootstrap/ListGroup'
 import {useHistory} from 'react-router-dom'
+import {Container} from '../UI/Container'
 
 export const Part = () => {
     const history = useHistory()
@@ -73,15 +74,18 @@ export const Part = () => {
     }
 
     return <>
+    <Container>
     <h1>Nouvelle partie</h1>
     <Form onSubmit={handleSubmit(submit)}>
     <Form.Group controlId="theme">
     <Form.Label>Thème(s)</Form.Label>
-    {themes == null ? <Loader/> : 
-   <Form.Control as="select" {...register('themes')} onChange={handleThemeChange} isInvalid={errors.themes} disabled={filteredThemes.length == 0}>
+    {themes == null ? <Loader/> : <><Form.Control as="select" {...register('themes')} onChange={handleThemeChange} isInvalid={errors.themes} disabled={filteredThemes.length == 0}>
         <option value="">Sélectionner un thème</option>
         {filteredThemes.map((theme, index) => <option key={theme._id} value={index}>{theme.theme}</option>)}
-    </Form.Control>}
+    </Form.Control>
+       <Form.Text className="text-muted">
+       Tous les thèmes sont sélectionnés par défaut
+     </Form.Text></>}
     {errors.themes && <Form.Control.Feedback type="invalid">{errors.themes.message}</Form.Control.Feedback>}
     </Form.Group>
     <Form.Group controlId="selected-themes">
@@ -111,6 +115,9 @@ export const Part = () => {
         <option value="">Sélectionner un type</option>
         {filteredTypes.map((type, index) => <option key={type.type} value={index}>{type.title}</option>)}
     </Form.Control>
+    <Form.Text className="text-muted">
+      Tous les types sont sélectionnés par défaut
+    </Form.Text>
     </Form.Group>
     <Form.Group controlId="selected-themes">
     <div className="d-flex flex-wrap">
@@ -127,10 +134,11 @@ export const Part = () => {
     </Form.Text>
     </Form.Group>
     <Form.Group controlId="random">
-      <Form.Check custom type="checkbox" id="custom-limit" label="Questions aléatoires" {...register('random')}/>
+      <Form.Check custom checked={true} type="checkbox" id="custom-limit" label="Questions aléatoires" {...register('random')}/>
     </Form.Group>
     <Button type="submit" variant="success">Lancer la partie</Button>
     </Form>
+    </Container>
     </>
 }
 

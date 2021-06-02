@@ -12,13 +12,34 @@
 
 .back {
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 5px;
+    right: 5px;
+}
+
+.game-back-button {
+    font-size: 1.2rem;
+    color: #48997d;
+    border: 2px solid #48997d;
+    padding: 5px;
+    border-radius: 8px;
+}
+
+.game-questions-counter {
+    position: absolute;
+    font-size: 1rem;
+    padding: 5px;
+    top: -36px;
+    left: 2px;
+    border-top: 2px solid rgba(0, 0, 0, 0.20);
+    border-left: 2px solid rgba(0, 0, 0, 0.20);
+    border-right: 2px solid rgba(0, 0, 0, 0.20);
+    border-top-left-radius: 5px;
 }
 
 .game-title {
     position: relative;
     padding: 10px;
+    margin-bottom: 20px;
     background-color: rgba(0, 0, 0, 0.20);
     border-radius: 5px;
     font-size: 1.8rem;
@@ -56,7 +77,7 @@
 
 .selected-label input:checked ~ .selected-content {
     box-shadow: 0 2px 4px 0 rgba(219, 215, 215, 0.5);
-    border: solid 2px red;
+    border: solid 2px #6b6b6b;
   }
 
 .proposition {
@@ -70,10 +91,10 @@
     border: solid 2px transparent;
 	background: #fff;
 	padding: 15px;
-	display: grid;
-	grid-gap: 15px;
+	display: flex;
+    align-items: center;
 	place-content: center;
-	transition: .1s ease-in-out all;
+    cursor: pointer;
 }
 
 .proposition-infos {
@@ -83,17 +104,43 @@
 .numero-proposition {
     position: absolute;
     left: 10px;
-    bottom: 10px;
+    bottom: 5px;
     font-size: 1.2rem;
     color: #bdbdbd;
 }
 
-.proposition-infos::after {
-    content: '';
-    position: absolute;
-    width: calc(100% - 60px);
-    height: 2px;
-    border: 2px solid #bdbdbd;
-    left: 35px;
-    bottom: 15px;
+.game-submit {
+    width: 100%;
+    border: 2px solid #48997d;
+    padding: 5px;
+    margin-top: 15px;
+    color: #48997d;
+    font-weight: bold;
+    font-size: 1.5rem;
+    transition: .1s ease-in-out all;
+}
+
+.game-submit:hover {
+    border: 2px solid #FFF;
+    color: #FFF;
+    background-color: #48997d;
+}
+
+.game-response-label {
+    display: block;
+    color: #FFF;
+    font-size: 1.2rem;
+}
+
+.game-response {
+    border: none;
+    padding: 5px;
+    font-size: 1.2rem;
+    width: 100%;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.game-response:focus {
+    outline: none;
 }

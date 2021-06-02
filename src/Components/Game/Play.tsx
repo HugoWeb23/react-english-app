@@ -90,12 +90,15 @@ export const Play = ({ location = {} }: IPlayProps) => {
     return <>
         <div className="game">
             <div className="back">
-                <button onClick={() => history.goBack()}>Menu principal</button>
+                <button onClick={() => history.goBack()} className="game-back-button">Menu principal</button>
             </div>
             <div className="game-container">
             {data.questions.length > 0 && <>
             <Form onSubmit={handleSubmit(submit)}>
                 <div className="game-title">
+                    <div className="game-questions-counter">
+                    Question {indexQuestion + 1} / {data.questions.length}
+                    </div>
                 <div className="game-title-intitule">
                     {currentQuestion.intitule}
                 </div>
@@ -103,10 +106,9 @@ export const Play = ({ location = {} }: IPlayProps) => {
                     {currentQuestion.question}
                 </div>
                 </div>
-                <p>Question {indexQuestion + 1} / {data.questions.length}</p>
                 {currentQuestion.type === 1 && <WriteResponse question={currentQuestion} register={register} />}
                 {currentQuestion.type === 2 && <MultiChoices question={currentQuestion} handleChange={handlePropsChange} />}
-                <button type="submit">Valider</button>
+                <button type="submit" className="game-submit">Valider</button>
             </Form>
         </>}
             </div>

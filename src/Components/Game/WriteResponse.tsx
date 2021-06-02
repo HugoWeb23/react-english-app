@@ -7,7 +7,9 @@ interface WriteProps {
 
 export const WriteResponse = ({ question, register }: WriteProps) => {
     return <>
-        <label>Répnse :</label>
-        <input type="text" {...register('reponse', { required: 'La réponse est obligatoire' })} autoComplete="off" />
+        <div className="game-write-response">
+        <label htmlFor="game-response" className="game-response-label">Réponse :</label>
+        <input type="text" {...register('reponse', { required: 'La réponse est obligatoire' })} className="game-response" id="game-response" autoComplete="off" autoFocus={true} />
+        </div>
     </>
 }
