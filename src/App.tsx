@@ -16,6 +16,7 @@ import {Play} from './Components/Game/Play'
 import {UserType} from './Types/User'
 import {Results} from './Components/Game/Results'
 import {GameHistory} from './Components/GameHistory'
+import {NotFound} from './Components/404'
 
 export const App = () => {
   const [user, setUser] = useState<null | UserType>(null);
@@ -55,11 +56,13 @@ return loading ? <UserLoader/> :
   <userContext.Provider value={value}>
   <ToastAlert/>
   <Switch>
-  <Route path="/play" component={Play}/>
+  <Route path="/play/:id" component={Play}/>
   <PrivateRoute path="/part" exact component={Part}/>
+  <Route path="/404" component={NotFound}/>
   <Route path="/*" component={Navigation}/>
   </Switch>
   <div className="container-md">
+  <Switch>
   <PrivateRoute path="/questions" component={Questions}/>
   <PrivateRoute path="/themes" component={Themes}/>
   <PrivateRoute path="/test" component={Test}/>
@@ -67,6 +70,7 @@ return loading ? <UserLoader/> :
   <Route path="/register">{user ? <Redirect to="/questions"/> : <Register onConnect={toggleUser}/>}</Route>
   <Route path="/results/:id" exact component={Results}/>
   <Route path="/gamehistory" exact component={GameHistory}/>
+  </Switch>
   </div>
   </userContext.Provider>
 </Router>

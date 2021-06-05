@@ -14,8 +14,8 @@ export const MultiChoices = ({ question, handleChange }: IChoicesProps) => {
 
     return <div className="selection-wrapper">
         {question.propositions.map((p, index: number) => <>
-            <label htmlFor={`check-${index}`} className="selected-label">
-                <input type="checkbox" key={p._id} onChange={(e: any) => Change(p, e)} id={`check-${index}`} />
+            <label htmlFor={`check-${index}`} tabIndex={index + 1} className="selected-label">
+                <input type="checkbox" tabIndex={index + 1} key={p._id} onChange={(e: any) => Change(p, e)} id={`check-${index}`} />
                 <div className="selected-content">
                     <div className="proposition">
                         {p.proposition}

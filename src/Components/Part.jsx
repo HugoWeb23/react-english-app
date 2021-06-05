@@ -41,7 +41,7 @@ export const Part = () => {
                 method: 'POST',
                 body: JSON.stringify(values)
             })
-            history.push({pathname: `/play/${reponse.id_part}`, state: {...reponse, score: {points: 0, totalPoints: reponse.questions.length}}})
+            history.push({pathname: `/play/${reponse.id_part}`, state: {...reponse, infos: {points: 0, totalQuestions: reponse.totalQuestions}}})
         } catch(e) {
 
         }

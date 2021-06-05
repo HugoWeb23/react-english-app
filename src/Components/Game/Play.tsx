@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { useHistory, Redirect } from 'react-router-dom'
+import { useHistory, Redirect, RouteComponentProps } from 'react-router-dom'
 import { QuestionType } from '../../Types/Questions'
 import { useForm, useFieldArray } from 'react-hook-form'
 import {WriteResponse} from './WriteResponse'
@@ -9,40 +9,74 @@ import {MultiChoices} from './MultiChoices'
 import { apiFetch } from '../../Utils/Api'
 import {Loader} from '../../UI/Loader'
 import '../../assets/css/styles.css'
-
-interface IPlayProps {
-    location: any
-}
+import {RobotError} from '../../Icons/RobotError'
 
 interface IDataType {
     id_part: string,
-    questions: QuestionType[],
-    score: {
+    AllQuestions: QuestionType[],
+    infos: {
         points: number,
-        totalPoints: number
+        totalQuestions: number
     }
 }
 
-export const Play = ({ location = {} }: IPlayProps) => {
+type TParams = {
+    id: string
+}
+
+interface IPlayProps {
+    location: any,
+    match: RouteComponentProps<TParams>
+}
+
+export const Play = ({ location = {}, match }: any) => {
     const history = useHistory();
+    const idPart: string = match.params.id
     const [data, setData] = useState<IDataType | null>(null);
     const [indexQuestion, setIndexQuestion] = useState<number>(0)
-    const [currentQuestion, setCurrentQuestion] = useState<QuestionType>(location.state.questions[0])
-    const [loading, setLoading] = useState<boolean>(true);
+    const [numberOfCurrentQuestion, setNumberOfCurrentQuestion] = useState<number>(0)
+    const [currentQuestion, setCurrentQuestion] = useState<QuestionType | null>(null)
+    const [dataLoading, setDataLoading] = useState<boolean>(true);
+    const [loading, setLoading] = useState<boolean>(false)
     const [endGame, setEndGame] = useState(false);
+    const [errors, setErrors] = useState<boolean>(false)
     const { register, handleSubmit, control, reset, formState } = useForm();
     const [selectedProps, setSelectedProps] = useState<any[]>([])
 
     useEffect(() => {
-        document.body.className = "game-body"
-        setData(location.state)
-        setLoading(false)
+        (async() => {
+            document.body.className = "game-body"
+            if(location.state === undefined) {
+                try {
+                    const fetchQuestions = await apiFetch(`/api/part/getparty/${idPart}`)
+                    setData({...fetchQuestions, infos: {points: fetchQuestions.trueQuestions, totalQuestions: fetchQuestions.totalQuestions}})
+                    setCurrentQuestion(fetchQuestions.AllQuestions[0])
+                    setNumberOfCurrentQuestion(fetchQuestions.currentIndex)
+                } catch(e) {
+                   setErrors(true)
+                }
+            }
+            if(location.state != undefined && location.state.AllQuestions.length > 0) {
+                setData(location.state)
+                setCurrentQuestion(location.state.AllQuestions[0])
+                setNumberOfCurrentQuestion(1)
+            }
+            setDataLoading(false)
+        })()
         return () => {
-        document.body.classList.remove("game-body")
-        }
+            document.body.classList.remove("game-body")
+            }
     }, [])
 
-    if(loading === true || data === null) {
+    const RedirectOnError = (path: string) => {
+       history.push(path)
+    }
+
+    if(errors || data?.AllQuestions.length === 0) {
+        return <ErrorPart/>
+    }
+
+    if(dataLoading === true || data === null || currentQuestion === null) {
         return <Loader/>
     }
 
@@ -53,11 +87,12 @@ export const Play = ({ location = {} }: IPlayProps) => {
     }
 
     const nextQuestion = (): void => {
-        if (indexQuestion < data.questions.length - 1) {
-            setCurrentQuestion(data.questions[indexQuestion + 1])
+        if (indexQuestion < data.AllQuestions.length - 1) {
+            setCurrentQuestion(data.AllQuestions[indexQuestion + 1])
             setIndexQuestion(index => index + 1)
+            setNumberOfCurrentQuestion(current => current + 1)
             reset()
-        } else if(indexQuestion == data.questions.length - 1) {
+        } else if(indexQuestion == data.AllQuestions.length - 1) {
             setEndGame(true)
         }
     }
@@ -71,16 +106,17 @@ export const Play = ({ location = {} }: IPlayProps) => {
             const props = selectedProps
             response = { ...response, propositionsSelect: props }
         }
-
+        setLoading(true)
         const fetch = await apiFetch('/api/questions/checkreply', {
             method: 'POST',
             body: JSON.stringify(response)
         })
         if(fetch.isCorrect) {
-            setData({...data, score: {...data.score, points: data.score.points + 1}})
+            setData({...data, infos: {...data.infos, points: data.infos.points + 1}})
         }
         setSelectedProps([])
         nextQuestion()
+        setLoading(false)
     }
 
     if (endGame) {
@@ -90,16 +126,15 @@ export const Play = ({ location = {} }: IPlayProps) => {
     return <>
         <div className="game">
             <div className="back">
-                <button onClick={() => history.goBack()} className="game-back-button">Menu principal</button>
+                <button onClick={() => history.push('/part')} className="game-back-button">Quitter la partie</button>
             </div>
             <div className="game-container">
-            {data.questions.length > 0 && <>
-            {JSON.stringify(data)}
+            {data.AllQuestions.length > 0 && <>
             <Form onSubmit={handleSubmit(submit)}>
                 <div className="game-title">
-                <div className="game-score">Score {data.score.points} / {data.score.totalPoints}</div>
+                <div className="game-score">Score {data.infos.points} / {data.infos.totalQuestions}</div>
                     <div className="game-questions-counter">
-                    Question {indexQuestion + 1} / {data.questions.length}
+                    Question {numberOfCurrentQuestion} / {data.infos.totalQuestions}
                     </div>
                 <div className="game-title-intitule">
                     {currentQuestion.intitule}
@@ -110,11 +145,22 @@ export const Play = ({ location = {} }: IPlayProps) => {
                 </div>
                 {currentQuestion.type === 1 && <WriteResponse question={currentQuestion} register={register} />}
                 {currentQuestion.type === 2 && <MultiChoices question={currentQuestion} handleChange={handlePropsChange} />}
-                <button type="submit" className="game-submit">Valider</button>
+                <button type="submit" className={`submit-button ${loading ? "loading-button" : ""}`}>Valider</button>
             </Form>
         </>}
             </div>
         </div>
     </>
+}
+
+const ErrorPart = () => {
+    const history = useHistory();
+    return <div className="game">
+        <div className="error-container">
+        <RobotError/>
+        <div className="error-title">Une erreur est survenue</div>
+        <button type="button" className="submit-button" onClick={() => history.push('/part')}>Retour à l'accueil</button>
+        </div>
+    </div>
 }
 

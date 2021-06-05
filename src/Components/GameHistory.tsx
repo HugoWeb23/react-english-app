@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { IParty } from '../Types/Parties'
 import { apiFetch } from "../Utils/Api"
-import { useHistory } from 'react-router-dom'
+import { useHistory, Link } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
 import { Loader } from "../UI/Loader"
 import DropdownButton from 'react-bootstrap/DropdownButton'
@@ -80,7 +80,7 @@ const Party = ({ party }: PartyProps) => {
     {party.isFinished ? <>
       <td>{party.trueQuestions}</td>
       <td>{party.falseQuestions}</td>
-    </> : <td colSpan={2} style={{ textAlign: 'center' }} className="table-danger">Cette partie n'est pas terminée <a href="#" className="card-link">Terminer la partie</a></td>
+    </> : <td colSpan={2} style={{ textAlign: 'center' }} className="table-danger">Cette partie n'est pas terminée <a onClick={() => history.push(`/play/${party._id}`)} className="card-link cursor-pointer">Terminer la partie</a></td>
     }
     <td>
       <DropdownButton variant="info" title="Actions">
