@@ -15,28 +15,27 @@ export const GameHistory = () => {
   const [parties, setParties] = useState<IParty[]>([])
   const [dataLoading, setDataLoading] = useState<boolean>(true)
   const [loadingNextPage, setLoadingNextPage] = useState(false)
+  const [page, setPage] = useState<number>(1)
   const { totalPages, currentPage, elementsPerPage, setTotalPages, setCurrentPage, setElementsPerPage } = usePagination()
 
   useEffect(() => {
     (async () => {
       setLoadingNextPage(true)
-      const fetch = await apiFetch(`/api/parts?limit=${elementsPerPage}&page=${currentPage}`)
+      const fetch = await apiFetch(`/api/parts?limit=${elementsPerPage}&page=${page}`)
       setParties(fetch.allParts)
-      if (fetch.allParts.length === 0) {
-        setCurrentPage(fetch.totalPages)
-      }
+      setCurrentPage(fetch.currentPage)
       setTotalPages(fetch.totalPages)
       setLoadingNextPage(false)
       setDataLoading(false)
     })()
-  }, [elementsPerPage, currentPage])
+  }, [elementsPerPage, page])
 
   const handleElementsChange = (elements: number) => {
     setElementsPerPage(elements)
   }
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+    setPage(page)
   }
 
   if (dataLoading) {

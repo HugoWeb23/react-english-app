@@ -26,22 +26,21 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
     const idPart: string = match.params.id;
     const [partInfo, setPartInfo] = useState<any>({})
     const [loader, setLoader] = useState<boolean>(true)
-    const [loadingNextPage, setLoadingNextPage] = useState(false)
+    const [loadingNextPage, setLoadingNextPage] = useState<boolean>(false)
+    const [page, setPage] = useState<number>(1)
     const {totalPages, currentPage, elementsPerPage, setTotalPages, setCurrentPage, setElementsPerPage} = usePagination()
 
     useEffect(() => {
         (async () => {
             setLoadingNextPage(true)
-            const part = await apiFetch(`/api/part/${idPart}?limit=${elementsPerPage}&page=${currentPage}`)
-            if (part.questions.length === 0) {
-                setCurrentPage(part.totalPages)
-            }
+            const part = await apiFetch(`/api/part/${idPart}?limit=${elementsPerPage}&page=${page}`)
+            setCurrentPage(part.currentPage)
             setPartInfo(part);
             setTotalPages(part.totalPages)
             setLoadingNextPage(false)
             setLoader(false)
         })()
-    }, [elementsPerPage, currentPage])
+    }, [elementsPerPage, page])
 
     if (loader) {
         return <Loader />
@@ -52,8 +51,7 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
     }
 
     const handlePageChange = (page: number): any => {
-        setCurrentPage(page)
-        console.log(page)
+        setPage(page)
     }
 
     return <>

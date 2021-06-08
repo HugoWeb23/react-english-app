@@ -84,7 +84,7 @@ export const Part = () => {
         {filteredThemes.map((theme, index) => <option key={theme._id} value={index}>{theme.theme}</option>)}
     </Form.Control>
        <Form.Text className="text-muted">
-       Tous les thèmes sont sélectionnés par défaut
+       Tous les thèmes sont sélectionnés par défaut.
      </Form.Text></>}
     {errors.themes && <Form.Control.Feedback type="invalid">{errors.themes.message}</Form.Control.Feedback>}
     </Form.Group>
@@ -116,7 +116,7 @@ export const Part = () => {
         {filteredTypes.map((type, index) => <option key={type.type} value={index}>{type.title}</option>)}
     </Form.Control>
     <Form.Text className="text-muted">
-      Tous les types sont sélectionnés par défaut
+      Tous les types sont sélectionnés par défaut.
     </Form.Text>
     </Form.Group>
     <Form.Group controlId="selected-themes">
