@@ -59,6 +59,9 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
             <h2>Résultats</h2>
             <Link to="/gamehistory" className="card-link">Retour à l'historique des parties</Link>
         </div>
+        <div className="score">
+            Score : {partInfo.trueQuestions} / {partInfo.totalQuestions}
+        </div>
         <div className="d-flex justify-content-end mb-3">
         <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange}/>
         </div>

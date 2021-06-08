@@ -149,6 +149,16 @@
     background-color: #48997d;
 }
 
+.error-response {
+    margin-top: 5px;
+    border: 2px solid #ea4335;
+    background: #ea4335;
+    border-radius: 5px;
+    color: #fff;
+    padding: 4px;
+    text-align: center;
+}
+
 .disabled-button {
     cursor: not-allowed;
     opacity: 0.4;

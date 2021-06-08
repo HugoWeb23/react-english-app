@@ -3,16 +3,18 @@ import '../../assets/css/styles.css'
 
 interface IChoicesProps {
     question: QuestionType,
+    errors: any,
     handleChange: (prop: any, e: any) => void
 }
 
-export const MultiChoices = ({ question, handleChange }: IChoicesProps) => {
+export const MultiChoices = ({ question, errors, handleChange }: IChoicesProps) => {
 
     const Change = (p: any, e: any) => {
         handleChange(p, e)
     }
 
-    return <div className="selection-wrapper">
+    return <>
+    <div className="selection-wrapper">
         {question.propositions.map((p, index: number) => <>
             <label htmlFor={`check-${index}`} tabIndex={index + 1} className="selected-label">
                 <input type="checkbox" tabIndex={index + 1} key={p._id} onChange={(e: any) => Change(p, e)} id={`check-${index}`} />
@@ -29,4 +31,6 @@ export const MultiChoices = ({ question, handleChange }: IChoicesProps) => {
             </label>
         </>)}
     </div>
+    {errors && <div className="error-response">Sélectionnez au moins une proposition</div>}
+    </>
 }

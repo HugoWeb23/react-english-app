@@ -41,7 +41,9 @@ export const Play = ({ location = {}, match }: any) => {
     const [endGame, setEndGame] = useState(false);
     const [errors, setErrors] = useState<boolean>(false)
     const { register, handleSubmit, control, reset, formState } = useForm();
+    const {errors: formErrors} = formState
     const [selectedProps, setSelectedProps] = useState<any[]>([])
+    const [propsError, setPropsError] = useState<boolean>(false)
 
     useEffect(() => {
         (async() => {
@@ -68,10 +70,6 @@ export const Play = ({ location = {}, match }: any) => {
             }
     }, [])
 
-    const RedirectOnError = (path: string) => {
-       history.push(path)
-    }
-
     if(errors || data?.AllQuestions.length === 0) {
         return <ErrorPart/>
     }
@@ -82,6 +80,7 @@ export const Play = ({ location = {}, match }: any) => {
 
     const handlePropsChange = (prop: any, e: any) => {
        const {checked}: {checked: boolean} = e.target
+       checked && setPropsError(false)
        checked && setSelectedProps((props: any) => [...props, prop._id])
        checked === false && setSelectedProps((props: any) => props.filter((p: any) => p != prop._id))
     }
@@ -98,6 +97,10 @@ export const Play = ({ location = {}, match }: any) => {
     }
 
     const submit = async (e: any) => {
+        if(currentQuestion.type === 2 && selectedProps.length === 0) {
+            setPropsError(true)
+            return;
+        }
         let response: any = { id_part: data.id_part, id_question: currentQuestion._id, type: currentQuestion.type }
         if (currentQuestion.type === 1) {
             response = { ...response, reponseEcrite: e.reponse }
@@ -106,17 +109,17 @@ export const Play = ({ location = {}, match }: any) => {
             const props = selectedProps
             response = { ...response, propositionsSelect: props }
         }
-        setLoading(true)
-        const fetch = await apiFetch('/api/questions/checkreply', {
-            method: 'POST',
-            body: JSON.stringify(response)
-        })
-        if(fetch.isCorrect) {
-            setData({...data, infos: {...data.infos, points: data.infos.points + 1}})
-        }
-        setSelectedProps([])
-        nextQuestion()
-        setLoading(false)
+            setLoading(true)
+            const fetch = await apiFetch('/api/questions/checkreply', {
+                method: 'POST',
+                body: JSON.stringify(response)
+            })
+            if(fetch.isCorrect) {
+                setData({...data, infos: {...data.infos, points: data.infos.points + 1}})
+            }
+            setSelectedProps([])
+            nextQuestion()
+            setLoading(false)
     }
 
     if (endGame) {
@@ -143,8 +146,8 @@ export const Play = ({ location = {}, match }: any) => {
                     {currentQuestion.question}
                 </div>
                 </div>
-                {currentQuestion.type === 1 && <WriteResponse question={currentQuestion} register={register} />}
-                {currentQuestion.type === 2 && <MultiChoices question={currentQuestion} handleChange={handlePropsChange} />}
+                {currentQuestion.type === 1 && <WriteResponse question={currentQuestion} register={register} errors={formErrors} />}
+                {currentQuestion.type === 2 && <MultiChoices question={currentQuestion} errors={propsError} handleChange={handlePropsChange} />}
                 <button type="submit" className={`submit-button ${loading ? "loading-button" : ""}`}>Valider</button>
             </Form>
         </>}
