@@ -66,7 +66,7 @@ export const SearchByThemes = ({themesList, handleClose, onSubmit}: ISearchByThe
                 <Modal.Title>Rechercher des thèmes</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-                <Form.Group>
+                <Form.Group controlId="search_theme">
                     <Form.Label>Nom du thème</Form.Label>
                     <Form.Control type="text" placeholder="Nom du thème" ref={searchThemeRef} onChange={searchTheme} />
                 </Form.Group>

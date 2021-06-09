@@ -134,7 +134,7 @@ export const Part = () => {
     </Form.Text>
     </Form.Group>
     <Form.Group controlId="random">
-      <Form.Check custom checked={true} type="checkbox" id="custom-limit" label="Questions aléatoires" {...register('random')}/>
+      <Form.Check custom defaultChecked={true} type="checkbox" id="custom-limit" label="Questions aléatoires" {...register('random')}/>
     </Form.Group>
     <Button type="submit" variant="success">Lancer la partie</Button>
     </Form>

@@ -54,8 +54,9 @@ export const QuestionFilters = ({selectedTypes, selectedThemes, typeChange, them
             Afficher les thèmes
     </a>
     </Form.Group>
-    <Form.Group>
-        <Form.Control type="text" placeholder="Recherche par texte" onChange={handleTextChange} />
+    <Form.Group controlId="write_search">
+        <Form.Label>Recherche écrite</Form.Label>
+        <Form.Control type="text" placeholder="" onChange={handleTextChange} />
     </Form.Group>
         {modalThemes && <SearchByThemes themesList={selectedThemes} handleClose={() => setModalThemes(false)} onSubmit={handleThemesChange}/>}
         {(selectedTypes.length > 0 || selectedThemes.length > 0) && <Button variant="outline-danger" className="mt-2" size="sm" onClick={() => resetFilters()}>Supprimer les filtres</Button>}

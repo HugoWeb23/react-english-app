@@ -63,7 +63,9 @@ export const Paginate = ({ totalPages, currentPage: pageCourante, pageChange }: 
 
     const pages = fetchPageNumbers();
 
-    return <Pagination className="d-flex justify-content-end">
+    return <>
+        {pages.length > 0 ? (
+        <Pagination className="d-flex justify-content-end">
         <Pagination.First onClick={() => pageChange(1)} disabled={pageCourante === 1} />
 
         {pages.map((page: number | string, index: number) => {
@@ -78,4 +80,6 @@ export const Paginate = ({ totalPages, currentPage: pageCourante, pageChange }: 
 
         <Pagination.Last onClick={() => pageChange(totalPages)} disabled={pageCourante === totalPages} />
     </Pagination>
+        ) : null}
+    </>
 }

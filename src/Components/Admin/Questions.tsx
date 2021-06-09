@@ -14,8 +14,7 @@ import {QuestionFilters} from './QuestionFilters'
 import {IFiletredQuestions} from '../../Types/Interfaces'
 import {ElementsPerPage} from '../../UI/ElementsPerPage'
 import {Paginate} from '../../UI/Pagination'
-import { stringify } from "querystring";
-
+import Alert from 'react-bootstrap/Alert'
 
 export const Questions = () => {
   const { questions, totalPages, currentPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
@@ -120,6 +119,7 @@ export const Questions = () => {
         {questions && questions.map((question: QuestionType, index: number) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion} />)}
       </tbody>
     </Table>
+    {(!loader && questions.length === 0) && <Alert variant="warning">Aucun résultat</Alert>}
     <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={handlePageChange} />
     </div>
     </div>

@@ -63,13 +63,16 @@ return loading ? <UserLoader/> :
   </Switch>
   <div className="container-md">
   <Switch>
+  <Route exact path="/">
+<Redirect to="/part" />
+</Route>
   <PrivateRoute path="/questions" component={Questions}/>
   <PrivateRoute path="/themes" component={Themes}/>
   <PrivateRoute path="/test" component={Test}/>
   <Route path="/login">{user ? <Redirect to="/questions"/> : <Login onConnect={toggleUser}/>}</Route>
   <Route path="/register">{user ? <Redirect to="/questions"/> : <Register onConnect={toggleUser}/>}</Route>
-  <Route path="/results/:id" exact component={Results}/>
-  <Route path="/gamehistory" exact component={GameHistory}/>
+  <PrivateRoute path="/results/:id" exact component={Results}/>
+  <PrivateRoute path="/gamehistory" exact component={GameHistory}/>
   </Switch>
   </div>
   </userContext.Provider>

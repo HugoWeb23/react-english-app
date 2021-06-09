@@ -17,15 +17,13 @@ const userLogout = () => {
 }
   
 return <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
-<Navbar.Brand href="#home">Anglais-App</Navbar.Brand>
+<Navbar.Brand href="#home">Administration</Navbar.Brand>
 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
 <Navbar.Collapse id="responsive-navbar-nav">
   <Nav className="mr-auto">
   {user && user.admin ? 
       <>
     <NavDropdown title="Administration" id="collasible-nav-dropdown">
-        <LinkContainer to="/questions"><NavDropdown.Item>Gestion des questions</NavDropdown.Item></LinkContainer>
-        <LinkContainer to="/themes"><NavDropdown.Item>Gestion des thèmes</NavDropdown.Item></LinkContainer>
         <LinkContainer to="/part"><NavDropdown.Item>Lancer une partie</NavDropdown.Item></LinkContainer>
         <LinkContainer to="/gamehistory"><NavDropdown.Item>Historique des parties</NavDropdown.Item></LinkContainer>
         <LinkContainer to="/test"><NavDropdown.Item>Test</NavDropdown.Item></LinkContainer>
@@ -33,6 +31,8 @@ return <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
       <NavDropdown.Divider />
       <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
     </NavDropdown>
+    <LinkContainer to="/questions"><Nav.Link>Gestion des questions</Nav.Link></LinkContainer>
+    <LinkContainer to="/themes"><Nav.Link>Gestion des thèmes</Nav.Link></LinkContainer>
     </>
     : null }
   </Nav>
@@ -40,7 +40,7 @@ return <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
       {user ? 
       <>
       <NavDropdown title={user.prenom} id="collasible-nav-dropdown">
-        <LinkContainer to="/questions"><NavDropdown.Item>Mon profil</NavDropdown.Item></LinkContainer>
+        <LinkContainer to="/l"><NavDropdown.Item>Mon profil</NavDropdown.Item></LinkContainer>
     </NavDropdown>
       <Nav.Link href="#" onClick={userLogout}>Déconnexion</Nav.Link>
       </> :
