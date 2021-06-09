@@ -14,6 +14,7 @@ import {QuestionFilters} from './QuestionFilters'
 import {IFiletredQuestions} from '../../Types/Interfaces'
 import {ElementsPerPage} from '../../UI/ElementsPerPage'
 import {Paginate} from '../../UI/Pagination'
+import { stringify } from "querystring";
 
 
 export const Questions = () => {
@@ -23,6 +24,7 @@ export const Questions = () => {
   const [filteredQuestions, setFilteredQuestions] = useState<IFiletredQuestions>({
     type: [],
     theme: [],
+    text: "",
     limit: 10,
     page: 1
   });
@@ -58,6 +60,12 @@ export const Questions = () => {
     })
   }
 
+  const handleTextChange = (text: string) => {
+    setFilteredQuestions((filters: IFiletredQuestions) => {
+      return {...filters, text: text}
+    })
+  }
+
   const resetFilters = () => {
     setFilteredQuestions((filters: IFiletredQuestions) => {
       return {...filters, theme: [], type: []}
@@ -86,16 +94,17 @@ export const Questions = () => {
         </div>
     {newQuestion && <CreateQuestion handleClose={handleCreateQuestion} onSubmit={createQuestion} />}
     <div className="row">
-      <div className="col-md-2">
+      <div className="col-md-3">
         <QuestionFilters
         selectedTypes={filteredQuestions.type}
         selectedThemes={filteredQuestions.theme} 
         typeChange={handleTypeChange}
         themeChanges={handleThemeChange}
+        textChange={handleTextChange}
         resetFilters={resetFilters}
         />
      </div>
-      <div className="col-md-10">
+      <div className="col-md-9">
     <Table striped bordered hover>
       <thead>
         <tr>

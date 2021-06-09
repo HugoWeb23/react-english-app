@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { ChangeEvent, FormEvent, HtmlHTMLAttributes, useState } from 'react'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import {SearchByThemes} from './SearchByThemes'
-import {CloseIcon} from '../../Icons/Close'
+import Card from 'react-bootstrap/Card'
 import {ClosableBadge} from '../../UI/ClosableBadge'
 
 interface IQuestionFilters {
@@ -10,10 +10,11 @@ interface IQuestionFilters {
     selectedThemes: any[],
     typeChange: (checked: boolean, type: number) => void,
     themeChanges: (themes: any, type?: string) => void,
+    textChange: (text: string) => void,
     resetFilters: () => void
 }
 
-export const QuestionFilters = ({selectedTypes, selectedThemes, typeChange, themeChanges, resetFilters}: IQuestionFilters) => {
+export const QuestionFilters = ({selectedTypes, selectedThemes, typeChange, themeChanges, textChange, resetFilters}: IQuestionFilters) => {
     const [modalThemes, setModalThemes] = useState(false)
 
     const handleThemesChange = (themes: any, type?: string) => {
@@ -23,7 +24,13 @@ export const QuestionFilters = ({selectedTypes, selectedThemes, typeChange, them
     const handleTypeChange = (checked: boolean, type: number) => {
         typeChange(checked, type)
     }
+
+    const handleTextChange = (e: ChangeEvent<HTMLInputElement>) => {
+        textChange(e.target.value)
+    }
     return <>
+        <Card>
+            <Card.Body>
         <h4>Les filtres</h4>
         <p>Filtrer par type</p>
         <Form.Group>
@@ -39,13 +46,20 @@ export const QuestionFilters = ({selectedTypes, selectedThemes, typeChange, them
                 custom
             />)}
         </Form.Group>
+        <Form.Group>
         <p className="mb-1">Filtrer par thèmes</p>
         {selectedThemes.map((theme: any, index: number) =>
             <ClosableBadge element={theme} elementName={theme.theme} index={index} variant="dark" handleClose={() => handleThemesChange(theme, 'delete')} />)}
         <a className="link" style={{cursor: 'pointer'}} onClick={() => setModalThemes(true)}>
             Afficher les thèmes
     </a>
+    </Form.Group>
+    <Form.Group>
+        <Form.Control type="text" placeholder="Recherche par texte" onChange={handleTextChange} />
+    </Form.Group>
         {modalThemes && <SearchByThemes themesList={selectedThemes} handleClose={() => setModalThemes(false)} onSubmit={handleThemesChange}/>}
         {(selectedTypes.length > 0 || selectedThemes.length > 0) && <Button variant="outline-danger" className="mt-2" size="sm" onClick={() => resetFilters()}>Supprimer les filtres</Button>}
+        </Card.Body>
+        </Card>
     </>
 }

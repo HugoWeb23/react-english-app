@@ -4,6 +4,7 @@ export interface IFiletredQuestions {
         _id: string,
         theme: string
     }[],
+    text: string,
     limit: number,
     page: number
   }
