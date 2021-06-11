@@ -2,7 +2,13 @@ import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import {useState} from 'react'
 
-export const DeleteModal = ({handleClose, onConfirm, element}) => {
+interface IDeleteModal {
+  handleClose: () => void,
+  onConfirm: (element: any) => Promise<void>,
+  element: any 
+}
+
+export const DeleteModal = ({handleClose, onConfirm, element}: IDeleteModal) => {
 
   const [loading, setLoading] = useState(false)
 

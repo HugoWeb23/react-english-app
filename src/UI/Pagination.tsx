@@ -3,7 +3,7 @@ import Pagination from 'react-bootstrap/Pagination'
 interface IPaginate {
     totalPages: number,
     currentPage: number,
-    pageChange: any
+    pageChange: (page: any) => void
 }
 
 export const Paginate = ({ totalPages, currentPage: pageCourante, pageChange }: IPaginate) => {

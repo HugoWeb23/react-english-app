@@ -8,24 +8,31 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import { ModalTheme } from "../../Themes/ModalTheme"
 import {DeleteModal} from '../../UI/DeleteModal'
 import {ThemeType} from '../../Types/Themes'
+import {usePagination} from '../../Hooks/usePagination'
+import { ElementsPerPage } from '../../UI/ElementsPerPage'
+import {Paginate} from '../../UI/Pagination'
 
 export const Themes = () => {
-    const {themes, getThemes, editTheme, createTheme, deleteTheme} = useThemes();
-    const [loading, setLoading] = useState(true);
+    const {themes, themesCurrentPage, themesTotalPages, getThemes, editTheme, createTheme, deleteTheme} = useThemes();
+    const { totalPages, currentPage, elementsPerPage, setTotalPages, setCurrentPage, setElementsPerPage } = usePagination()
+    const [loading, setLoading] = useState(true)
     const [modalCreate, setModalCreate] = useState(false)
 
     useEffect(() => {
         (async() => {
-            await getThemes();
+            await getThemes(elementsPerPage);
             setLoading(false)
         })()
-    }, [])
+    }, [elementsPerPage, currentPage])
 
     const closeModalCreate = () => {
         setModalCreate(false)
     }
 
     return <>
+    <div className="d-flex justify-content-end mb-3">
+      <ElementsPerPage elementsPerPage={elementsPerPage} onChange={(page) => setElementsPerPage(page)} />
+    </div>
     <div className="d-flex justify-content-between align-items-center mb-2 mt-2">
     <h1>Les thèmes</h1>
     <Button variant="primary" onClick={() => setModalCreate(true)}>Créer un thème</Button>
@@ -43,6 +50,7 @@ export const Themes = () => {
     {loading ? <Loader display="block" animation="border" variant="primary" /> : themes.map((theme: ThemeType, index: number) => <Theme key={index} theme={theme} index={index} onEdit={editTheme} onDelete={deleteTheme}/>)}
   </tbody>
 </Table>
+<Paginate totalPages={themesTotalPages} currentPage={themesCurrentPage} pageChange={(page) => setCurrentPage(page)} />
     </>
 }
 

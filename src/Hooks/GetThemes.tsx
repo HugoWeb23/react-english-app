@@ -8,7 +8,7 @@ export const Themes = () => {
     return {
         themes, 
         GetThemes: async() => {
-            const fetch = await apiFetch('/api/themes/all');
+            const fetch = await apiFetch('/api/themes');
             setThemes(fetch);
         }
     }

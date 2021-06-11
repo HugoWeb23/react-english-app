@@ -4,5 +4,6 @@ export interface IParty {
     totalQuestions: number,
     trueQuestions: number,
     falseQuestions: number,
-    isFinished: boolean
+    isFinished: boolean,
+    temps: string
 }

@@ -21,7 +21,6 @@ export const Register = ({onConnect}: RegisterProps) => {
   const {watch, register, formState, handleSubmit, setError} = useForm({mode: 'onTouched'});
   const {errors, isSubmitting} = formState;
   const password = watch('pass');
-  console.log(password);
   const onSubmit:SubmitHandler<FormValues> = async data => {
     delete data.repeatpass
     try {

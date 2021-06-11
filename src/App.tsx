@@ -50,6 +50,16 @@ export const App = () => {
     }
   }, [user, toggleUser])
 
+  const LoginRouter = () => {
+    if(!user) {
+     return <Login onConnect={toggleUser}/>
+    } else if(user.admin === false) {
+      return <Redirect to="/part"/>
+    } else if(user.admin === true) {
+      return <Redirect to="/questions"/>
+    }
+  }
+
 return loading ? <UserLoader/> :
 <>
   <Router>
@@ -57,22 +67,24 @@ return loading ? <UserLoader/> :
   <ToastAlert/>
   <Switch>
   <Route path="/play/:id" component={Play}/>
-  <PrivateRoute path="/part" exact component={Part}/>
+  <PrivateRoute path="/part" exact component={Part} admin={false}/>
   <Route path="/404" component={NotFound}/>
   <Route path="/*" component={Navigation}/>
   </Switch>
   <div className="container-md">
   <Switch>
   <Route exact path="/">
-<Redirect to="/part" />
-</Route>
-  <PrivateRoute path="/questions" component={Questions}/>
-  <PrivateRoute path="/themes" component={Themes}/>
-  <PrivateRoute path="/test" component={Test}/>
-  <Route path="/login">{user ? <Redirect to="/questions"/> : <Login onConnect={toggleUser}/>}</Route>
-  <Route path="/register">{user ? <Redirect to="/questions"/> : <Register onConnect={toggleUser}/>}</Route>
-  <PrivateRoute path="/results/:id" exact component={Results}/>
-  <PrivateRoute path="/gamehistory" exact component={GameHistory}/>
+  <Redirect to="/part" />
+  </Route>
+  <PrivateRoute path="/questions" component={Questions} admin={true}/>
+  <PrivateRoute path="/themes" component={Themes} admin={true}/>
+  <PrivateRoute path="/test" component={Test} admin={true}/>
+  <Route path="/login">
+    {LoginRouter}
+  </Route>
+  <Route path="/register">{user ? <Redirect to="/part"/> : <Register onConnect={toggleUser}/>}</Route>
+  <PrivateRoute path="/results/:id" exact component={Results} admin={false}/>
+  <PrivateRoute path="/gamehistory" exact component={GameHistory} admin={false}/>
   </Switch>
   </div>
   </userContext.Provider>
