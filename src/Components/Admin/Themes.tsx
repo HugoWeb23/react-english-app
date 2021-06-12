@@ -8,22 +8,25 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import { ModalTheme } from "../../Themes/ModalTheme"
 import {DeleteModal} from '../../UI/DeleteModal'
 import {ThemeType} from '../../Types/Themes'
-import {usePagination} from '../../Hooks/usePagination'
 import { ElementsPerPage } from '../../UI/ElementsPerPage'
 import {Paginate} from '../../UI/Pagination'
+import {IPaginationProps} from '../../Types/Interfaces'
 
 export const Themes = () => {
-    const {themes, themesCurrentPage, themesTotalPages, getThemes, editTheme, createTheme, deleteTheme} = useThemes();
-    const { totalPages, currentPage, elementsPerPage, setTotalPages, setCurrentPage, setElementsPerPage } = usePagination()
-    const [loading, setLoading] = useState(true)
-    const [modalCreate, setModalCreate] = useState(false)
+    const {themes, currentPage, totalPages, elementsPerPage, getThemes, editTheme, createTheme, deleteTheme} = useThemes();
+    const [loading, setLoading] = useState<boolean>(true)
+    const [modalCreate, setModalCreate] = useState<boolean>(false)
+    const [paginationProps, setPaginationProps] = useState<IPaginationProps>({
+      currentPage: 1,
+      elementsPerPage: 10
+    })
 
     useEffect(() => {
         (async() => {
-            await getThemes(elementsPerPage);
+            await getThemes(paginationProps);
             setLoading(false)
         })()
-    }, [elementsPerPage, currentPage])
+    }, [paginationProps])
 
     const closeModalCreate = () => {
         setModalCreate(false)
@@ -31,7 +34,7 @@ export const Themes = () => {
 
     return <>
     <div className="d-flex justify-content-end mb-3">
-      <ElementsPerPage elementsPerPage={elementsPerPage} onChange={(page) => setElementsPerPage(page)} />
+      <ElementsPerPage elementsPerPage={elementsPerPage} onChange={(page) => setPaginationProps(props => { return {...props, elementsPerPage: page}})} />
     </div>
     <div className="d-flex justify-content-between align-items-center mb-2 mt-2">
     <h1>Les thèmes</h1>
@@ -41,7 +44,6 @@ export const Themes = () => {
     <Table striped bordered hover>
   <thead>
     <tr>
-      <th>#</th>
       <th>Thème</th>
       <th>Actions</th>
     </tr>
@@ -50,7 +52,7 @@ export const Themes = () => {
     {loading ? <Loader display="block" animation="border" variant="primary" /> : themes.map((theme: ThemeType, index: number) => <Theme key={index} theme={theme} index={index} onEdit={editTheme} onDelete={deleteTheme}/>)}
   </tbody>
 </Table>
-<Paginate totalPages={themesTotalPages} currentPage={themesCurrentPage} pageChange={(page) => setCurrentPage(page)} />
+<Paginate totalPages={totalPages} currentPage={currentPage} pageChange={(page) => setPaginationProps(props => { return {...props, currentPage: page}})} />
     </>
 }
 
@@ -81,7 +83,6 @@ const Theme = ({theme, index, onEdit, onDelete}: ThemeProps) => {
         setEditModal(false)
     }
 return <tr>
-    <td>{index+1}</td>
     <td>{theme.theme}</td>
     <td>
     <DropdownButton variant="info" title="Actions" disabled={loading}>
@@ -94,7 +95,7 @@ return <tr>
 }
 
 interface CreateThemeProps {
-  onCreate: () => Promise<void>,
+  onCreate: (data: ThemeType) => Promise<void>,
   handleClose: () => void
 }
 

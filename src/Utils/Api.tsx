@@ -1,5 +1,11 @@
+interface IErrors {
+    field: any,
+    message: string
+}
+
 export class ApiErrors {
-    constructor(errors) {
+    errors: IErrors
+    constructor(errors: IErrors) {
         this.errors = errors
     }
 
@@ -8,13 +14,13 @@ export class ApiErrors {
     }
 
     get errorsPerField() {
-        const errors = [];
+        const errors: IErrors[] = [];
        Object.entries(this.errors).map(([key, value]) => errors.push({['field']:key, ['message']: value.message}));
        return errors;
     }
 }
 
-export const apiFetch = async (endpoint, options = {}) => {
+export const apiFetch = async (endpoint: string, options = {}) => {
     const token = null;
     options = {
         headers: {

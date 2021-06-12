@@ -8,3 +8,8 @@ export interface IFiletredQuestions {
     limit: number,
     page: number
   }
+
+export interface IPaginationProps {
+    currentPage: number,
+    elementsPerPage: number
+}

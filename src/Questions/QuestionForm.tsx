@@ -3,26 +3,28 @@ import Button from "react-bootstrap/Button"
 import Modal from "react-bootstrap/Modal"
 import {useFieldArray, useForm, useFormContext} from 'react-hook-form'
 import {MultiChoices} from './MultiChoices'
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { SelectThemes } from "../Themes/SelectThemes"
 import {Themes} from '../Hooks/GetThemes'
+import { Loader } from "../UI/Loader"
 
 export const QuestionForm = () => {
-    const {register, control, watch, Controller, formState, getValues} = useFormContext();
+    const {register, control, watch, formState, getValues} = useFormContext();
     const {errors} = formState;
     const {fields, append, remove} = useFieldArray({control, name: "propositions"})
+    const [themesLoader, setThemesLoader] = useState<boolean>(true)
     const questionType = watch('type');
 
-    // A changer
     const {themes, GetThemes} = Themes();
 
     useEffect(() => {
         (async() => {
             await GetThemes();
+            setThemesLoader(false)
         })()
     }, [])
 
-    const checkReponse = (value) => {
+    const checkReponse = (value: string) => {
         const questionType = watch('type');
         if(value == null && questionType == "1") {
             return "La réponse est obligatoire"
@@ -30,7 +32,7 @@ export const QuestionForm = () => {
         return true
     }
 
-    const removeField = field => {
+    const removeField = (field: any) => {
         if(fields.length > 1) {
             remove(field)
         }
@@ -47,7 +49,7 @@ return <>
 </Form.Group>
 <Form.Group controlId="themeId">
     <Form.Label>Thème de la question</Form.Label>
-    <SelectThemes themes={themes} name="themeId" register={register} errors={errors}/>
+    {themesLoader ? <Loader display="block" animation="border" variant="primary" /> : <SelectThemes themes={themes} name="themeId" register={register} errors={errors}/>}
 </Form.Group>
 <Form.Group controlId="intitule">
     <Form.Label>Intitulé de la question</Form.Label>

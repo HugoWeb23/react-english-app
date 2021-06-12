@@ -1,17 +1,25 @@
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import { FormProvider, useForm } from "react-hook-form";
-import { ThemeForm } from './ThemeForm';
-import { ApiErrors } from '../Utils/Api';
+import { FormProvider, useForm, SubmitHandler } from "react-hook-form"
+import { ThemeForm } from './ThemeForm'
+import { ApiErrors } from '../Utils/Api'
+import { ThemeType } from '../Types/Themes'
 
-export const ModalTheme = ({handleClose, onSubmit, theme = {}, type}) => {
+interface IModalTheme {
+  handleClose: () => void,
+  onSubmit: (data: ThemeType) => Promise<void>,
+  theme?: ThemeType,
+  type: 'create' | 'edit'
+}
+
+export const ModalTheme = ({handleClose, onSubmit, theme = {} as ThemeType, type}: IModalTheme) => {
 
     const methods = useForm({defaultValues: {
         theme: theme.theme || null
     }});
 
-    const submit = async(data) => {
+    const submit: SubmitHandler<ThemeType> = async(data) => {
         try {
             await onSubmit(data)
             handleClose()
