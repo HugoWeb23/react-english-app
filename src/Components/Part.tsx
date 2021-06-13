@@ -1,8 +1,7 @@
-import {useForm, useFormContext, useFieldArray} from 'react-hook-form'
-import {SelectThemes} from '../Themes/SelectThemes'
+import {useForm, useFormContext, useFieldArray, SubmitHandler} from 'react-hook-form'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState, useRef } from 'react'
 import {Themes} from '../Hooks/GetThemes'
 import {Loader} from '../UI/Loader'
 import {CloseIcon} from '../Icons/Close'
@@ -11,26 +10,42 @@ import { apiFetch } from '../Utils/Api'
 import ListGroup from 'react-bootstrap/ListGroup'
 import {useHistory} from 'react-router-dom'
 import {Container} from '../UI/Container'
+import { QuestionType } from '../Types/Questions'
+import { ThemeType } from '../Types/Themes'
+
+interface IPartData {
+limit: number,
+random: boolean
+}
+
+interface ISelectedQuestions {
+    questionId: string,
+    themeId: string
+}
 
 export const Part = () => {
     const history = useHistory()
-    const {register, setError, handleSubmit, clearErrors, control, watch, Controller, formState, getValues} = useForm({defaultValues: {
+    const {register, setError, handleSubmit, clearErrors, control, watch, formState, getValues} = useForm({defaultValues: {
         themes: "",
-        types: [{}]
+        types: [{}],
+        limit: "",
+        random: true
     }});
     const {errors} = formState;
     const {themes, GetThemes} = Themes();
     const types = [{type: 1, title: "Réponse à écrire"}, {type: 2, title: "Choix multiples"}]
     const {selectedThemes, selectedTypes, addOption, deleteOption} = useOptions();
     const [modal, setModal] = useState(false)
-    const [selectedQuestions, setSelectedQuestions] = useState([]);
+    const [selectedQuestions, setSelectedQuestions] = useState<ISelectedQuestions[]>([]);
+    const typesRef = useRef<any>(null)
+    const themesRef = useRef<any>(null)
     useEffect(() => {
         (async() => {
             await GetThemes()
         })()
     }, [])
 
-    const submit = async(e) => {
+    const submit: SubmitHandler<IPartData> = async(e) => {
         const values = { questions: selectedQuestions.map(q => q.questionId), 
                         themes: selectedThemes.map(t => t._id),
                         types: selectedTypes.map(t => t.type),
@@ -47,28 +62,26 @@ export const Part = () => {
         }
      }
 
-    const filteredThemes = (themes || []).filter(theme => {
-        return !selectedThemes.some(t => t._id === theme._id);
-    })
-
-    const filteredTypes = (types || []).filter(type => {
-        return !selectedTypes.some(t => t.type === type.type);
-    })
-
-    const handleThemeChange = (e) => {
+    const handleThemeChange = (e: ChangeEvent<HTMLInputElement>) => {
         clearErrors("themes")
-        addOption(filteredThemes[parseInt(e.target.value, 10)], 'themes')
+        if(themes[parseInt(e.target.value, 10)] != undefined) {
+        addOption(themes[parseInt(e.target.value, 10)], 'themes')
+        themesRef.current.selectedIndex = 0
+        }
     }
 
-    const handleTypeChange = (e) => {
-        addOption(filteredTypes[parseInt(e.target.value, 10)], 'types')
+    const handleTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if(types[parseInt(e.target.value, 10)] != undefined) {
+            addOption(types[parseInt(e.target.value, 10)], 'types')
+        }
+        typesRef.current.selectedIndex = 0
     }
 
     const handleManualQuestions = () => {
         setModal(true)
     }
 
-    const handleDeleteOption = (theme) => {
+    const handleDeleteOption = (theme: ThemeType) => {
         setSelectedQuestions(questions => questions.filter(q => q.themeId != theme._id))
         deleteOption(theme, 'themes')
     }
@@ -79,9 +92,9 @@ export const Part = () => {
     <Form onSubmit={handleSubmit(submit)}>
     <Form.Group controlId="theme">
     <Form.Label>Thème(s)</Form.Label>
-    {themes == null ? <Loader/> : <><Form.Control as="select" {...register('themes')} onChange={handleThemeChange} isInvalid={errors.themes} disabled={filteredThemes.length == 0}>
+    {themes == null ? <Loader/> : <><Form.Control as="select" {...register('themes')} onChange={handleThemeChange} ref={themesRef}>
         <option value="">Sélectionner un thème</option>
-        {filteredThemes.map((theme, index) => <option key={theme._id} value={index}>{theme.theme}</option>)}
+        {themes.map((theme, index) => <option disabled={selectedThemes.filter(t => t._id === theme._id).length > 0} key={theme._id} value={index}>{theme.theme}</option>)}
     </Form.Control>
        <Form.Text className="text-muted">
        Tous les thèmes sont sélectionnés par défaut.
@@ -90,7 +103,7 @@ export const Part = () => {
     </Form.Group>
     <Form.Group controlId="selected-themes">
     <div className="d-flex flex-wrap">
-    {selectedThemes.map((theme, index) => {
+    {selectedThemes.map((theme: ThemeType, index: number) => {
         return <a href="#" key={index} onClick={() => handleDeleteOption(theme)} className="badge badge-primary mr-2 mb-2">{theme.theme} <CloseIcon/></a>
     })}
     </div>
@@ -99,21 +112,21 @@ export const Part = () => {
     <>
     <Form.Group controlId="theme">
     <Form.Label>Questions</Form.Label>
-   <Button block="true" variant="warning" onClick={handleManualQuestions}>Sélection manuelle ({selectedQuestions.length})</Button>
+   <Button block={true} variant="warning" onClick={handleManualQuestions}>Sélection manuelle ({selectedQuestions.length})</Button>
    <Button variant="outline-danger" className="mt-3" size="sm" onClick={() => setSelectedQuestions([])}>Supprimer les questions sélectionnées</Button>
     </Form.Group>
     {modal && <ManualQuestionsModal 
         handleClose={() => setModal(false)} 
         themes={selectedThemes} 
-        onConfirm={(e) => setSelectedQuestions(e)}
+        onConfirm={(e: ISelectedQuestions[]) => setSelectedQuestions(e)}
         checkedQuestions={selectedQuestions}/>}
     </>
     }
     <Form.Group controlId="types">
     <Form.Label>Type(s)</Form.Label>
-    <Form.Control as="select" onChange={handleTypeChange} disabled={filteredTypes.length == 0}>
+    <Form.Control as="select" onChange={handleTypeChange} ref={typesRef}>
         <option value="">Sélectionner un type</option>
-        {filteredTypes.map((type, index) => <option key={type.type} value={index}>{type.title}</option>)}
+        {types.map((type, index) => <option disabled={selectedTypes.filter(t => t.type === type.type).length > 0} key={type.type} value={index}>{type.title}</option>)}
     </Form.Control>
     <Form.Text className="text-muted">
       Tous les types sont sélectionnés par défaut.
@@ -121,7 +134,7 @@ export const Part = () => {
     </Form.Group>
     <Form.Group controlId="selected-themes">
     <div className="d-flex flex-wrap">
-    {selectedTypes.map((type, index) => {
+    {selectedTypes.map((type: ISelectedType, index: number) => {
         return <a href="#" key={index} onClick={() => deleteOption(type, 'types')} className="badge badge-primary mr-2 mb-2">{type.title} <CloseIcon/></a>
     })}
     </div>
@@ -142,39 +155,52 @@ export const Part = () => {
     </>
 }
 
-const useOptions = () => {
-    const [options, setOptions] = useState({themes: [], types: []});
+interface ISelectedType {
+    type: number,
+    title: string
+}
 
+const useOptions = () => {
+    const [options, setOptions] = useState<{themes: ThemeType[], types: ISelectedType[]}>({themes: [], types: []});
     return {
         selectedThemes: options.themes,
         selectedTypes: options.types,
-        addOption: (data, option) => {
+        addOption: (data: ISelectedType | ThemeType, option: 'themes' | 'types') => {
                 setOptions(state => {
                     return {...state, [option]: [...state[option], data]}
                 })
         },
-        deleteOption: (data, option) => {
-                setOptions(state => {
-                    return {...state, [option]: state[option].filter(t => t !== data)}
+        deleteOption: (data: ISelectedType | ThemeType, option: 'themes' | 'types') => {
+                setOptions((state: any) => {
+                    return {...state, [option]: state[option].filter((t: any) => t !== data)}
                 })
         }
     }
 }
 
-const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, checkedQuestions}) => {
-    const [questions, setQuestions] = useState(null);
+interface IManualQuestionsModal {
+    handleClose: () => void,
+    themes: ThemeType[],
+    onConfirm: (selectedQuestions: ISelectedQuestions[]) => void,
+    checkedQuestions: ISelectedQuestions[]
+}
+
+const ManualQuestionsModal = ({handleClose, themes, onConfirm, checkedQuestions}: IManualQuestionsModal) => {
+    const [questions, setQuestions] = useState<QuestionType[]>([]);
+    const [loader, setLoader] = useState<boolean>(true)
     const [selectedQuestions, setSelectedQuestions] = useState(checkedQuestions || []);
     useEffect(() => {
         (async() => {
             const questions = await apiFetch('/api/questions', {
                 method: 'POST',
-                body: JSON.stringify({themes: themes.map(t => t._id)})
+                body: JSON.stringify({themes: themes.map((t: ThemeType) => t._id)})
             })
             setQuestions(questions)
+            setLoader(false)
         })()
     }, [])
 
-    const handleQuestionChange = (value, question) => {
+    const handleQuestionChange = (value: boolean, question: QuestionType) => {
         if(value === true) {
             setSelectedQuestions(questions => [...questions, {questionId: question._id, themeId: question.theme._id}])
            
@@ -193,10 +219,10 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, checkedQue
     </Modal.Header>
     <Modal.Body>
       <p className="font-weight-normal">{themes.length} {themes.length > 1 ? "thèmes sélectionnés" : "thème sélectionné"}</p>
-      {questions === null ? <Loader/> : themes.map(t => {
+      {loader ? <Loader/> : themes.map(t => {
         return <>
         <div style={{fontWeight: 'bold', marginBottom: '10px'}}>{t.theme}</div>
-        <ListGroup className="mb-3">{questions.map((q, i) => q.theme._id === t._id ? <Question index={i} question={q} onChange={handleQuestionChange} checkedQuestions={checkedQuestions}/> : null)}</ListGroup>
+        <ListGroup className="mb-3">{questions.map((q: QuestionType, i: number) => q.theme._id === t._id ? <Question question={q} onChange={handleQuestionChange} checkedQuestions={checkedQuestions}/> : null)}</ListGroup>
         </>
     })}</Modal.Body>
     <Modal.Footer>
@@ -210,12 +236,18 @@ const ManualQuestionsModal = ({handleClose, themes = null, onConfirm, checkedQue
   </Modal>
 }
 
-const Question = ({index, question, onChange, checkedQuestions}) => {
-const handleQuestionChange = (e) => {
+interface IQuestion {
+    question: QuestionType,
+    onChange: (value: boolean, question: QuestionType) => void,
+    checkedQuestions: ISelectedQuestions[]
+}
+
+const Question = ({question, onChange, checkedQuestions}: IQuestion) => {
+const handleQuestionChange = (e: ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.checked, question)
 }
 const isChecked = () => {
-    return checkedQuestions.some(q => q.questionId === question._id) ? "checked" : null
+    return checkedQuestions.some(q => q.questionId === question._id) ? true : undefined
 }
 
     return <>

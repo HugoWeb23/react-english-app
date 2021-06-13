@@ -22,7 +22,6 @@ export const App = () => {
   const [user, setUser] = useState<null | UserType>(null);
   const [loading, setLoading] = useState(true);
   const [alertDisconnect, setAlertDisconnect] = useState(false)
-  console.log(user)
   useEffect(() => {
     (async() => {
       const user = await apiFetch('/api/user', {
@@ -33,8 +32,12 @@ export const App = () => {
     })()
   }, [])
 
-  const toggleUser = (user: UserType) => {
-    setUser(user)
+  const toggleUser = (user?: UserType) => {
+    if(user === undefined) {
+      setUser(null)
+    } else {
+      setUser(user)
+    }
   }
 
   const toggleAlert = () => {

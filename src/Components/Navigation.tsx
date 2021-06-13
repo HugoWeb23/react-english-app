@@ -4,16 +4,15 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import {userContext} from '../Contexts/Contexts'
 import { LinkContainer } from 'react-router-bootstrap'
-import {ToastAlert} from '../UI/Toast'
 
 export const Navigation = () => {
 
-const {user, toggleUser, toggleAlert} = useContext(userContext);
+const value = useContext(userContext);
 
 const userLogout = () => {
   localStorage.removeItem('token');
-  toggleUser(null);
-  toggleAlert();
+  value.toggleUser();
+  value.toggleAlert();
 }
   
 return <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
@@ -21,7 +20,7 @@ return <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
 <Navbar.Collapse id="responsive-navbar-nav">
   <Nav className="mr-auto">
-  {user && user.admin ? 
+  {value.user && value.user.admin ? 
       <>
     <NavDropdown title="Administration" id="collasible-nav-dropdown">
         <LinkContainer to="/part"><NavDropdown.Item>Lancer une partie</NavDropdown.Item></LinkContainer>
@@ -37,9 +36,9 @@ return <Navbar collapseOnSelect expand="lg" bg="primary" variant="dark">
     : null }
   </Nav>
   <Nav>
-      {user ? 
+      {value.user ? 
       <>
-      <NavDropdown title={user.prenom} id="collasible-nav-dropdown">
+      <NavDropdown title={value.user.prenom} id="collasible-nav-dropdown">
         <LinkContainer to="/l"><NavDropdown.Item>Mon profil</NavDropdown.Item></LinkContainer>
     </NavDropdown>
       <Nav.Link href="#" onClick={userLogout}>Déconnexion</Nav.Link>
