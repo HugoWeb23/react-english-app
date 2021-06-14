@@ -17,7 +17,7 @@ import {Paginate} from '../../UI/Pagination'
 import Alert from 'react-bootstrap/Alert'
 
 export const Questions = () => {
-  const { questions, totalPages, currentPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
+  const { questions, totalPages, currentPage, elementsPerPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
   const [loader, setLoader] = useState<boolean>(true);
   const [newQuestion, setnewQuestion] = useState<boolean>(false)
   const [filteredQuestions, setFilteredQuestions] = useState<IFiletredQuestions>({
@@ -89,7 +89,7 @@ export const Questions = () => {
       <Button variant="primary" onClick={handleCreateQuestion}>Créer une question</Button>
     </div>
     <div className="d-flex justify-content-end mb-3">
-        <ElementsPerPage elementsPerPage={filteredQuestions.limit} onChange={handleElementsChange}/>
+        <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange}/>
         </div>
     {newQuestion && <CreateQuestion handleClose={handleCreateQuestion} onSubmit={createQuestion} />}
     <div className="row">
@@ -119,7 +119,7 @@ export const Questions = () => {
         {questions && questions.map((question: QuestionType, index: number) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion} />)}
       </tbody>
     </Table>
-    {(!loader && questions.length === 0) && <Alert variant="warning">Aucun résultat</Alert>}
+    {(loader === false && questions.length === 0) && <Alert variant="warning">Aucun résultat</Alert>}
     <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={handlePageChange} />
     </div>
     </div>

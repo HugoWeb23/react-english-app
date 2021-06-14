@@ -1,10 +1,12 @@
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
+import Alert from 'react-bootstrap/Alert'
 import { FormProvider, useForm, SubmitHandler } from "react-hook-form"
 import { ThemeForm } from './ThemeForm'
 import { ApiErrors } from '../Utils/Api'
 import { ThemeType } from '../Types/Themes'
+import { useState } from 'react'
 
 interface IModalTheme {
   handleClose: () => void,
@@ -14,7 +16,7 @@ interface IModalTheme {
 }
 
 export const ModalTheme = ({handleClose, onSubmit, theme = {} as ThemeType, type}: IModalTheme) => {
-
+    const [globalErrors, setGlobalErrors] = useState<{message: string} | null>(null)
     const methods = useForm({defaultValues: {
         theme: theme.theme || null
     }});
@@ -31,6 +33,7 @@ export const ModalTheme = ({handleClose, onSubmit, theme = {} as ThemeType, type
                         message: err.message
                       });
                 })
+               setGlobalErrors(e.globalErrors)
             }
         }
     }
@@ -42,6 +45,7 @@ export const ModalTheme = ({handleClose, onSubmit, theme = {} as ThemeType, type
     <FormProvider {...methods}>
     <Form onSubmit={methods.handleSubmit(submit)}>
     <Modal.Body>
+    {globalErrors && globalErrors.message != undefined && <Alert variant="danger">{globalErrors.message}</Alert>}
      <ThemeForm/>
     </Modal.Body>
     <Modal.Footer>

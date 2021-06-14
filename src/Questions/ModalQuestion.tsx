@@ -15,6 +15,7 @@ interface IModalQuestion {
 }
 
 export const ModalQuestion = ({handleClose, onSubmit, question = {} as QuestionType, type}: IModalQuestion) => {
+    const [loading, setLoading] = useState(false)
     const methods = useForm({
       defaultValues: {
           type: question.type || "1",
@@ -25,19 +26,14 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {} as QuestionT
           reponse: question.reponse || null
       }
     })
-
-    const [loading, setLoading] = useState(false)
     
-    const submit: SubmitHandler<QuestionType> = async(question) => {
+    const submit: any = async(question: any, close: any) => {
       try {
        setLoading(true)
        await onSubmit(question)
-       handleClose()
-       /*
-       if(close === true) {
+       if(close) {
         handleClose()
        }
-       */
        if(type != 'edit') {
         methods.reset()
        }
@@ -68,7 +64,7 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {} as QuestionT
       <Button variant="secondary" onClick={() => handleClose()}>
         Annuler
       </Button>
-      <Button variant="success" onClick={methods.handleSubmit(submit)} disabled={loading}>{type == 'create' ? "Créer" : "Éditer"}</Button>
+      <Button variant="success" onClick={methods.handleSubmit(data => submit(data, false))} disabled={loading}>{type == 'create' ? "Créer" : "Éditer"}</Button>
       <Button variant="success" type="submit" disabled={loading}>
       {type == 'create' ? "Créer et fermer" : "Éditer et fermer"}
       </Button>

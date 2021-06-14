@@ -34,8 +34,6 @@ export const Login = ({onConnect}: LoginProps) => {
         if(e instanceof ApiErrors) {
           setErrorsPerField(e.errorsPerField)
           setGlobalErrors(e.globalErrors);
-         console.log(globalErrors)
-         console.log(errorsPerField)
         }
       }
      

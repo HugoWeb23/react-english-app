@@ -33,12 +33,12 @@ export const Themes = () => {
     }
 
     return <>
-    <div className="d-flex justify-content-end mb-3">
-      <ElementsPerPage elementsPerPage={elementsPerPage} onChange={(page) => setPaginationProps(props => { return {...props, elementsPerPage: page}})} />
-    </div>
     <div className="d-flex justify-content-between align-items-center mb-2 mt-2">
     <h1>Les thèmes</h1>
     <Button variant="primary" onClick={() => setModalCreate(true)}>Créer un thème</Button>
+    </div>
+    <div className="d-flex justify-content-end mb-3">
+      <ElementsPerPage elementsPerPage={elementsPerPage} onChange={(page) => setPaginationProps(props => { return {...props, elementsPerPage: page}})} />
     </div>
     {modalCreate && <CreateTheme onCreate={createTheme} handleClose={closeModalCreate}/>}
     <Table striped bordered hover>
@@ -59,7 +59,7 @@ export const Themes = () => {
 interface ThemeProps {
   theme: ThemeType,
   index: number,
-  onEdit: (theme: ThemeType, data: ThemeType) => Promise<void>,
+  onEdit: (theme: ThemeType, data: ThemeType) => Promise<any>,
   onDelete: (theme: ThemeType) => Promise<void>
 }
 
@@ -106,7 +106,7 @@ return <ModalTheme onSubmit={onCreate} handleClose={handleClose} type="create"/>
 interface EditThemeProps {
   handleClose: () => void,
   theme: ThemeType,
-  onEdit: (data: ThemeType) => Promise<void>
+  onEdit: (data: ThemeType) => Promise<any>
 }
 
 const EditTheme = ({handleClose, theme, onEdit}: EditThemeProps) => {
