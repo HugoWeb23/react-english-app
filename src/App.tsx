@@ -69,27 +69,24 @@ return loading ? <UserLoader/> :
   <userContext.Provider value={value}>
   <ToastAlert/>
   <Switch>
-  <Route path="/play/:id" component={Play}/>
-  <PrivateRoute path="/part" exact component={Part} admin={false}/>
+  <PrivateRoute path="/play/:id" component={Play} navigation="none"/>
+  <PrivateRoute path="/part" exact component={Part} admin={false} navigation="public"/>
   <Route path="/404" component={NotFound}/>
-  <Route path="/*" component={Navigation}/>
   </Switch>
-  <div className="container-md">
   <Switch>
   <Route exact path="/">
   <Redirect to="/part" />
   </Route>
-  <PrivateRoute path="/questions" component={Questions} admin={true}/>
-  <PrivateRoute path="/themes" component={Themes} admin={true}/>
-  <PrivateRoute path="/test" component={Test} admin={true}/>
+  <PrivateRoute path="/questions" component={Questions} admin={true} navigation="admin"/>
+  <PrivateRoute path="/themes" component={Themes} admin={true} navigation="admin"/>
+  <PrivateRoute path="/test" component={Test} admin={true} navigation="admin"/>
   <Route path="/login">
     {LoginRouter}
   </Route>
   <Route path="/register">{user ? <Redirect to="/part"/> : <Register onConnect={toggleUser}/>}</Route>
-  <PrivateRoute path="/results/:id" exact component={Results} admin={false}/>
-  <PrivateRoute path="/gamehistory" exact component={GameHistory} admin={false}/>
+  <PrivateRoute path="/results/:id" exact component={Results} admin={false} navigation="public"/>
+  <PrivateRoute path="/gamehistory" exact component={GameHistory} admin={false} navigation="public"/>
   </Switch>
-  </div>
   </userContext.Provider>
 </Router>
 </>

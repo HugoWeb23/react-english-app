@@ -11,6 +11,7 @@ import { usePagination } from '../Hooks/usePagination'
 import { Paginate } from '../UI/Pagination'
 import '../assets/css/styles.css'
 import {DeleteModal} from '../UI/DeleteModal'
+import {Container} from '../UI/Container'
 
 export const GameHistory = () => {
   const [parties, setParties] = useState<IParty[]>([])
@@ -56,6 +57,7 @@ export const GameHistory = () => {
   }
 
   return <>
+    <Container>
     <div className="d-flex justify-content-end mb-3">
       <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange} />
     </div>
@@ -75,6 +77,7 @@ export const GameHistory = () => {
       </tbody>
     </Table>
     <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={handlePageChange} />
+    </Container>
   </>
 }
 

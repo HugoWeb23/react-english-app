@@ -10,11 +10,12 @@ import { ModalQuestion } from '../../Questions/ModalQuestion'
 import { Loader } from '../../UI/Loader'
 import { DeleteModal } from "../../UI/DeleteModal"
 import { QuestionType, PropositionType } from '../../Types/Questions'
-import {QuestionFilters} from './QuestionFilters'
-import {IFiletredQuestions} from '../../Types/Interfaces'
-import {ElementsPerPage} from '../../UI/ElementsPerPage'
-import {Paginate} from '../../UI/Pagination'
+import { QuestionFilters } from './QuestionFilters'
+import { IFiletredQuestions } from '../../Types/Interfaces'
+import { ElementsPerPage } from '../../UI/ElementsPerPage'
+import { Paginate } from '../../UI/Pagination'
 import Alert from 'react-bootstrap/Alert'
+import { Container } from "../../UI/Container";
 
 export const Questions = () => {
   const { questions, totalPages, currentPage, elementsPerPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
@@ -41,88 +42,90 @@ export const Questions = () => {
 
   const handleThemeChange = (theme: any, type?: string) => {
     setFilteredQuestions((filters: IFiletredQuestions) => {
-      if(type === 'delete') {
-        return {...filters, theme: filters.theme.filter(t => t != theme)}
+      if (type === 'delete') {
+        return { ...filters, theme: filters.theme.filter(t => t != theme) }
       } else {
-        return {...filters, theme: theme}
+        return { ...filters, theme: theme }
       }
     })
   }
 
   const handleTypeChange = (checked: any, type: any) => {
     setFilteredQuestions((filters: IFiletredQuestions) => {
-     if(checked && !filters.type.includes(type)) {
-      return {...filters, type: [...filters.type, type]}
-     } else {
-       return {...filters, type: filters.type.filter(f => f != type)}
-     }
+      if (checked && !filters.type.includes(type)) {
+        return { ...filters, type: [...filters.type, type] }
+      } else {
+        return { ...filters, type: filters.type.filter(f => f != type) }
+      }
     })
   }
 
   const handleTextChange = (text: string) => {
     setFilteredQuestions((filters: IFiletredQuestions) => {
-      return {...filters, text: text}
+      return { ...filters, text: text }
     })
   }
 
   const resetFilters = () => {
     setFilteredQuestions((filters: IFiletredQuestions) => {
-      return {...filters, theme: [], type: []}
+      return { ...filters, theme: [], type: [] }
     })
   }
 
   const handleElementsChange = (elements: number) => {
     setFilteredQuestions((filters: IFiletredQuestions) => {
-      return {...filters, limit: elements}
+      return { ...filters, limit: elements }
     })
   }
 
   const handlePageChange = (page: number) => {
     setFilteredQuestions((filters: IFiletredQuestions) => {
-      return {...filters, page: page}
+      return { ...filters, page: page }
     })
   }
 
   return <>
-    <div className="d-flex justify-content-between align-items-center mb-2 mt-2">
-      <h1>Les questions</h1>
-      <Button variant="primary" onClick={handleCreateQuestion}>Créer une question</Button>
-    </div>
-    <div className="d-flex justify-content-end mb-3">
-        <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange}/>
+    <Container>
+      <div className="d-flex justify-content-between align-items-center mb-2 mt-2">
+        <h1>Les questions</h1>
+        <Button variant="primary" onClick={handleCreateQuestion}>Créer une question</Button>
+      </div>
+      <div className="d-flex justify-content-end mb-3">
+        <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange} />
+      </div>
+      {newQuestion && <CreateQuestion handleClose={handleCreateQuestion} onSubmit={createQuestion} />}
+      <div className="row">
+        <div className="col-md-3">
+          <QuestionFilters
+            selectedTypes={filteredQuestions.type}
+            selectedThemes={filteredQuestions.theme}
+            typeChange={handleTypeChange}
+            themeChanges={handleThemeChange}
+            textChange={handleTextChange}
+            resetFilters={resetFilters}
+          />
         </div>
-    {newQuestion && <CreateQuestion handleClose={handleCreateQuestion} onSubmit={createQuestion} />}
-    <div className="row">
-      <div className="col-md-3">
-        <QuestionFilters
-        selectedTypes={filteredQuestions.type}
-        selectedThemes={filteredQuestions.theme} 
-        typeChange={handleTypeChange}
-        themeChanges={handleThemeChange}
-        textChange={handleTextChange}
-        resetFilters={resetFilters}
-        />
-     </div>
-      <div className="col-md-9">
-    <Table striped bordered hover>
-      <thead>
-        <tr>
-          <th>Intitulé</th>
-          <th>Question</th>
-          <th>Réponse(s)</th>
-          <th>Type</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        {loader && <Loader display="block" animation="border" variant="primary" />} 
-        {questions && questions.map((question: QuestionType, index: number) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion} />)}
-      </tbody>
-    </Table>
-    {(loader === false && questions.length === 0) && <Alert variant="warning">Aucun résultat</Alert>}
-    <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={handlePageChange} />
-    </div>
-    </div>
+        <div className="col-md-9">
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Intitulé</th>
+                <th>Question</th>
+                <th>Réponse(s)</th>
+                <th>Type</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loader && <Loader display="block" animation="border" variant="primary" />}
+              {questions && questions.map((question: QuestionType, index: number) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion} />)}
+            </tbody>
+          </Table>
+          {(loader === false && questions.length === 0) && <Alert variant="warning">Aucun résultat</Alert>}
+          <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={handlePageChange} />
+        </div>
+      </div>
+    </Container>
   </>
 }
 
