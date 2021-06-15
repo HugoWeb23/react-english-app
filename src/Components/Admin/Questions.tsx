@@ -20,6 +20,7 @@ import { Container } from "../../UI/Container";
 export const Questions = () => {
   const { questions, totalPages, currentPage, elementsPerPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
   const [loader, setLoader] = useState<boolean>(true);
+  const [loadingNextPage, setLoadingNextPage] = useState<boolean>(false)
   const [newQuestion, setnewQuestion] = useState<boolean>(false)
   const [filteredQuestions, setFilteredQuestions] = useState<IFiletredQuestions>({
     type: [],
@@ -31,8 +32,10 @@ export const Questions = () => {
 
   useEffect(() => {
     (async () => {
+      setLoadingNextPage(true);
       await getQuestions(filteredQuestions);
       setLoader(false);
+      setLoadingNextPage(false);
     })()
   }, [filteredQuestions])
 
@@ -106,7 +109,7 @@ export const Questions = () => {
           />
         </div>
         <div className="col-md-9">
-          <Table striped bordered hover>
+          <Table striped bordered hover className={loadingNextPage ? "opacity-table" : ''}>
             <thead>
               <tr>
                 <th>Intitulé</th>

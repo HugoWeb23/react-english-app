@@ -75,7 +75,13 @@ export const Play = ({ location = {}, match }: any) => {
     }
 
     if(dataLoading === true || data === null || currentQuestion === null) {
-        return <Loader/>
+        return <>
+        <div className="game">
+        <div className="error-container">
+        <div className="lds-hourglass"></div>
+        </div>
+        </div>
+        </>
     }
 
     const handlePropsChange = (prop: any, e: any) => {

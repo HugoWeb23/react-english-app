@@ -51,7 +51,8 @@ export const Themes = () => {
           </tr>
         </thead>
         <tbody>
-          {loading ? <Loader display="block" animation="border" variant="primary" /> : themes.map((theme: ThemeType, index: number) => <Theme key={index} theme={theme} index={index} onEdit={editTheme} onDelete={deleteTheme} />)}
+          {loading && <Loader display="block" animation="border" variant="primary" />}
+          {themes && themes.map((theme: ThemeType, index: number) => <Theme key={index} theme={theme} index={index} onEdit={editTheme} onDelete={deleteTheme} />)}
         </tbody>
       </Table>
       <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={(page) => setPaginationProps(props => { return { ...props, currentPage: page } })} />

@@ -32,7 +32,7 @@ export const Part = () => {
         random: true
     }});
     const {errors} = formState;
-    const {themes, GetThemes} = Themes();
+    const {themes, GetThemes, loadingThemes} = Themes();
     const types = [{type: 1, title: "Réponse à écrire"}, {type: 2, title: "Choix multiples"}]
     const {selectedThemes, selectedTypes, addOption, deleteOption} = useOptions();
     const [modal, setModal] = useState(false)
@@ -92,7 +92,7 @@ export const Part = () => {
     <Form onSubmit={handleSubmit(submit)}>
     <Form.Group controlId="theme">
     <Form.Label>Thème(s)</Form.Label>
-    {themes == null ? <Loader/> : <><Form.Control as="select" {...register('themes')} onChange={handleThemeChange} ref={themesRef}>
+    {loadingThemes ? <Loader/> : <><Form.Control as="select" {...register('themes')} onChange={handleThemeChange} ref={themesRef}>
         <option value="">Sélectionner un thème</option>
         {themes.map((theme, index) => <option disabled={selectedThemes.filter(t => t._id === theme._id).length > 0} key={theme._id} value={index}>{theme.theme}</option>)}
     </Form.Control>

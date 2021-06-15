@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { IParty } from '../Types/Parties'
 import { apiFetch } from "../Utils/Api"
-import { useHistory, Link } from 'react-router-dom'
+import { useHistory } from 'react-router-dom'
 import Table from 'react-bootstrap/Table'
+import Alert from 'react-bootstrap/Alert'
 import { Loader } from "../UI/Loader"
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
@@ -52,13 +53,10 @@ export const GameHistory = () => {
     }
   }
 
-  if (dataLoading) {
-    return <Loader />
-  }
-
   return <>
     <Container>
-    <div className="d-flex justify-content-end mb-3">
+    <div className="d-flex justify-content-between mb-3">
+    <h1>Historique de vos parties</h1>
       <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange} />
     </div>
     <Table striped bordered hover className={loadingNextPage ? "opacity-table" : ''}>
@@ -73,9 +71,11 @@ export const GameHistory = () => {
         </tr>
       </thead>
       <tbody>
+        {dataLoading && <Loader/>}
         {parties.map((party: IParty, index: number) => <Party key={index} party={party} onDelete={handlePartDelete} />)}
       </tbody>
     </Table>
+    {(dataLoading === false && parties.length === 0) && <Alert variant="warning">Aucun résultat</Alert>}
     <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={handlePageChange} />
     </Container>
   </>

@@ -1,3 +1,7 @@
 export const UserLoader: Function = () => {
-    return 'Chargement de l\'utilisateur';
+    return <>
+    <div className="main-loader-container">
+    <div className="lds-ripple"><div></div><div></div></div>
+    </div>
+    </>;
 }

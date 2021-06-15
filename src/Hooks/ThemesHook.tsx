@@ -42,7 +42,7 @@ export const useThemes = () => {
         totalPages: state.totalPages,
         elementsPerPage: state.elementsPerPage,
         getThemes: async(props: IPaginationProps) => {
-           fetchThemes(props)
+           await fetchThemes(props)
         },
         editTheme: async(theme: ThemeType, data: ThemeType) => {
                 const fetch = await apiFetch(`/api/themes/${theme._id}`, {
