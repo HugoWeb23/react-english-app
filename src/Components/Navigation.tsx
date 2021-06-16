@@ -33,21 +33,12 @@ export const Navigation = ({ children }: {children: JSX.Element}) => {
               </NavDropdown>
               <LinkContainer to="/questions"><Nav.Link>Gestion des questions</Nav.Link></LinkContainer>
               <LinkContainer to="/themes"><Nav.Link>Gestion des thèmes</Nav.Link></LinkContainer>
+              <LinkContainer to="/manageaccounts"><Nav.Link>Gestion des comptes</Nav.Link></LinkContainer>
             </>
             : null}
         </Nav>
         <Nav>
-          {value.user ?
-            <>
-              <NavDropdown title={value.user.prenom} id="collasible-nav-dropdown">
-                <LinkContainer to="/l"><NavDropdown.Item>Mon profil</NavDropdown.Item></LinkContainer>
-              </NavDropdown>
-            </> :
-            <>
-              <LinkContainer to="/login"><Nav.Link href="#deets">Connexion</Nav.Link></LinkContainer>
-              <LinkContainer to="/register"><Nav.Link href="#deets">Inscription</Nav.Link></LinkContainer>
-            </>
-          }
+        <LinkContainer to="/part"><Nav.Link>Quitter l'administration</Nav.Link></LinkContainer>
         </Nav>
       </Navbar.Collapse>
     </Navbar>

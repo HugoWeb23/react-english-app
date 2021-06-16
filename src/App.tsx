@@ -17,7 +17,8 @@ import {UserType} from './Types/User'
 import {Results} from './Components/Game/Results'
 import {GameHistory} from './Components/GameHistory'
 import {NotFound} from './Components/404'
-import { Profile } from "./Components/Profile";
+import { Profile } from "./Components/Profile"
+import { ManageAccounts } from "./Components/Admin/ManageAccounts";
 
 export const App = () => {
   const [user, setUser] = useState<null | UserType>(null);
@@ -81,6 +82,7 @@ return loading ? <UserLoader/> :
   </Route>
   <PrivateRoute path="/questions" component={Questions} admin={true} navigation="admin"/>
   <PrivateRoute path="/themes" component={Themes} admin={true} navigation="admin"/>
+  <PrivateRoute path="/manageaccounts" component={ManageAccounts} admin={true} navigation="admin"/>
   <PrivateRoute path="/test" component={Test} admin={true} navigation="admin"/>
   <Route path="/login">
     {LoginRouter}

@@ -13,3 +13,11 @@ export interface IPaginationProps {
     currentPage: number,
     elementsPerPage: number
 }
+
+export interface IUsers {
+    _id: string,
+    nom: string,
+    prenom: string,
+    email: string,
+    admin: boolean
+}

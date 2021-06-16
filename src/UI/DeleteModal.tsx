@@ -5,10 +5,11 @@ import {useState} from 'react'
 interface IDeleteModal {
   handleClose: () => void,
   onConfirm: (element: any) => Promise<void>,
-  element: any 
+  element: any,
+  message?: string
 }
 
-export const DeleteModal = ({handleClose, onConfirm, element}: IDeleteModal) => {
+export const DeleteModal = ({handleClose, onConfirm, element, message = 'Voulez-vous vraiment supprimer cet élément ?'}: IDeleteModal) => {
 
   const [loading, setLoading] = useState(false)
 
@@ -22,7 +23,7 @@ return  <Modal show={true} onHide={() => handleClose()}>
 <Modal.Header closeButton>
   <Modal.Title>Confirmation</Modal.Title>
 </Modal.Header>
-<Modal.Body>Voulez-vous vraiment supprimer cet élément ?</Modal.Body>
+<Modal.Body>{message}</Modal.Body>
 <Modal.Footer>
   <Button variant="secondary" onClick={() => handleClose()}>
     Annuler
