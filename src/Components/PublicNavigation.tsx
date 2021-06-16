@@ -28,7 +28,7 @@ export const PublicNavigation = ({ children }: {children: JSX.Element}) => {
                     {value.user ?
                         <>
                             <NavDropdown title={value.user.prenom} id="collasible-nav-dropdown">
-                                <LinkContainer to="/l"><NavDropdown.Item>Mon profil</NavDropdown.Item></LinkContainer>
+                                <LinkContainer to="/profile"><NavDropdown.Item>Mon profil</NavDropdown.Item></LinkContainer>
                             </NavDropdown>
                             <Nav.Link href="#" onClick={userLogout}>Déconnexion</Nav.Link>
                         </> :

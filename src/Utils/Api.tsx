@@ -34,8 +34,6 @@ export const apiFetch = async (endpoint: string, options = {}) => {
     const response = await fetch('https://hugomongoapi.herokuapp.com' + endpoint, options)
     if (response.status == 204) {
         return null;
-    } else if(response.status == 401) {
-        return null;
     }
     const responseData = await response.json();
     if (response.ok) {

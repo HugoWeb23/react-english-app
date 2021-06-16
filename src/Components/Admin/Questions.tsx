@@ -15,7 +15,7 @@ import { IFiletredQuestions } from '../../Types/Interfaces'
 import { ElementsPerPage } from '../../UI/ElementsPerPage'
 import { Paginate } from '../../UI/Pagination'
 import Alert from 'react-bootstrap/Alert'
-import { Container } from "../../UI/Container";
+import { Container } from "../../UI/Container"
 
 export const Questions = () => {
   const { questions, totalPages, currentPage, elementsPerPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
@@ -32,10 +32,10 @@ export const Questions = () => {
 
   useEffect(() => {
     (async () => {
-      setLoadingNextPage(true);
-      await getQuestions(filteredQuestions);
-      setLoader(false);
-      setLoadingNextPage(false);
+        setLoadingNextPage(true);
+        await getQuestions(filteredQuestions);
+        setLoader(false);
+        setLoadingNextPage(false);
     })()
   }, [filteredQuestions])
 

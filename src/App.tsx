@@ -17,6 +17,7 @@ import {UserType} from './Types/User'
 import {Results} from './Components/Game/Results'
 import {GameHistory} from './Components/GameHistory'
 import {NotFound} from './Components/404'
+import { Profile } from "./Components/Profile";
 
 export const App = () => {
   const [user, setUser] = useState<null | UserType>(null);
@@ -24,10 +25,14 @@ export const App = () => {
   const [alertDisconnect, setAlertDisconnect] = useState(false)
   useEffect(() => {
     (async() => {
-      const user = await apiFetch('/api/user', {
-        method: 'GET'
-      })
-      setUser(user);
+      try {
+        const user = await apiFetch('/api/user', {
+          method: 'GET'
+        })
+        setUser(user);
+      } catch(e) {
+        setUser(null)
+      }
       setLoading(false)
     })()
   }, [])
@@ -83,6 +88,7 @@ return loading ? <UserLoader/> :
   <Route path="/register">{user ? <Redirect to="/part"/> : <Register onConnect={toggleUser}/>}</Route>
   <PrivateRoute path="/results/:id" exact component={Results} admin={false} navigation="public"/>
   <PrivateRoute path="/gamehistory" exact component={GameHistory} admin={false} navigation="public"/>
+  <PrivateRoute path="/profile" exact component={Profile} admin={false} navigation="public"/>
   </userContext.Provider>
 </Router>
 </>

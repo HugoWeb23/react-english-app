@@ -56,7 +56,7 @@ export const QuestionsHook = () => {
                 method: 'DELETE'
             })
             if(state.questions.length <= 1 && state.totalPages > 1) {
-                fetchQuestions({page: (state.currentPage > 1 ? state.currentPage - 1 : 1), limit: state.elementsPerPage, type: state.type, theme: state.theme, text: state.text})
+                await fetchQuestions({page: (state.currentPage > 1 ? state.currentPage - 1 : 1), limit: state.elementsPerPage, type: state.type, theme: state.theme, text: state.text})
             }
             dispatch({ type: 'DELETE_QUESTION', payLoad: question });
         },
