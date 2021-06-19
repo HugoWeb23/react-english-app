@@ -10,9 +10,11 @@ import Dropdown from 'react-bootstrap/Dropdown'
 import { ModalAccount } from '../../Accounts/ModalAccount'
 import { AccountForm } from '../../Accounts/AccountForm'
 import { DeleteModal } from '../../UI/DeleteModal'
+import { ElementsPerPage } from '../../UI/ElementsPerPage'
+import { Paginate } from '../../UI/Pagination'
 
 export const ManageAccounts = () => {
-    const {users, GetAllUsers, UpdateUser, DeleteUser} = ManageUsersHook()
+    const {users, GetAllUsers, UpdateUser, DeleteUser, elementsPerPage, totalPages, currentPage, ChangeLimit, ChangePage} = ManageUsersHook()
     const [loader, setLoader] = useState<boolean>(true)
 
 useEffect(() => {
@@ -27,6 +29,9 @@ return  <>
 <div className="d-flex justify-content-between align-items-center mb-2 mt-2">
 <h1>Gestion des comptes</h1>
 </div>
+<div className="d-flex justify-content-end mb-3">
+        <ElementsPerPage elementsPerPage={elementsPerPage} onChange={ChangeLimit} />
+      </div>
 <Table striped bordered hover>
             <thead>
               <tr>
@@ -42,6 +47,7 @@ return  <>
               {users.map(user => <User user={user} onSubmit={UpdateUser} onDelete={DeleteUser}/>)}
             </tbody>
           </Table>
+          <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={ChangePage} />
 </Container>
 </>
 }

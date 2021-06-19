@@ -1,15 +1,17 @@
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import {useState} from 'react'
+import { toast } from 'react-toastify'
 
 interface IDeleteModal {
   handleClose: () => void,
   onConfirm: (element: any) => Promise<void>,
   element: any,
-  message?: string
+  alertMessage?: string,
+  deleteMessage?: string
 }
 
-export const DeleteModal = ({handleClose, onConfirm, element, message = 'Voulez-vous vraiment supprimer cet élément ?'}: IDeleteModal) => {
+export const DeleteModal = ({handleClose, onConfirm, element, alertMessage = 'Voulez-vous vraiment supprimer cet élément ?', deleteMessage = 'Élément supprimé'}: IDeleteModal) => {
 
   const [loading, setLoading] = useState(false)
 
@@ -17,13 +19,14 @@ export const DeleteModal = ({handleClose, onConfirm, element, message = 'Voulez-
         setLoading(true)
         await onConfirm(element)
         handleClose()
+        toast.success(deleteMessage)
     }
 
 return  <Modal show={true} onHide={() => handleClose()}>
 <Modal.Header closeButton>
   <Modal.Title>Confirmation</Modal.Title>
 </Modal.Header>
-<Modal.Body>{message}</Modal.Body>
+<Modal.Body>{alertMessage}</Modal.Body>
 <Modal.Footer>
   <Button variant="secondary" onClick={() => handleClose()}>
     Annuler

@@ -165,7 +165,7 @@ const Question = memo(({ question, onDelete, onUpdate }: QuestionProps) => {
         <Dropdown.Item eventKey="2" onClick={() => setDeleteModal(true)}>Supprimer</Dropdown.Item>
       </DropdownButton>
     </td>
-    {deleteModal && <DeleteModal handleClose={() => setDeleteModal(false)} element={question} onConfirm={Delete} />}
+    {deleteModal && <DeleteModal handleClose={() => setDeleteModal(false)} element={question} onConfirm={Delete} deleteMessage="La question a été supprimée" />}
     {editQuestion && <EditQuestion handleClose={() => setEditQuestion(false)} question={question} onSubmit={updateQuestion} />}
   </tr>
 })

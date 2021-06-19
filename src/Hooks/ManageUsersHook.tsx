@@ -1,21 +1,54 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { IUsers } from "../Types/Interfaces"
 import { apiFetch } from "../Utils/Api"
 
+interface IState {
+    users: IUsers[],
+    totalPages: number,
+    currentPage: number,
+    elementsPerPage: number
+}
+
 export const ManageUsersHook = () => {
-    const [users, setUsers] = useState<IUsers[]>([])
+    const [state, setState] = useState<IState>({users: [], totalPages: 1, currentPage: 1, elementsPerPage: 10})
+   
+    const FetchUsers = async(page: number = 1, limit: number = 10) => {
+        const FetchUsers = await apiFetch(`/api/users?page=${page}&limit=${limit}`);
+        setState(state => {
+            return {...state, users: FetchUsers.allUsers, totalPages: FetchUsers.totalPages, currentPage: FetchUsers.currentPage, elementsPerPage: FetchUsers.elementsPerPage}
+        })
+    }
 
     return {
-        users,
+        users: state.users,
+        totalPages: state.totalPages,
+        currentPage: state.currentPage,
+        elementsPerPage: state.elementsPerPage,
         GetAllUsers: async() => {
-            const FetchUsers = await apiFetch('/api/users');
-            setUsers(FetchUsers)
+            await FetchUsers()
         },
         UpdateUser: async(olduser: IUsers, newuser: IUsers) => {
-            setUsers(users => users.map(user => olduser == user ? newuser : user))
+            const UpdateUser = await apiFetch('/api/user', {
+                method: 'PUT',
+                body: JSON.stringify(newuser)
+            })
+            setState(state => {
+                return {...state, users: state.users.map(user => olduser == user ? UpdateUser : user)}
+            })
         },
         DeleteUser: async(data: IUsers) => {
-            setUsers(users => users.filter(user => user != data))
+            const DeleteUser = await apiFetch(`/api/user/${data._id}`, {
+                method: 'DELETE'
+            })
+            setState(state => {
+                return {...state, users: state.users.filter(user => user != data)}
+            })
+        },
+        ChangeLimit: async(limit: number) => {
+            await FetchUsers(state.currentPage, limit)
+        },
+        ChangePage: async(page: number) => {
+            await FetchUsers(page, state.elementsPerPage)
         }
     }
 }

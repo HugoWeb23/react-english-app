@@ -18,7 +18,9 @@ import {Results} from './Components/Game/Results'
 import {GameHistory} from './Components/GameHistory'
 import {NotFound} from './Components/404'
 import { Profile } from "./Components/Profile"
-import { ManageAccounts } from "./Components/Admin/ManageAccounts";
+import { ManageAccounts } from "./Components/Admin/ManageAccounts"
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 export const App = () => {
   const [user, setUser] = useState<null | UserType>(null);
@@ -74,6 +76,7 @@ return loading ? <UserLoader/> :
   <Router>
   <userContext.Provider value={value}>
   <ToastAlert/>
+  <ToastContainer autoClose={2500}/>
   <PrivateRoute path="/play/:id" component={Play} navigation="none"/>
   <PrivateRoute path="/part" exact component={Part} admin={false} navigation="public"/>
   <Route path="/404" component={NotFound}/>

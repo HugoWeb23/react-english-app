@@ -18,12 +18,12 @@ return <>
 </Form.Group>
 <Form.Group controlId="email">
     <Form.Label>Adresse e-mail</Form.Label>
-    <Form.Control type="text" placeholder="Intitulé de la question" isInvalid={errors.email} {...register('email', {required: "L'adresse -email est obligatoire"})}/>
+    <Form.Control type="text" placeholder="Intitulé de la question" isInvalid={errors.email} {...register('email', {required: "L'adresse e-mail est obligatoire"})}/>
     {errors.email && <Form.Control.Feedback type="invalid">{errors.email.message}</Form.Control.Feedback>}
 </Form.Group>
 <Form.Group controlId="role">
     <Form.Label>Rôle de l'utilisateur</Form.Label>
-    <Form.Control as="select" isInvalid={errors.role} {...register('admin', {required: "Le role est obligatoire", min: 1, max: 2})}>
+    <Form.Control as="select" isInvalid={errors.role} {...register('admin', {required: "Le rôle est obligatoire"})}>
       <option value="false">Utilisateur</option>
       <option value="true">Administrateur</option>
     </Form.Control>

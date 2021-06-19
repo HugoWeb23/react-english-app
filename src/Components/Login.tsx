@@ -16,7 +16,6 @@ type FormValues = {
 }
 
 export const Login = ({onConnect}: LoginProps) => {
-   const [errorsPerField, setErrorsPerField] = useState({});
    const [globalErrors, setGlobalErrors] = useState<{message: string} | null>(null);
 
    const {watch, register, formState, handleSubmit, setError} = useForm();
@@ -32,13 +31,20 @@ export const Login = ({onConnect}: LoginProps) => {
          onConnect(user);
       } catch(e) {
         if(e instanceof ApiErrors) {
-          setErrorsPerField(e.errorsPerField)
+          console.log(e.errorsPerField)
+          e.errorsPerField.forEach(err => {
+            setError(err.field, {
+              type: 'manual',
+              message: err.message
+            })
+          })
           setGlobalErrors(e.globalErrors);
         }
       }
      
    }
    return <Form noValidate className="container mt-4" onSubmit={handleSubmit(onSubmit)}>
+     {JSON.stringify(globalErrors)}
       {globalErrors && globalErrors.message != undefined && <Alert variant="danger">{globalErrors.message}</Alert>}
    <Form.Group controlId="email">
      <Form.Label>Adresse e-mail</Form.Label>

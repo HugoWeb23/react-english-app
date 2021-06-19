@@ -13,7 +13,7 @@ interface IModalAccount {
   onSubmit: (user: IUsers) => Promise<any>,
   user?: IUsers,
   type: 'edit' | 'create',
-  children: JSX.Element
+  children: any
 }
 
 export const ModalAccount = ({handleClose, onSubmit, user = {} as IUsers, type, children}: IModalAccount) => {

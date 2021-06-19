@@ -6,6 +6,7 @@ import { Form } from "react-bootstrap";
 import {ApiErrors} from '../Utils/Api'
 import { useState } from "react";
 import {QuestionType} from '../Types/Questions'
+import { toast } from 'react-toastify'
 
 interface IModalQuestion {
   handleClose: () => void,
@@ -17,14 +18,7 @@ interface IModalQuestion {
 export const ModalQuestion = ({handleClose, onSubmit, question = {} as QuestionType, type}: IModalQuestion) => {
     const [loading, setLoading] = useState(false)
     const methods = useForm({
-      defaultValues: {
-          type: question.type || "1",
-          themeId: question.theme && question.theme._id || null,
-          intitule: question.intitule || null,
-          question: question.question || null,
-          propositions: question.propositions || [{}],
-          reponse: question.reponse || null
-      }
+      defaultValues: {...question, propositions: (question.propositions === undefined ? [{}] : question.propositions), themeId: question.theme?._id }
     })
     
     const submit: any = async(question: any, close: any) => {
@@ -38,6 +32,7 @@ export const ModalQuestion = ({handleClose, onSubmit, question = {} as QuestionT
         methods.reset()
        }
        setLoading(false)
+       toast.success('TEST')
       } catch(e) {
         if(e instanceof ApiErrors) {
           e.errorsPerField.forEach(err => {
