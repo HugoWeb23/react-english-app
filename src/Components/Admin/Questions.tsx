@@ -6,7 +6,6 @@ import Button from 'react-bootstrap/Button'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Badge from 'react-bootstrap/Badge'
-import { ModalQuestion } from '../../Questions/ModalQuestion'
 import { Loader } from '../../UI/Loader'
 import { DeleteModal } from "../../UI/DeleteModal"
 import { QuestionType, PropositionType } from '../../Types/Questions'
@@ -16,6 +15,8 @@ import { ElementsPerPage } from '../../UI/ElementsPerPage'
 import { Paginate } from '../../UI/Pagination'
 import Alert from 'react-bootstrap/Alert'
 import { Container } from "../../UI/Container"
+import { AdminModalForm } from '../../ModalForm/AdminModalForm'
+import { QuestionForm } from "../../AdminForms/Questions/QuestionForm";
 
 export const Questions = () => {
   const { questions, totalPages, currentPage, elementsPerPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
@@ -32,10 +33,10 @@ export const Questions = () => {
 
   useEffect(() => {
     (async () => {
-        setLoadingNextPage(true);
-        await getQuestions(filteredQuestions);
-        setLoader(false);
-        setLoadingNextPage(false);
+      setLoadingNextPage(true);
+      await getQuestions(filteredQuestions);
+      setLoader(false);
+      setLoadingNextPage(false);
     })()
   }, [filteredQuestions])
 
@@ -176,7 +177,15 @@ interface CreateQuestionProps {
 }
 
 const CreateQuestion = ({ handleClose, onSubmit }: CreateQuestionProps) => {
-  return <ModalQuestion handleClose={handleClose} onSubmit={onSubmit} type="create" />
+  const defaultValues = { propositions: [{}] }
+  return <AdminModalForm
+    handleClose={handleClose}
+    onSubmit={onSubmit}
+    type="create"
+    component={QuestionForm}
+    defaultValues={defaultValues}
+    createText="Créer une question"
+    editText="Éditer une question" />
 }
 
 interface EditQuestionProps {
@@ -186,6 +195,14 @@ interface EditQuestionProps {
 }
 
 const EditQuestion = ({ handleClose, question, onSubmit }: EditQuestionProps) => {
-  return <ModalQuestion handleClose={handleClose} question={question} onSubmit={onSubmit} type="edit" />
+  const defaultValues = { ...question, propositions: (question.propositions === undefined ? [{}] : question.propositions), themeId: question.theme?._id }
+  return <AdminModalForm
+    handleClose={handleClose}
+    onSubmit={onSubmit}
+    type="edit"
+    component={QuestionForm}
+    defaultValues={defaultValues}
+    createText="Créer une question"
+    editText="Éditer une question" />
 }
 

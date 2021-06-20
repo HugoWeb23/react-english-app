@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import Form from 'react-bootstrap/Form'
-import { ThemeType } from "../Types/Themes"
+import { ThemeType } from "../../Types/Themes"
 import { FieldErrors, FieldValues, UseFormRegister } from "react-hook-form"
 
 interface ISelectedThemes {

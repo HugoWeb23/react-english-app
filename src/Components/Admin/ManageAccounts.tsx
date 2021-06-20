@@ -7,8 +7,8 @@ import { ManageUsersHook } from '../../Hooks/ManageUsersHook'
 import { Loader } from '../../UI/Loader'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
-import { ModalAccount } from '../../Accounts/ModalAccount'
-import { AccountForm } from '../../Accounts/AccountForm'
+import { AdminModalForm } from '../../ModalForm/AdminModalForm'
+import { AccountForm } from '../../AdminForms/Accounts/AccountForm'
 import { DeleteModal } from '../../UI/DeleteModal'
 import { ElementsPerPage } from '../../UI/ElementsPerPage'
 import { Paginate } from '../../UI/Pagination'
@@ -44,7 +44,7 @@ return  <>
             </thead>
             <tbody>
               {loader && <Loader animation="border" variant="primary"/>}
-              {users.map(user => <User user={user} onSubmit={UpdateUser} onDelete={DeleteUser}/>)}
+              {users.map(user => <User user={user} key={user._id} onSubmit={UpdateUser} onDelete={DeleteUser}/>)}
             </tbody>
           </Table>
           <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={ChangePage} />
@@ -73,19 +73,15 @@ const User = ({user, onSubmit, onDelete}: UserInterface) => {
         <Dropdown.Item eventKey="2" onClick={() => setDeleteModal(true)}>Supprimer</Dropdown.Item>
       </DropdownButton></td>
     </tr>
-    {editModal && <EditUser user={user} handleClose={() => setEditModal(false)} onSubmit={data => onSubmit(user, data)}/>}
+    {editModal && <AdminModalForm 
+            handleClose={() => setEditModal(false)} 
+            onSubmit={data => onSubmit(user, data)} 
+            type="edit" 
+            component={AccountForm}
+            defaultValues={user}
+            createText="Créer un compte"
+            editText="Éditer un compte"/>
+    }
     {deleteModal && <DeleteModal handleClose={() => setDeleteModal(false)} onConfirm={onDelete} element={user}/>}
     </>
-}
-
-interface IEditUser {
-    user: IUsers,
-    handleClose: () => void,
-    onSubmit: (user: IUsers) => Promise<any>,
-}
-
-const EditUser = ({user, handleClose, onSubmit}: IEditUser) => {
-    return <ModalAccount user={user} handleClose={handleClose} onSubmit={(user) => onSubmit(user)} type="edit">
-        <AccountForm/>
-    </ModalAccount>
 }

@@ -5,13 +5,14 @@ import Table from 'react-bootstrap/Table'
 import { Loader } from '../../UI/Loader'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Dropdown from 'react-bootstrap/Dropdown'
-import { ModalTheme } from "../../Themes/ModalTheme"
 import { DeleteModal } from '../../UI/DeleteModal'
 import { ThemeType } from '../../Types/Themes'
 import { ElementsPerPage } from '../../UI/ElementsPerPage'
 import { Paginate } from '../../UI/Pagination'
 import { IPaginationProps } from '../../Types/Interfaces'
 import { Container } from '../../UI/Container'
+import { AdminModalForm } from '../../ModalForm/AdminModalForm'
+import { ThemeForm } from "../../AdminForms/Themes/ThemeForm";
 
 export const Themes = () => {
   const { themes, currentPage, totalPages, elementsPerPage, getThemes, editTheme, createTheme, deleteTheme } = useThemes();
@@ -104,7 +105,13 @@ interface CreateThemeProps {
 }
 
 const CreateTheme = ({ onCreate, handleClose }: CreateThemeProps) => {
-  return <ModalTheme onSubmit={onCreate} handleClose={handleClose} type="create" />
+  return <AdminModalForm
+  handleClose={handleClose}
+  onSubmit={onCreate}
+  type="create"
+  component={ThemeForm}
+  createText="Créer un thème"
+  editText="Éditer un thème" />
 }
 
 interface EditThemeProps {
@@ -114,5 +121,12 @@ interface EditThemeProps {
 }
 
 const EditTheme = ({ handleClose, theme, onEdit }: EditThemeProps) => {
-  return <ModalTheme handleClose={handleClose} theme={theme} onSubmit={onEdit} type="edit" />
+  return <AdminModalForm
+  handleClose={handleClose}
+  onSubmit={onEdit}
+  type="edit"
+  component={ThemeForm}
+  defaultValues={theme}
+  createText="Créer un thème"
+  editText="Éditer un thème" />
 }

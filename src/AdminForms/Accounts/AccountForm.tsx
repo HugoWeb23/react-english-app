@@ -1,8 +1,8 @@
 import Form from "react-bootstrap/Form"
-import {useFormContext} from 'react-hook-form'
+import { UseFormReturn } from "react-hook-form";
 
-export const AccountForm = () => {
-    const {register, control, watch, formState, getValues} = useFormContext();
+export const AccountForm = (props: UseFormReturn) => {
+    const {register, control, watch, formState, getValues, setValue} = props;
     const {errors} = formState;
 
 return <>
@@ -23,11 +23,11 @@ return <>
 </Form.Group>
 <Form.Group controlId="role">
     <Form.Label>Rôle de l'utilisateur</Form.Label>
-    <Form.Control as="select" isInvalid={errors.role} {...register('admin', {required: "Le rôle est obligatoire"})}>
+    <Form.Control as="select" isInvalid={errors.admin} {...register('admin', {required: "Le rôle est obligatoire"})}>
       <option value="false">Utilisateur</option>
       <option value="true">Administrateur</option>
     </Form.Control>
-    {errors.role && <Form.Control.Feedback type="invalid">{errors.role.message}</Form.Control.Feedback>}
+    {errors.admin && <Form.Control.Feedback type="invalid">{errors.admin.message}</Form.Control.Feedback>}
 </Form.Group>
 </>
 }

@@ -7,7 +7,7 @@ export interface IFiletredQuestions {
     text: string,
     limit: number,
     page: number
-  }
+}
 
 export interface IPaginationProps {
     currentPage: number,

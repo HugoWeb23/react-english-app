@@ -1,8 +1,8 @@
 import Form from 'react-bootstrap/Form'
-import {useFormContext} from 'react-hook-form'
+import {UseFormReturn} from 'react-hook-form'
 
-export const ThemeForm = () => {
-    const {register, formState} = useFormContext();
+export const ThemeForm = (props: UseFormReturn) => {
+    const {register, formState} = props
     const {errors} = formState;
 
     return <>
