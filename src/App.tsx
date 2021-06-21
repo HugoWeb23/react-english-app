@@ -56,18 +56,20 @@ export const App = () => {
     return {
       user,
       alertDisconnect,
+      loading,
       toggleUser,
       toggleAlert
     }
   }, [user, toggleUser])
 
   const LoginRouter = () => {
+    console.log('LOgin router')
     if(!user) {
      return <Login onConnect={toggleUser}/>
     } else if(user.admin === false) {
       return <Redirect to="/part"/>
     } else if(user.admin === true) {
-      return <Redirect to="/questions"/>
+      return <Redirect to="/themes"/>
     }
   }
 
@@ -87,9 +89,7 @@ return loading ? <UserLoader/> :
   <PrivateRoute path="/themes" component={Themes} admin={true} navigation="admin"/>
   <PrivateRoute path="/manageaccounts" component={ManageAccounts} admin={true} navigation="admin"/>
   <PrivateRoute path="/test" component={Test} admin={true} navigation="admin"/>
-  <Route path="/login">
-    {LoginRouter}
-  </Route>
+  <Route path="/login">{user ? <Redirect to="/part"/> : <Login onConnect={toggleUser}/>}</Route>
   <Route path="/register">{user ? <Redirect to="/part"/> : <Register onConnect={toggleUser}/>}</Route>
   <PrivateRoute path="/results/:id" exact component={Results} admin={false} navigation="public"/>
   <PrivateRoute path="/gamehistory" exact component={GameHistory} admin={false} navigation="public"/>

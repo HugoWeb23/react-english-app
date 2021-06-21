@@ -16,6 +16,7 @@ type FormValues = {
 }
 
 export const Login = ({onConnect}: LoginProps) => {
+  console.log("login called")
    const [globalErrors, setGlobalErrors] = useState<{message: string} | null>(null);
 
    const {watch, register, formState, handleSubmit, setError} = useForm();
