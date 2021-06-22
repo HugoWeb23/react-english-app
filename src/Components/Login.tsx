@@ -5,6 +5,7 @@ import Alert from 'react-bootstrap/Alert'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import {apiFetch, ApiErrors} from '../Utils/Api'
 import {UserType} from '../Types/User'
+import { PublicNavigation } from '../Components/PublicNavigation'
 
 interface LoginProps {
   onConnect: (user: UserType) => void
@@ -16,7 +17,6 @@ type FormValues = {
 }
 
 export const Login = ({onConnect}: LoginProps) => {
-  console.log("login called")
    const [globalErrors, setGlobalErrors] = useState<{message: string} | null>(null);
 
    const {watch, register, formState, handleSubmit, setError} = useForm();
@@ -44,8 +44,9 @@ export const Login = ({onConnect}: LoginProps) => {
       }
      
    }
-   return <Form noValidate className="container mt-4" onSubmit={handleSubmit(onSubmit)}>
-     {JSON.stringify(globalErrors)}
+   return <>
+   <PublicNavigation>
+   <Form noValidate className="container mt-4" onSubmit={handleSubmit(onSubmit)}>
       {globalErrors && globalErrors.message != undefined && <Alert variant="danger">{globalErrors.message}</Alert>}
    <Form.Group controlId="email">
      <Form.Label>Adresse e-mail</Form.Label>
@@ -62,4 +63,6 @@ export const Login = ({onConnect}: LoginProps) => {
      {isSubmitting ? 'Chargement...' : 'Connexion'}
    </Button>
  </Form>
+ </PublicNavigation>
+ </>
 }

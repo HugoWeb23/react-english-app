@@ -62,17 +62,6 @@ export const App = () => {
     }
   }, [user, toggleUser])
 
-  const LoginRouter = () => {
-    console.log('LOgin router')
-    if(!user) {
-     return <Login onConnect={toggleUser}/>
-    } else if(user.admin === false) {
-      return <Redirect to="/part"/>
-    } else if(user.admin === true) {
-      return <Redirect to="/themes"/>
-    }
-  }
-
 return loading ? <UserLoader/> :
 <>
   <Router>

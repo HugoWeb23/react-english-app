@@ -13,11 +13,7 @@ interface IPrivateRoute extends RouteProps {
 export const PrivateRoute = ({ component: Component, admin = false, navigation = "none", ...rest }: IPrivateRoute) => {
   const value = useContext(userContext);
   if (value?.user && (admin === true && value.user.admin == false)) {
-    return <Redirect to={{ pathname: '/gamehistory' }} />
-  }
-
-  if(value.loading) {
-    return <div></div>
+    return <Redirect to={{ pathname: '/part' }} />
   }
 
   return (

@@ -15,8 +15,8 @@ export class ApiErrors {
 
     get errorsPerField() {
         const errors: IErrors[] = [];
-       Object.entries(this.errors).map(([key, value]) => errors.push({['field']:key, ['message']: value.message}));
-       return errors;
+        Object.entries(this.errors).map(([key, value]) => errors.push({ ['field']: key, ['message']: value.message }));
+        return errors;
     }
 }
 
@@ -30,7 +30,7 @@ export const apiFetch = async (endpoint: string, options = {}) => {
         },
         ...options
     }
-    
+
     const response = await fetch('http://localhost:5000' + endpoint, options)
     if (response.status == 204) {
         return null;
@@ -39,9 +39,9 @@ export const apiFetch = async (endpoint: string, options = {}) => {
     if (response.ok) {
         return responseData
     } else {
-        if(responseData.errors) {
+        if (responseData.errors) {
             throw new ApiErrors(responseData.errors)
-        } else if(responseData.error) {
+        } else if (responseData.error) {
             throw new ApiErrors(responseData.error)
         }
     }

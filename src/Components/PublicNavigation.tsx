@@ -5,7 +5,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 import { userContext } from '../Contexts/Contexts'
 import { LinkContainer } from 'react-router-bootstrap'
 
-export const PublicNavigation = ({ children }: {children: JSX.Element}) => {
+export const PublicNavigation = ({ children }: { children: JSX.Element }) => {
 
     const value = useContext(userContext);
 
@@ -19,11 +19,15 @@ export const PublicNavigation = ({ children }: {children: JSX.Element}) => {
             <Navbar.Brand href="#home">English App</Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
-                <Nav className="mr-auto">
-                            <LinkContainer to="/part"><Nav.Link>Lancer une partie</Nav.Link></LinkContainer>
-                            <LinkContainer to="/gamehistory"><Nav.Link>Historique des parties</Nav.Link></LinkContainer>
-                            {value.user?.admin && <LinkContainer to="/questions"><Nav.Link>Administration</Nav.Link></LinkContainer>}
-                </Nav>
+                {value.user && <>
+                    <Nav className="mr-auto">
+                        <LinkContainer to="/part"><Nav.Link>Lancer une partie</Nav.Link></LinkContainer>
+                        <LinkContainer to="/gamehistory"><Nav.Link>Historique des parties</Nav.Link></LinkContainer>
+                        {value.user?.admin && <LinkContainer to="/questions"><Nav.Link>Administration</Nav.Link></LinkContainer>}
+                    </Nav>
+                </>
+                }
+
                 <Nav>
                     {value.user ?
                         <>
