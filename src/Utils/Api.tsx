@@ -4,19 +4,30 @@ interface IErrors {
 }
 
 export class ApiErrors {
-    errors: IErrors
-    constructor(errors: IErrors) {
+    errors: any
+    constructor(errors: any) {
         this.errors = errors
     }
 
     get globalErrors() {
-        return this.errors;
+        if(this.errors.globalErrors) {
+            const errors: any[] = []
+            this.errors.globalErrors.forEach((error: any) => errors.push(error.message))
+            console.log(this.errors)
+            return errors;
+        }
+        return []
     }
 
     get errorsPerField() {
-        const errors: IErrors[] = [];
-        Object.entries(this.errors).map(([key, value]) => errors.push({ ['field']: key, ['message']: value.message }));
-        return errors;
+        if(this.errors.errorsPerField) {
+            const errors: any[] = [];
+            Object.entries(this.errors.errorsPerField).map(([key, value]: any) => errors.push({ ['field']: key, ['message']: value.message }));
+            console.log(this.errors)
+            return errors;
+        }
+        return []
+       
     }
 }
 
@@ -40,9 +51,9 @@ export const apiFetch = async (endpoint: string, options = {}) => {
         return responseData
     } else {
         if (responseData.errors) {
-            throw new ApiErrors(responseData.errors)
-        } else if (responseData.error) {
-            throw new ApiErrors(responseData.error)
+            throw new ApiErrors({errorsPerField: responseData.errors})
+        } if (responseData.globalErrors) {
+            throw new ApiErrors({globalErrors: responseData.globalErrors})
         }
     }
 }

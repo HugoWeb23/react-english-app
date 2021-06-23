@@ -24,7 +24,7 @@ interface IAdminModalForm {
 export const AdminModalForm = ({ handleClose, onSubmit, type, component: Component, defaultValues, editText, createText, successAlert = "Opération effectuée", errorAlert = "Une erreur est survenuee" }: IAdminModalForm) => {
   const [loading, setLoading] = useState(false)
   const props = useForm({defaultValues: defaultValues})
-  const submit: any = async (formData: any, close: any) => {
+  const submit: any = async (formData: any, close: boolean) => {
     try {
       setLoading(true)
       await onSubmit(formData)

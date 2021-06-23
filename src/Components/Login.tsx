@@ -17,13 +17,14 @@ type FormValues = {
 }
 
 export const Login = ({onConnect}: LoginProps) => {
-   const [globalErrors, setGlobalErrors] = useState<{message: string} | null>(null);
+   const [globalErrors, setGlobalErrors] = useState<any>([]);
 
    const {watch, register, formState, handleSubmit, setError} = useForm();
    const {errors, isSubmitting} = formState;
 
    const onSubmit:SubmitHandler<FormValues> = async data => {
       try {
+        setGlobalErrors([])
          const user = await apiFetch('/login', {
             method: 'POST',
             body: JSON.stringify(data)
@@ -32,7 +33,6 @@ export const Login = ({onConnect}: LoginProps) => {
          onConnect(user);
       } catch(e) {
         if(e instanceof ApiErrors) {
-          console.log(e.errorsPerField)
           e.errorsPerField.forEach(err => {
             setError(err.field, {
               type: 'manual',
@@ -47,7 +47,7 @@ export const Login = ({onConnect}: LoginProps) => {
    return <>
    <PublicNavigation>
    <Form noValidate className="container mt-4" onSubmit={handleSubmit(onSubmit)}>
-      {globalErrors && globalErrors.message != undefined && <Alert variant="danger">{globalErrors.message}</Alert>}
+      {globalErrors.length > 0 && <Alert variant="danger">{globalErrors.map((error: any) => <p className="text-left mb-0">{error}</p>)}</Alert>}
    <Form.Group controlId="email">
      <Form.Label>Adresse e-mail</Form.Label>
      <Form.Control type="email" placeholder="Entrez votre adresse e-mail" isInvalid={errors.email} {...register('email', {required: 'Veuillez saisir une adresse email'})}/>

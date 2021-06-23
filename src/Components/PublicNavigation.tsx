@@ -12,13 +12,12 @@ export const PublicNavigation = ({ children }: { children: JSX.Element }) => {
     const userLogout = () => {
         localStorage.removeItem('token');
         value.toggleUser();
-        value.toggleAlert();
     }
     return <>
         <Navbar collapseOnSelect expand="lg" bg="danger" variant="dark">
             <Navbar.Brand href="#home">English App</Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            <Navbar.Collapse id="responsive-navbar-nav">
+            <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
                 {value.user && <>
                     <Nav className="mr-auto">
                         <LinkContainer to="/part"><Nav.Link>Lancer une partie</Nav.Link></LinkContainer>

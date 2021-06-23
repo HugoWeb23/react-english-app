@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import {apiFetch, ApiErrors} from '../Utils/Api'
 import {UserType} from '../Types/User'
+import { PublicNavigation } from '../Components/PublicNavigation'
 
 interface RegisterProps {
   onConnect: (user: UserType) => void
@@ -42,6 +43,7 @@ export const Register = ({onConnect}: RegisterProps) => {
    }
   }
     return <>
+    <PublicNavigation>
     <Form className="container mt-4" onSubmit={handleSubmit(onSubmit)}>
     <h2 className="mb-4">Créer un compte</h2>
     <Form.Group controlId="nom">
@@ -73,5 +75,6 @@ export const Register = ({onConnect}: RegisterProps) => {
       {isSubmitting ? 'Chargement...' : 'S\'enregistrer'}
     </Button>
   </Form>
+  </PublicNavigation>
   </>
 }

@@ -122,7 +122,7 @@ export const Questions = () => {
             </thead>
             <tbody>
               {loader && <Loader display="block" animation="border" variant="primary" />}
-              {questions && questions.map((question: QuestionType, index: number) => <Question key={index} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion} />)}
+              {questions && questions.map((question: QuestionType, index: number) => <Question key={question._id} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion} />)}
             </tbody>
           </Table>
           {(loader === false && questions.length === 0) && <Alert variant="warning">Aucun résultat</Alert>}

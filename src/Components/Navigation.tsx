@@ -12,7 +12,6 @@ export const Navigation = ({ children }: {children: JSX.Element}) => {
   const userLogout = () => {
     localStorage.removeItem('token');
     value.toggleUser();
-    value.toggleAlert();
   }
 
   return <>

@@ -10,7 +10,6 @@ import {PrivateRoute} from './Components/PrivateRoute'
 import {Questions} from './Components/Admin/Questions'
 import {Themes} from './Components/Admin/Themes'
 import {apiFetch} from './Utils/Api'
-import {ToastAlert} from './UI/Toast'
 import {Part} from './Components/Part'
 import {Play} from './Components/Game/Play'
 import {UserType} from './Types/User'
@@ -48,17 +47,12 @@ export const App = () => {
     }
   }
 
-  const toggleAlert = () => {
-    setAlertDisconnect(!alertDisconnect)
-  }
-
   const value = useMemo(() => {
     return {
       user,
       alertDisconnect,
       loading,
-      toggleUser,
-      toggleAlert
+      toggleUser
     }
   }, [user, toggleUser])
 
@@ -66,7 +60,6 @@ return loading ? <UserLoader/> :
 <>
   <Router>
   <userContext.Provider value={value}>
-  <ToastAlert/>
   <ToastContainer autoClose={2500}/>
   <PrivateRoute path="/play/:id" component={Play} navigation="none"/>
   <PrivateRoute path="/part" exact component={Part} admin={false} navigation="public"/>
