@@ -12,6 +12,7 @@ import { Paginate } from '../../UI/Pagination'
 import { ElementsPerPage } from '../../UI/ElementsPerPage'
 import { usePagination } from '../../Hooks/usePagination'
 import { Container } from '../../UI/Container'
+import {LeftArrow} from '../../Icons/LeftArrow'
 
 interface IResults extends QuestionType {
     propositionsSelect: string[],
@@ -55,7 +56,7 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
         <Container>
             <div className="d-flex justify-content-between align-items-center mb-2">
                 <h2>Résultats</h2>
-                <Link to="/gamehistory" className="card-link">Retour à l'historique des parties</Link>
+                <Link to="/gamehistory" className="card-link"><LeftArrow/>Retour à l'historique des parties</Link>
             </div>
             {loader ? <Loader /> :
                 <>

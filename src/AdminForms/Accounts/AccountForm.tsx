@@ -21,6 +21,14 @@ return <>
     <Form.Control type="text" placeholder="Intitulé de la question" isInvalid={errors.email} {...register('email', {required: "L'adresse e-mail est obligatoire"})}/>
     {errors.email && <Form.Control.Feedback type="invalid">{errors.email.message}</Form.Control.Feedback>}
 </Form.Group>
+<Form.Group controlId="pass">
+    <Form.Label>Mot de passe</Form.Label>
+    <Form.Control type="password" placeholder="Nouveau mot de passe" autoComplete="new-password" isInvalid={errors.pass} {...register('pass')}/>
+    {errors.pass && <Form.Control.Feedback type="invalid">{errors.pass.message}</Form.Control.Feedback>}
+    <Form.Text className="text-muted">
+      Laisser vide pour ne pas modifier
+    </Form.Text>
+</Form.Group>
 <Form.Group controlId="role">
     <Form.Label>Rôle de l'utilisateur</Form.Label>
     <Form.Control as="select" isInvalid={errors.admin} {...register('admin', {required: "Le rôle est obligatoire"})}>

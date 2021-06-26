@@ -21,7 +21,7 @@ interface IAdminModalForm {
   errorAlert?: string
 }
 
-export const AdminModalForm = ({ handleClose, onSubmit, type, component: Component, defaultValues, editText, createText, successAlert = "Opération effectuée", errorAlert = "Une erreur est survenuee" }: IAdminModalForm) => {
+export const AdminModalForm = ({ handleClose, onSubmit, type, component: Component, defaultValues, editText, createText, successAlert = "Opération effectuée", errorAlert = "Une erreur est survenue" }: IAdminModalForm) => {
   const [loading, setLoading] = useState(false)
   const props = useForm({defaultValues: defaultValues})
   const submit: any = async (formData: any, close: boolean) => {
@@ -44,9 +44,12 @@ export const AdminModalForm = ({ handleClose, onSubmit, type, component: Compone
             message: err.message
           });
         })
+        console.log(e.globalErrors)
+        e.globalErrors.forEach(err => {
+          toast.error(err)
+        })
       }
       setLoading(false)
-      toast.error(errorAlert)
     }
   }
 

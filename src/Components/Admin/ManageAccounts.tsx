@@ -67,7 +67,7 @@ const User = ({user, onSubmit, onDelete}: UserInterface) => {
         <td>{user.nom}</td>
         <td>{user.prenom}</td>
         <td>{user.email}</td>
-        <td>{user.admin ? 'Administrateur' : 'Utilisateur'}</td>
+        <td>{user.admin === true ? 'Administrateur' : 'Utilisateur'}</td>
         <td><DropdownButton variant="info" title="Actions">
         <Dropdown.Item eventKey="1" onClick={() => setEditModal(true)}>Modifier</Dropdown.Item>
         <Dropdown.Item eventKey="2" onClick={() => setDeleteModal(true)}>Supprimer</Dropdown.Item>
@@ -78,7 +78,7 @@ const User = ({user, onSubmit, onDelete}: UserInterface) => {
             onSubmit={data => onSubmit(user, data)} 
             type="edit" 
             component={AccountForm}
-            defaultValues={user}
+            defaultValues={{...user, admin: user.admin.toString()}}
             createText="Créer un compte"
             editText="Éditer un compte"/>
     }

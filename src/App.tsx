@@ -4,7 +4,6 @@ import { Navigation } from "./Components/Navigation"
 import {userContext} from './Contexts/Contexts'
 import {UserLoader} from './Loaders/UserLoader'
 import {Login} from './Components/Login'
-import {Test} from './Components/Test'
 import {Register} from './Components/Register'
 import {PrivateRoute} from './Components/PrivateRoute'
 import {Questions} from './Components/Admin/Questions'
@@ -35,7 +34,10 @@ export const App = () => {
       } catch(e) {
         setUser(null)
       }
-      setLoading(false)
+      setTimeout(() => {
+        setLoading(false)
+      }, 1000)
+     
     })()
   }, [])
 
@@ -67,10 +69,9 @@ return loading ? <UserLoader/> :
   <Route exact path="/">
   <Redirect to="/part" />
   </Route>
-  <PrivateRoute path="/questions" component={Questions} admin={true} navigation="admin"/>
   <PrivateRoute path="/themes" component={Themes} admin={true} navigation="admin"/>
+  <PrivateRoute path="/questions" component={Questions} admin={true} navigation="admin"/>
   <PrivateRoute path="/manageaccounts" component={ManageAccounts} admin={true} navigation="admin"/>
-  <PrivateRoute path="/test" component={Test} admin={true} navigation="admin"/>
   <Route path="/login">{user ? <Redirect to="/part"/> : <Login onConnect={toggleUser}/>}</Route>
   <Route path="/register">{user ? <Redirect to="/part"/> : <Register onConnect={toggleUser}/>}</Route>
   <PrivateRoute path="/results/:id" exact component={Results} admin={false} navigation="public"/>

@@ -1,6 +1,5 @@
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
-import { useEffect } from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
 import {apiFetch, ApiErrors} from '../Utils/Api'
 import {UserType} from '../Types/User'
@@ -19,7 +18,7 @@ type FormValues = {
 }
 
 export const Register = ({onConnect}: RegisterProps) => {
-  const {watch, register, formState, handleSubmit, setError} = useForm({mode: 'onTouched'});
+  const {watch, register, formState, handleSubmit, setError} = useForm<any>({mode: 'onTouched'});
   const {errors, isSubmitting} = formState;
   const password = watch('pass');
   const onSubmit:SubmitHandler<FormValues> = async data => {
@@ -66,7 +65,7 @@ export const Register = ({onConnect}: RegisterProps) => {
       <Form.Control type="password" placeholder="Entrez un mot de passe" isInvalid={errors.pass} {...register('pass', {required: 'Veuillez saisir un mot de passe'})} />
       {errors.pass && <Form.Control.Feedback type="invalid">{errors.pass.message}</Form.Control.Feedback>}
     </Form.Group>
-    <Form.Group controlId="pass">
+    <Form.Group controlId="repat-pass">
       <Form.Label>Répéter le mot de passe</Form.Label>
       <Form.Control type="password" placeholder="Répétez le mot de passe" isInvalid={errors.repeatpass} {...register('repeatpass', {required: 'Veuillez répéter le mot de passe', validate: value => value === password || "Les deux mots de passe ne correspondent pas"})} />
       {errors.repeatpass && <Form.Control.Feedback type="invalid">{errors.repeatpass.message}</Form.Control.Feedback>}

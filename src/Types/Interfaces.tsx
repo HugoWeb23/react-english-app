@@ -21,3 +21,11 @@ export interface IUsers {
     email: string,
     admin: boolean
 }
+
+export interface ProfileValues {
+    nom: string,
+    prenom: string,
+    email: string,
+    pass?: string,
+    repeatpass?: string
+  }

@@ -14,8 +14,8 @@ export const PublicNavigation = ({ children }: { children: JSX.Element }) => {
         value.toggleUser();
     }
     return <>
-        <Navbar collapseOnSelect expand="lg" bg="danger" variant="dark">
-            <Navbar.Brand href="#home">English App</Navbar.Brand>
+        <Navbar className="mb-3" collapseOnSelect expand="lg" bg="danger" variant="dark">
+            <LinkContainer to={value.user ? "/part" : "/login"}><Navbar.Brand>English App</Navbar.Brand></LinkContainer>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
                 {value.user && <>

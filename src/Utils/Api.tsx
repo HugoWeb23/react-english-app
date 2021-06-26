@@ -13,7 +13,6 @@ export class ApiErrors {
         if(this.errors.globalErrors) {
             const errors: any[] = []
             this.errors.globalErrors.forEach((error: any) => errors.push(error.message))
-            console.log(this.errors)
             return errors;
         }
         return []

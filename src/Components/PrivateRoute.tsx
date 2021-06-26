@@ -12,16 +12,14 @@ interface IPrivateRoute extends RouteProps {
 
 export const PrivateRoute = ({ component: Component, admin = false, navigation = "none", ...rest }: IPrivateRoute) => {
   const value = useContext(userContext);
-  if (value?.user && (admin === true && value.user.admin == false)) {
-    return <Redirect to={{ pathname: '/part' }} />
-  }
 
   return (
     <Route
       {...rest}
       render={props => <>
         {value?.user ?
-          <>
+        <>
+        {value?.user && (admin === true && value.user.admin == false) && <Redirect to={{ pathname: '/part' }} />}
             {navigation == 'public' &&
               <PublicNavigation>
                 <Component {...props} />
