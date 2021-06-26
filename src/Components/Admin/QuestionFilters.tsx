@@ -60,7 +60,7 @@ export const QuestionFilters = ({ selectedTypes, selectedThemes, typeChange, the
                     <p className="mb-1">Filtrer par thèmes</p>
                     {selectedThemes.map((theme: any, index: number) =>
                         <ClosableBadge element={theme} elementName={theme.theme} index={index} variant="dark" handleClose={() => handleThemesChange(theme, 'delete')} />)}
-                    <a className="link" style={{ cursor: 'pointer' }} onClick={() => setModalThemes(true)}>
+                    <a className="link" style={{ display: 'block', cursor: 'pointer' }} onClick={() => setModalThemes(true)}>
                         Afficher les thèmes
                     </a>
                 </Form.Group>
