@@ -23,7 +23,6 @@ import 'react-toastify/dist/ReactToastify.css'
 export const App = () => {
   const [user, setUser] = useState<null | UserType>(null);
   const [loading, setLoading] = useState(true);
-  const [test, setTest] = useState<boolean>()
   const [alertDisconnect, setAlertDisconnect] = useState(false)
   useEffect(() => {
     (async() => {
