@@ -1,8 +1,9 @@
 import {Controller} from 'react-hook-form'
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
+import { StandardTextFieldProps } from '@material-ui/core';
 
-interface IMultipleValues {
+interface IMultipleValues extends StandardTextFieldProps {
     name: string,
     optionLabel: string,
     inputLabel: string,
@@ -28,7 +29,7 @@ return <>
             {...params}
             fullWidth
             label={inputLabel}
-            variant="outlined"
+            variant="standard"
             ref={props.field.ref}
           />
         )}

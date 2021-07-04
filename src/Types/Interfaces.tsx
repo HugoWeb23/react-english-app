@@ -29,3 +29,9 @@ export interface ProfileValues {
     pass?: string,
     repeatpass?: string
   }
+
+export interface TypeType {
+    id?: number,
+    type: number,
+    title: string
+}
