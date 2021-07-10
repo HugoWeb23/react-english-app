@@ -1,15 +1,33 @@
-import Form from "react-bootstrap/Form"
-import Button from "react-bootstrap/Button"
-import Modal from "react-bootstrap/Modal"
-import { useFieldArray, UseFormReturn } from 'react-hook-form'
+import { useFieldArray, UseFormReturn, Controller } from 'react-hook-form'
 import { MultiChoices } from './MultiChoices'
 import { useEffect, useState } from "react"
 import { SelectThemes } from "../Themes/SelectThemes"
 import { Themes } from '../../Hooks/GetThemes'
 import { Loader } from "../../UI/Loader"
+import AddIcon from '@material-ui/icons/Add';
+import {
+    FormControl,
+    Select,
+    InputLabel,
+    MenuItem,
+    createStyles,
+    makeStyles,
+    Button,
+    Theme
+} from '@material-ui/core'
+import { MTextField } from "../../UI/Material/MTextField"
+
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        form: {
+            marginBottom: '15px'
+        }
+    }),
+);
 
 export const QuestionForm = (props: UseFormReturn) => {
-    const { register, control, watch, formState, getValues } = props;
+    const classes = useStyles()
+    const {control, watch, formState, getValues } = props;
     const { errors } = formState;
     const { fields, append, remove } = useFieldArray({ control, name: "propositions" })
     const [themesLoader, setThemesLoader] = useState<boolean>(true)
@@ -38,43 +56,65 @@ export const QuestionForm = (props: UseFormReturn) => {
     }
 
     return <>
-        <Form.Group controlId="type">
-            <Form.Label>Type de question</Form.Label>
-            <Form.Control as="select" isInvalid={errors.type} {...register('type', { required: "Le type est obligatoire", min: 1, max: 2 })}>
-                <option value="1">Réponse à écrire</option>
-                <option value="2">Choix multiples</option>
-            </Form.Control>
-            {errors.type && <Form.Control.Feedback type="invalid">{errors.type.message}</Form.Control.Feedback>}
-        </Form.Group>
-        <Form.Group controlId="themeId">
-            <Form.Label>Thème de la question</Form.Label>
-            {themesLoader ? <Loader display="block" animation="border" variant="primary" /> : <SelectThemes themes={themes} name="themeId" register={register} errors={errors} />}
-        </Form.Group>
-        <Form.Group controlId="intitule">
-            <Form.Label>Intitulé de la question</Form.Label>
-            <Form.Control type="text" placeholder="Intitulé de la question" isInvalid={errors.intitule} {...register('intitule', { required: "L'intitulé est obligatoire" })} />
-            {errors.intitule && <Form.Control.Feedback type="invalid">{errors.intitule.message}</Form.Control.Feedback>}
-        </Form.Group>
-        <Form.Group controlId="question">
-            <Form.Label>Question</Form.Label>
-            <Form.Control type="text" placeholder="Question" isInvalid={errors.question} {...register('question', { required: "La question est obligatoire" })} />
-            {errors.question && <Form.Control.Feedback type="invalid">{errors.question.message}</Form.Control.Feedback>}
-        </Form.Group>
+        <FormControl className={classes.form} fullWidth>
+            <InputLabel id="demo-simple-select-label">Type de question</InputLabel>
+            <Controller
+                name="type"
+                control={control}
+                defaultValue={1}
+                render={({ field: { value, onChange } }) => (
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={value}
+                        onChange={onChange}
+                    >
+                        <MenuItem value={1}>Réponse à écrire</MenuItem>
+                        <MenuItem value={2}>Choix multiples</MenuItem>
+                    </Select>
+                )}
+            />
+        </FormControl>
+        <SelectThemes themes={themes} name="themeId" styles={classes.form} control={control} />
+        <FormControl className={classes.form} fullWidth>
+            <MTextField
+                name="intitule"
+                control={control}
+                label="Intitulé de la question"
+                rules={{ required: "L'intitulé est obligatoire" }}
+            />
+        </FormControl>
+        <FormControl className={classes.form} fullWidth>
+            <MTextField
+                name="question"
+                control={control}
+                label="Question"
+                rules={{ required: "La question est obligatoire" }}
+            />
+        </FormControl>
         {questionType == "1" && <>
-            <Form.Group controlId="reponse">
-                <Form.Label>Réponse à la question</Form.Label>
-                <Form.Control type="text" isInvalid={errors.reponse} placeholder="Réponse" {...register('reponse', {
-                    validate: checkReponse
-                })} />
-                {errors.reponse && <Form.Control.Feedback type="invalid">{errors.reponse.message}</Form.Control.Feedback>}
-            </Form.Group>
+            <FormControl className={classes.form} fullWidth>
+                <MTextField
+                    name="reponse"
+                    control={control}
+                    label="Réponse"
+                    rules={{ validate: checkReponse }}
+                />
+            </FormControl>
         </>}
         {questionType == "2" && <>
-            <Form.Label>Propositions de réponses</Form.Label>
             {fields.map((field, index) => {
-                return <MultiChoices field={field} key={index} index={index} errors={errors} register={register} remove={removeField} />
+                return <MultiChoices field={field} key={index} index={index} control={control} remove={removeField} errors={errors} styles={classes.form} />
             })}
-            <Button variant="info" onClick={() => append({})}>Ajouter une proposition</Button>
+            <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                startIcon={<AddIcon/>}
+                onClick={() => append({proposition: "", correcte: false})}
+            >
+                Ajouter une proposition
+            </Button>
         </>}
     </>
 }

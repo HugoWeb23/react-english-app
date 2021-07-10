@@ -1,23 +1,19 @@
 import { useForm, useFormContext, useFieldArray, SubmitHandler } from 'react-hook-form'
-import Form from 'react-bootstrap/Form'
 import { ChangeEvent, useEffect, useState, useRef } from 'react'
 import { Themes } from '../Hooks/GetThemes'
 import { Loader } from '../UI/Loader'
-import Modal from 'react-bootstrap/Modal'
 import { apiFetch } from '../Utils/Api'
-import ListGroup from 'react-bootstrap/ListGroup'
 import { useHistory } from 'react-router-dom'
-import { Container } from '../UI/Container'
 import { QuestionType } from '../Types/Questions'
 import { ThemeType } from '../Types/Themes'
 import { TypeType } from '../Types/Interfaces'
-
 import { MultipleValues } from '../UI/Material/MultipleValues'
 import { MTextField } from '../UI/Material/MTextField'
 import { MCheckbox } from '../UI/Material/MCheckbox'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import {
+    Container,
     Typography,
     FormControl,
     FormControlLabel,
@@ -32,7 +28,8 @@ import {
     CardActionArea,
     Grid,
     TextField,
-    CircularProgress
+    CircularProgress,
+    Chip
 } from '@material-ui/core'
 
 interface IPartData {
@@ -78,15 +75,17 @@ export const Part = () => {
     const { register, setError, handleSubmit, clearErrors, control, watch, formState, getValues } = useForm<any>({
         defaultValues: {
             themes: [],
-            types: []
+            types: [],
+            random: true
         }
     });
     const { errors } = formState;
     const [loading, setLoading] = useState<boolean>(true)
     const { themes, GetThemes, loadingThemes } = Themes();
-    const types: TypeType[] = [{ id: 1, type: 1, title: "Réponse à écrire" }, { id: 2, type: 2, title: "Choix multiples" }]
+    const types: TypeType[] = [{ _id: 1, type: 1, title: "Réponse à écrire" }, { _id: 2, type: 2, title: "Choix multiples" }]
     const [modal, setModal] = useState(false)
     const [selectedQuestions, setSelectedQuestions] = useState<ISelectedQuestions[]>([]);
+    const [filteredSelectedQuestions, setFilterSelectedQuestions] = useState<ISelectedQuestions[]>([]);
     useEffect(() => {
         (async () => {
             await GetThemes()
@@ -95,6 +94,7 @@ export const Part = () => {
     }, [])
 
     const submit: SubmitHandler<IPartData> = async (e) => {
+        console.log(e.random)
         const values = {
             questions: selectedQuestions.map(q => q.questionId),
             themes: e.themes.map(t => t._id),
@@ -108,7 +108,6 @@ export const Part = () => {
                 method: 'POST',
                 body: JSON.stringify(values)
             })
-            console.log(values)
             history.push({ pathname: `/play/${reponse.id_part}`, state: { ...reponse, infos: { points: 0, totalQuestions: reponse.totalQuestions } } })
         } catch (e) {
 
@@ -129,10 +128,19 @@ export const Part = () => {
     const themesWatch = watch('themes')
     const typesWatch = watch('types')
 
+    useEffect(() => {
+        const types: number[] = typesWatch.map((t: TypeType) => t.type)
+        const questions = selectedQuestions
+        if(types.length > 0) {
+            setFilterSelectedQuestions(questions.filter(q => types.includes(q.type)))
+        } else {
+            setFilterSelectedQuestions(questions)
+        }
+    }, [typesWatch, selectedQuestions])
+
     return <>
-        <Container>
+        <Container maxWidth="lg">
            <Typography variant="h4">Lancer une partie</Typography>
-           {JSON.stringify(selectedQuestions)}
             <form onSubmit={handleSubmit(submit)}>
                 <FormControl className={classes.root} fullWidth>
                     {loadingThemes ? <Loader /> : <>
@@ -147,15 +155,15 @@ export const Part = () => {
                 </FormControl>
                 {(themesWatch && themesWatch.length > 0) &&
                     <>
-                        <Button fullWidth variant="contained" className={classes.button} onClick={handleManualQuestions}>Sélection manuelle ({selectedQuestions.length})</Button>
-                        {selectedQuestions.length > 0 && <Button fullWidth={false} size="small" variant="outlined" color="secondary" className={classes.button} onClick={() => setSelectedQuestions([])}>Supprimer les questions sélectionnées</Button>}
+                        <Button fullWidth variant="contained" className={classes.button} onClick={handleManualQuestions}>Sélection manuelle ({filteredSelectedQuestions.length})</Button>
+                        {filteredSelectedQuestions.length > 0 && <Button fullWidth={false} size="small" variant="outlined" color="secondary" className={classes.button} onClick={() => setSelectedQuestions([])}>Supprimer les questions sélectionnées</Button>}
 
                         {modal && <ManualQuestionsModal
                             handleClose={() => setModal(false)}
                             themes={themesWatch}
                             types={typesWatch}
                             onConfirm={(e: ISelectedQuestions[]) => setSelectedQuestions(e)}
-                            checkedQuestions={selectedQuestions} />}
+                            checkedQuestions={filteredSelectedQuestions} />}
                     </>
                 }
                 <FormControl className={classes.root} fullWidth>
@@ -181,7 +189,6 @@ export const Part = () => {
                             name="random"
                             control={control}
                             color="primary"
-                            defaultChecked
                         />
                     }
                         label="Questions aléatoires"
@@ -230,7 +237,7 @@ const ManualQuestionsModal = ({ handleClose, themes, types, onConfirm, checkedQu
 
     const handleFilterThmes = (theme: ThemeType | null) => {
         if (theme != null) {
-            setFilteredThemes(themes => themes.filter(t => t._id === theme._id))
+            setFilteredThemes(themes.filter(t => t._id === theme._id))
         } else {
             setFilteredThemes(themes)
         }
@@ -245,21 +252,29 @@ const ManualQuestionsModal = ({ handleClose, themes, types, onConfirm, checkedQu
         <DialogContent>
             {loader ? <CircularProgress /> :
                 <>
-                    <Typography variant="subtitle1">{themes.length} {themes.length > 1 ? "thèmes sélectionnés" : "thème sélectionné"}</Typography>
+                <Grid container style={{justifyContent: 'space-between'}}>
+                <Grid item>
+                <Typography variant="subtitle1">{themes.length} {themes.length > 1 ? "thèmes sélectionnés" : "thème sélectionné"}</Typography>
+                </Grid>
+                <Grid item>
+                <Typography variant="subtitle1">{types.map(t => <Chip color="primary" size="small" label={t.title} style={{marginRight: '3px'}}/>)}</Typography>
+                </Grid>
+                </Grid>
                     <Autocomplete
                         id="combo-box-demo"
                         fullWidth
+                        disabled={themes.length <= 1}
                         options={themes}
                         getOptionLabel={(option) => option.theme}
-                        style={{ width: 300 }}
+                        style={{ marginTop: '15px', marginBottom: '20px' }}
                         renderInput={(params) => <TextField {...params} label="Filtrer les thèmes" />}
                         noOptionsText="Aucun résultat"
                         onChange={(e, value) => handleFilterThmes(value)}
                     />
                     {filteredThemes.map(t => {
                         return <>
-                            <Typography variant="subtitle2">{t.theme}</Typography>
-                            <ListGroup className="mb-3">{questions.map((q: QuestionType, i: number) => q.theme._id === t._id ? <Question question={q} onChange={handleQuestionChange} checkedQuestions={selectedQuestions} /> : null)}</ListGroup>
+                            <Typography variant="subtitle2" paragraph>{t.theme}</Typography>
+                            {questions.map((q: QuestionType, i: number) => q.theme._id === t._id ? <Question question={q} onChange={handleQuestionChange} checkedQuestions={selectedQuestions} /> : null)}
                         </>
                     })}</>}</DialogContent>
         <DialogActions>

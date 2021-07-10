@@ -1,4 +1,4 @@
-import {Controller} from 'react-hook-form'
+import {Controller, useFieldArray} from 'react-hook-form'
 import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import { StandardTextFieldProps } from '@material-ui/core';
@@ -9,32 +9,45 @@ interface IMultipleValues extends StandardTextFieldProps {
     inputLabel: string,
     control: any,
     data: any,
-    deleteOption?: (value: any) => void
+    styles?: any,
+    multiple?: boolean,
+    rules?: any,
+    deleteOption?: (value: any) => void,
+    addOption?: (value: any) => void
 }
 
-export const MultipleValues = ({name, optionLabel, inputLabel, control, data, deleteOption}: IMultipleValues) => {
+export const MultipleValues = ({name, optionLabel, inputLabel, control, data, styles, multiple = true, rules, deleteOption, addOption}: IMultipleValues) => {
 return <>
 <Controller
     name={name}
     control={control}
+    rules={rules}
     render={(props) => (
+      <>
         <Autocomplete
         {...props}
-        multiple
+        value={props.field.value}
+        multiple={multiple}
         options={data}
         getOptionLabel={(option: any) => option[optionLabel]}
+        getOptionSelected={(option, value) => option._id == value._id}
         noOptionsText='Aucun résultat'
+        loading={true}
+        className={styles}
         renderInput={(params) => (
           <TextField
             {...params}
             fullWidth
             label={inputLabel}
             variant="standard"
+            error={props.fieldState.invalid}
+            helperText={props.fieldState.error?.message}
             ref={props.field.ref}
           />
         )}
-        onChange={(_, data, reason, value) => (props.field.onChange(data), deleteOption && (reason == 'remove-option' ? deleteOption(value) : deleteOption(undefined)))}
+        onChange={(_, data, reason, value) => (props.field.onChange(data), deleteOption && (reason == 'remove-option' ? deleteOption(value) : deleteOption(undefined)), addOption && (reason == 'select-option' && addOption(value)), console.log(data))}
       />
+      </>
     )}
     />
 </>

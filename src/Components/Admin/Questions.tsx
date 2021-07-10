@@ -1,10 +1,7 @@
 import { useEffect, useState, useMemo, memo } from "react"
 import { apiFetch } from "../../Utils/Api";
 import { QuestionsHook } from '../../Hooks/QuestionsHook'
-import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import Dropdown from 'react-bootstrap/Dropdown'
 import Badge from 'react-bootstrap/Badge'
 import { Loader } from '../../UI/Loader'
 import { DeleteModal } from "../../UI/DeleteModal"
@@ -17,6 +14,17 @@ import Alert from 'react-bootstrap/Alert'
 import { Container } from "../../UI/Container"
 import { AdminModalForm } from '../../ModalForm/AdminModalForm'
 import { QuestionForm } from "../../AdminForms/Questions/QuestionForm";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton
+} from '@material-ui/core'
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
 
 export const Questions = () => {
   const { questions, totalPages, currentPage, elementsPerPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
@@ -40,8 +48,8 @@ export const Questions = () => {
     })()
   }, [filteredQuestions])
 
-  const handleCreateQuestion = () => {
-    setnewQuestion(!newQuestion)
+  const handleCreateQuestion = async(question: any) => {
+    await createQuestion({...question, themeId: question.themeId._id})
   }
 
   const handleThemeChange = (theme: any, type?: string) => {
@@ -92,12 +100,12 @@ export const Questions = () => {
     <Container>
       <div className="d-flex justify-content-between align-items-center mb-2 mt-2">
         <h1>Les questions</h1>
-        <Button variant="primary" onClick={handleCreateQuestion}>Créer une question</Button>
+        <Button variant="primary" onClick={() => setnewQuestion(true)}>Créer une question</Button>
       </div>
       <div className="d-flex justify-content-end mb-3">
         <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange} />
       </div>
-      {newQuestion && <CreateQuestion handleClose={handleCreateQuestion} onSubmit={createQuestion} />}
+      {newQuestion && <CreateQuestion handleClose={() => setnewQuestion(false)} onSubmit={handleCreateQuestion} />}
       <div className="row">
         <div className="col-md-3">
           <QuestionFilters
@@ -110,20 +118,20 @@ export const Questions = () => {
           />
         </div>
         <div className="col-md-9">
-          <Table striped bordered hover className={loadingNextPage ? "opacity-table" : ''}>
-            <thead>
-              <tr>
-                <th>Intitulé</th>
-                <th>Question</th>
-                <th>Réponse(s)</th>
-                <th>Type</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Intitulé</TableCell>
+                <TableCell>Question</TableCell>
+                <TableCell>Réponse(s)</TableCell>
+                <TableCell>Type</TableCell>
+                <TableCell>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
               {loader && <Loader display="block" animation="border" variant="primary" />}
               {questions && questions.map((question: QuestionType, index: number) => <Question key={question._id} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion} />)}
-            </tbody>
+            </TableBody>
           </Table>
           {(loader === false && questions.length === 0) && <Alert variant="warning">Aucun résultat</Alert>}
           <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={handlePageChange} />
@@ -151,24 +159,26 @@ const Question = memo(({ question, onDelete, onUpdate }: QuestionProps) => {
     setLoading(false)
   }
 
-  const updateQuestion = async (data: QuestionType) => {
-    await onUpdate(question, data)
+  const updateQuestion = async (data: any) => {
+    await onUpdate(question, {...data, themeId: data.themeId._id})
   }
 
-  return <tr>
-    <td>{question.intitule}</td>
-    <td>{question.question}</td>
-    <td>{question.reponse || question.propositions.map((p: PropositionType, index: number) => <p key={index} className={`mb-0 ${p.correcte ? "text-success" : "text-danger"}`}>{'[' + p.proposition + ']'}</p>)}</td>
-    <td>{question.type == 1 ? <Badge pill variant="primary">Réponse unique</Badge> : <Badge pill variant="secondary">Choix multiples</Badge>}</td>
-    <td>
-      <DropdownButton variant="info" title="Actions" disabled={loading}>
-        <Dropdown.Item eventKey="1" onClick={() => setEditQuestion(true)}>Modifier</Dropdown.Item>
-        <Dropdown.Item eventKey="2" onClick={() => setDeleteModal(true)}>Supprimer</Dropdown.Item>
-      </DropdownButton>
-    </td>
+  return <TableRow key={question._id}>
+    <TableCell>{question.intitule}</TableCell>
+    <TableCell>{question.question}</TableCell>
+    <TableCell>{question.reponse || question.propositions.map((p: PropositionType, index: number) => <p key={index} className={`mb-0 ${p.correcte ? "text-success" : "text-danger"}`}>{'[' + p.proposition + ']'}</p>)}</TableCell>
+    <TableCell>{question.type == 1 ? <Badge pill variant="primary">Réponse unique</Badge> : <Badge pill variant="secondary">Choix multiples</Badge>}</TableCell>
+    <TableCell>
+      <IconButton aria-label="edit" onClick={() => setEditQuestion(true)}>
+        <EditIcon fontSize="inherit" />
+      </IconButton>
+      <IconButton aria-label="delete" onClick={() => setDeleteModal(true)}>
+        <DeleteIcon fontSize="inherit" />
+      </IconButton>
+    </TableCell>
     {deleteModal && <DeleteModal handleClose={() => setDeleteModal(false)} element={question} onConfirm={Delete} deleteMessage="La question a été supprimée" />}
     {editQuestion && <EditQuestion handleClose={() => setEditQuestion(false)} question={question} onSubmit={updateQuestion} />}
-  </tr>
+  </TableRow>
 })
 
 interface CreateQuestionProps {
@@ -177,7 +187,7 @@ interface CreateQuestionProps {
 }
 
 const CreateQuestion = ({ handleClose, onSubmit }: CreateQuestionProps) => {
-  const defaultValues = { propositions: [{}] }
+  const defaultValues = { propositions: [{proposition: "", correcte: false}] }
   return <AdminModalForm
     handleClose={handleClose}
     onSubmit={onSubmit}
@@ -195,7 +205,7 @@ interface EditQuestionProps {
 }
 
 const EditQuestion = ({ handleClose, question, onSubmit }: EditQuestionProps) => {
-  const defaultValues = { ...question, propositions: (question.propositions === undefined ? [{}] : question.propositions), themeId: question.theme?._id }
+  const defaultValues = { ...question, propositions: (question.propositions === undefined ? [{}] : question.propositions), themeId: question.theme }
   return <AdminModalForm
     handleClose={handleClose}
     onSubmit={onSubmit}

@@ -31,7 +31,7 @@ export interface ProfileValues {
   }
 
 export interface TypeType {
-    id?: number,
+    _id?: number,
     type: number,
     title: string
 }

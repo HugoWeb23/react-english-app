@@ -1,13 +1,17 @@
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
-import Modal from 'react-bootstrap/Modal'
-import Button from 'react-bootstrap/Button'
-import { Form } from "react-bootstrap";
 import { ApiErrors } from '../Utils/Api'
 import { useState } from "react";
 import { IUsers } from "../Types/Interfaces";
 import { Children } from "react";
 import { JsxElement } from "typescript";
 import { toast } from "react-toastify";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button
+} from '@material-ui/core'
 
 interface IAdminModalForm {
   handleClose: () => void,
@@ -23,7 +27,7 @@ interface IAdminModalForm {
 
 export const AdminModalForm = ({ handleClose, onSubmit, type, component: Component, defaultValues, editText, createText, successAlert = "Opération effectuée", errorAlert = "Une erreur est survenue" }: IAdminModalForm) => {
   const [loading, setLoading] = useState(false)
-  const props = useForm({defaultValues: defaultValues})
+  const props = useForm({ defaultValues: defaultValues })
   const submit: any = async (formData: any, close: boolean) => {
     try {
       setLoading(true)
@@ -53,23 +57,21 @@ export const AdminModalForm = ({ handleClose, onSubmit, type, component: Compone
     }
   }
 
-  return <Modal show={true} onHide={() => handleClose()}>
-    <Modal.Header closeButton>
-      <Modal.Title>{type == 'create' ? createText : editText}</Modal.Title>
-    </Modal.Header>
-    <Form onSubmit={props.handleSubmit(submit)}>
-      <Modal.Body>
+  return <Dialog open={true} onClose={() => handleClose()}>
+    <DialogTitle id="alert-dialog-title">{type == 'create' ? createText : editText}</DialogTitle>
+    <form onSubmit={props.handleSubmit(submit)}>
+      <DialogContent>
         <Component {...props} />
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={() => handleClose()}>
-          Annuler
+      </DialogContent>
+      <DialogActions>
+        <Button color="secondary" onClick={() => handleClose()}>
+          Fermer
         </Button>
-        <Button variant="success" onClick={props.handleSubmit(data => submit(data, false))} disabled={loading}>{type == 'create' ? "Créer" : "Éditer"}</Button>
-        <Button variant="success" type="submit" disabled={loading}>
+        <Button color="primary" onClick={props.handleSubmit(data => submit(data, false))} disabled={loading}>{type == 'create' ? "Créer" : "Éditer"}</Button>
+        <Button color="primary" type="submit" disabled={loading}>
           {type == 'create' ? "Créer et fermer" : "Éditer et fermer"}
         </Button>
-      </Modal.Footer>
-    </Form>
-  </Modal>
+      </DialogActions>
+    </form>
+  </Dialog>
 }

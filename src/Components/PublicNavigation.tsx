@@ -1,11 +1,6 @@
-import { useContext } from 'react';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import { useContext, useState } from 'react';
 import { userContext } from '../Contexts/Contexts'
-import { LinkContainer } from 'react-router-bootstrap'
-import { Link } from 'react-router-dom';
-
+import { Link, NavLink } from 'react-router-dom';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -15,7 +10,6 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { useState } from 'react';
 
 export const PublicNavigation = ({ children }: { children: JSX.Element }) => {
 
@@ -48,39 +42,6 @@ export const PublicNavigation = ({ children }: { children: JSX.Element }) => {
 
     const classes = useStyles();
 
-    /*
-
-     <Navbar className="mb-3" collapseOnSelect expand="lg" bg="danger" variant="dark">
-            <LinkContainer to={value.user ? "/part" : "/login"}><Navbar.Brand>English App</Navbar.Brand></LinkContainer>
-            <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-            <Navbar.Collapse id="responsive-navbar-nav" className="justify-content-end">
-                {value.user && <>
-                    <Nav className="mr-auto">
-                        <LinkContainer to="/part"><Nav.Link>Lancer une partie</Nav.Link></LinkContainer>
-                        <LinkContainer to="/gamehistory"><Nav.Link>Historique des parties</Nav.Link></LinkContainer>
-                        {value.user?.admin && <LinkContainer to="/questions"><Nav.Link>Administration</Nav.Link></LinkContainer>}
-                    </Nav>
-                </>
-                }
-
-                <Nav>
-                    {value.user ?
-                        <>
-                            <NavDropdown title={value.user.prenom} id="collasible-nav-dropdown">
-                                <LinkContainer to="/profile"><NavDropdown.Item>Mon profil</NavDropdown.Item></LinkContainer>
-                            </NavDropdown>
-                            <Nav.Link href="#" onClick={userLogout}>Déconnexion</Nav.Link>
-                        </> :
-                        <>
-                            <LinkContainer to="/login"><Nav.Link href="#deets">Connexion</Nav.Link></LinkContainer>
-                            <LinkContainer to="/register"><Nav.Link href="#deets">Inscription</Nav.Link></LinkContainer>
-                        </>
-                    }
-                </Nav>
-            </Navbar.Collapse>
-        </Navbar>
-    */
-
     return <>
         <div className={classes.root}>
             <AppBar position="static">
@@ -100,8 +61,9 @@ export const PublicNavigation = ({ children }: { children: JSX.Element }) => {
                                 keepMounted
                                 open={profileOpen}
                                 onClose={handleMenuClose}
+                                transitionDuration={0}
                             >
-                              <MenuItem component={Link} onClick={handleMenuClose} to="/profile">Mon profile</MenuItem>
+                             <MenuItem component={NavLink} onClick={handleMenuClose} activeClassName="selected" to="/profile" style={{color: 'inherit'}}>Mon profile</MenuItem>
                               <MenuItem onClick={() => (handleMenuClose(), userLogout())}>Déconnexion</MenuItem>
                             </Menu>
 
