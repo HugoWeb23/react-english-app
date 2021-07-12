@@ -14,6 +14,7 @@ import {
     Button,
     Box
 } from '@material-ui/core'
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 
 interface ISearchByThemes {
@@ -31,37 +32,39 @@ export const SearchByThemes = ({ themesList, handleClose, onSubmit }: ISearchByT
 
     const [themes, setThemes] = useState<IThemes[]>([])
     const [selectedThemes, setSelectedThemes] = useState<IThemes[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
     const searchThemeRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         setSelectedThemes(themesList)
     }, [])
 
-    const searchTheme = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.value.length > 2) {
+    const searchTheme = async (value: string) => {
+        if (value.length > 2) {
+            setLoading(true)
             const themes = await apiFetch('/api/themes/search', {
                 method: 'POST',
-                body: JSON.stringify({ theme: e.target.value })
+                body: JSON.stringify({ theme: value })
             })
             setThemes(themes)
-        } else if (e.target.value.length === 0) {
-            setThemes([])
+            setLoading(true)
         }
     }
 
-    const handleSelectTheme = (e: React.ChangeEvent<HTMLInputElement>, theme: IThemes): void => {
-        if (e.target.checked && !selectedThemes.some((t: IThemes) => t._id == theme._id)) {
-            setSelectedThemes((themes: IThemes[]) => [...themes, theme])
-        } else if (e.target.checked === false) {
-            setSelectedThemes((themes: IThemes[]) => themes.filter((t: IThemes) => t._id != theme._id))
+    const handleSelectTheme = (themes: IThemes[]): void => {
+        let isValid = true
+        themes.map(theme => {
+            if(typeof theme != 'object') {
+                isValid = false
+                return
+            }
+            if('_id' in theme == false || 'theme' in theme == false) {
+                isValid = false
+            }
+        })
+        if(isValid) {
+            setSelectedThemes(themes)
         }
-        searchThemeRef.current && (searchThemeRef.current.value = "")
-        searchThemeRef.current?.focus()
-      
-    }
-
-    const handleDeleteTheme = (theme: IThemes) => {
-        setSelectedThemes((themes: IThemes[]) => themes.filter((t: IThemes) => t != theme))
     }
 
     const handleSaveThemes = () => {
@@ -73,27 +76,27 @@ export const SearchByThemes = ({ themesList, handleClose, onSubmit }: ISearchByT
         <Dialog open={true} onClose={handleClose} fullWidth>
             <DialogTitle id="alert-dialog-title">Rechercher des thèmes</DialogTitle>
             <DialogContent>
-                <FormControl fullWidth>
-                    <TextField placeholder="Nom du thème" inputRef={searchThemeRef} onChange={searchTheme} />
-                </FormControl>
-                <FormControl>
-                    {selectedThemes.length > 0 && <>{selectedThemes.map((t: IThemes, index: number) => <ClosableBadge element={t} elementName={t.theme} index={index} variant="dark" handleClose={handleDeleteTheme} />)}
-                        <FormHelperText>
-                            Cliquez sur un thème pour le supprimer.
-                        </FormHelperText>
-                    </>}
-                </FormControl>
-                {themes.length > 0 && themes.map((theme: IThemes, index: number) => {
-                    return <>
-                    <Box>
-                    <FormControlLabel
-                        key={theme._id}
-                        control={<Checkbox checked={selectedThemes.some((t: IThemes) => t._id == theme._id)} onChange={(e) => handleSelectTheme(e, theme)} name={`check${index}`} />}
-                        label={theme.theme}
-                    />
-                    </Box>
-                    </>
-                })}
+                <Autocomplete
+                    value={selectedThemes}
+                    multiple
+                    freeSolo
+                    id="tags-standard"
+                    options={themes}
+                    defaultValue={themesList}
+                    getOptionLabel={(option) => option.theme}
+                    getOptionSelected={(value: IThemes, option: IThemes) => option._id === value._id}
+                    onChange={(e, value) => handleSelectTheme(value as IThemes[])}
+                    onInputChange={(e, value) => searchTheme(value)}
+                    disableCloseOnSelect={true}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            variant="standard"
+                            label="Sélectionnez des thèmes"
+                            placeholder="Sélectionnez des thèmes"
+                        />
+                    )}
+                />
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>
