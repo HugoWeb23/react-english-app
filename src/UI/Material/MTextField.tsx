@@ -17,13 +17,13 @@ export const MTextField = ({ name, control, rules, defaultValue, ...restProps }:
         rules={rules}
         render={(props) => (
             <TextField
-            {...restProps}
             value={props.field.value}
             id="outlined-basic"
             onChange={props.field.onChange} 
             error={props.fieldState.invalid}
             helperText={props.fieldState.error?.message}
             inputRef={props.field.ref}
+            {...restProps}
              />
         )}
         />

@@ -1,7 +1,6 @@
 import { useEffect, useState, useMemo, memo } from "react"
 import { apiFetch } from "../../Utils/Api";
 import { QuestionsHook } from '../../Hooks/QuestionsHook'
-import Button from 'react-bootstrap/Button'
 import Badge from 'react-bootstrap/Badge'
 import { Loader } from '../../UI/Loader'
 import { DeleteModal } from "../../UI/DeleteModal"
@@ -21,10 +20,18 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  IconButton
+  IconButton,
+  Button,
+  Box,
+  Typography,
+  Grid
 } from '@material-ui/core'
+import { flexbox } from '@material-ui/system';
+import Pagination from '@material-ui/lab/Pagination';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
+import AddIcon from '@material-ui/icons/Add';
+import { ChangeEvent } from "react";
 
 export const Questions = () => {
   const { questions, totalPages, currentPage, elementsPerPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
@@ -48,8 +55,8 @@ export const Questions = () => {
     })()
   }, [filteredQuestions])
 
-  const handleCreateQuestion = async(question: any) => {
-    await createQuestion({...question, themeId: question.themeId._id})
+  const handleCreateQuestion = async (question: any) => {
+    await createQuestion({ ...question, themeId: question.themeId._id })
   }
 
   const handleThemeChange = (theme: any, type?: string) => {
@@ -90,7 +97,7 @@ export const Questions = () => {
     })
   }
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = (e: ChangeEvent<unknown>, page: number) => {
     setFilteredQuestions((filters: IFiletredQuestions) => {
       return { ...filters, page: page }
     })
@@ -98,16 +105,24 @@ export const Questions = () => {
 
   return <>
     <Container>
-      <div className="d-flex justify-content-between align-items-center mb-2 mt-2">
-        <h1>Les questions</h1>
-        <Button variant="primary" onClick={() => setnewQuestion(true)}>Créer une question</Button>
-      </div>
-      <div className="d-flex justify-content-end mb-3">
+      <Box display="flex" justifyContent="space-between" alignItems="center">
+       <Typography variant="h4">Les questions</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => setnewQuestion(true)}
+          startIcon={<AddIcon />}
+        >
+          Créer une question
+        </Button>
+        </Box>
+      <Box display="flex" justifyContent="flex-end">
         <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange} />
-      </div>
+        </Box>
       {newQuestion && <CreateQuestion handleClose={() => setnewQuestion(false)} onSubmit={handleCreateQuestion} />}
-      <div className="row">
-        <div className="col-md-3">
+     <Grid container>
+       <Grid item xs={3}>
+         <Box marginRight="10px">
           <QuestionFilters
             selectedTypes={filteredQuestions.type}
             selectedThemes={filteredQuestions.theme}
@@ -116,8 +131,9 @@ export const Questions = () => {
             textChange={handleTextChange}
             resetFilters={resetFilters}
           />
-        </div>
-        <div className="col-md-9">
+          </Box>
+       </Grid>
+       <Grid item xs={9}>
           <Table>
             <TableHead>
               <TableRow>
@@ -134,9 +150,11 @@ export const Questions = () => {
             </TableBody>
           </Table>
           {(loader === false && questions.length === 0) && <Alert variant="warning">Aucun résultat</Alert>}
-          <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={handlePageChange} />
-        </div>
-      </div>
+          <Box marginTop="15px" display="flex" justifyContent="flex-end">
+          <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} showFirstButton showLastButton />
+          </Box>
+       </Grid>
+     </Grid>
     </Container>
   </>
 }
@@ -160,7 +178,7 @@ const Question = memo(({ question, onDelete, onUpdate }: QuestionProps) => {
   }
 
   const updateQuestion = async (data: any) => {
-    await onUpdate(question, {...data, themeId: data.themeId._id})
+    await onUpdate(question, { ...data, themeId: data.themeId._id })
   }
 
   return <TableRow key={question._id}>
@@ -187,7 +205,7 @@ interface CreateQuestionProps {
 }
 
 const CreateQuestion = ({ handleClose, onSubmit }: CreateQuestionProps) => {
-  const defaultValues = { propositions: [{proposition: "", correcte: false}] }
+  const defaultValues = { themeId: null, propositions: [{ proposition: "", correcte: false }] }
   return <AdminModalForm
     handleClose={handleClose}
     onSubmit={onSubmit}
@@ -205,7 +223,7 @@ interface EditQuestionProps {
 }
 
 const EditQuestion = ({ handleClose, question, onSubmit }: EditQuestionProps) => {
-  const defaultValues = { ...question, propositions: (question.propositions === undefined ? [{}] : question.propositions), themeId: question.theme }
+  const defaultValues = { ...question, propositions: (question.propositions === undefined ? [{ proposition: "", correcte: false }] : question.propositions), themeId: question.theme }
   return <AdminModalForm
     handleClose={handleClose}
     onSubmit={onSubmit}

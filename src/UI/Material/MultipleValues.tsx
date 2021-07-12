@@ -25,27 +25,25 @@ return <>
     render={(props) => (
       <>
         <Autocomplete
-        {...props}
         value={props.field.value}
         multiple={multiple}
         options={data}
         getOptionLabel={(option: any) => option[optionLabel]}
         getOptionSelected={(option, value) => option._id == value._id}
         noOptionsText='Aucun résultat'
-        loading={true}
         className={styles}
+        onChange={(_, data, reason, value) => (props.field.onChange(data), deleteOption && (reason == 'remove-option' ? deleteOption(value) : deleteOption(undefined)), addOption && (reason == 'select-option' && addOption(value)))}
         renderInput={(params) => (
           <TextField
-            {...params}
-            fullWidth
             label={inputLabel}
             variant="standard"
             error={props.fieldState.invalid}
             helperText={props.fieldState.error?.message}
             ref={props.field.ref}
+            {...params}
           />
         )}
-        onChange={(_, data, reason, value) => (props.field.onChange(data), deleteOption && (reason == 'remove-option' ? deleteOption(value) : deleteOption(undefined)), addOption && (reason == 'select-option' && addOption(value)), console.log(data))}
+        {...props}
       />
       </>
     )}

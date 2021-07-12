@@ -1,10 +1,19 @@
-import Button from 'react-bootstrap/Button'
-import Modal from 'react-bootstrap/Modal'
-import Form from 'react-bootstrap/Form'
-import { CloseIcon } from '../../Icons/Close'
 import React, { useEffect, useState, useRef } from 'react'
 import { apiFetch } from '../../Utils/Api'
-import {ClosableBadge} from '../../UI/ClosableBadge'
+import { ClosableBadge } from '../../UI/ClosableBadge'
+import {
+    TextField,
+    FormControl,
+    FormControlLabel,
+    FormHelperText,
+    Checkbox,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    Button,
+    Box
+} from '@material-ui/core'
 
 
 interface ISearchByThemes {
@@ -18,7 +27,7 @@ interface IThemes {
     theme: string
 }
 
-export const SearchByThemes = ({themesList, handleClose, onSubmit}: ISearchByThemes) => {
+export const SearchByThemes = ({ themesList, handleClose, onSubmit }: ISearchByThemes) => {
 
     const [themes, setThemes] = useState<IThemes[]>([])
     const [selectedThemes, setSelectedThemes] = useState<IThemes[]>([])
@@ -29,13 +38,13 @@ export const SearchByThemes = ({themesList, handleClose, onSubmit}: ISearchByThe
     }, [])
 
     const searchTheme = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if(e.target.value.length > 2) {
+        if (e.target.value.length > 2) {
             const themes = await apiFetch('/api/themes/search', {
                 method: 'POST',
                 body: JSON.stringify({ theme: e.target.value })
             })
             setThemes(themes)
-        } else if(e.target.value.length === 0) {
+        } else if (e.target.value.length === 0) {
             setThemes([])
         }
     }
@@ -48,7 +57,7 @@ export const SearchByThemes = ({themesList, handleClose, onSubmit}: ISearchByThe
         }
         searchThemeRef.current && (searchThemeRef.current.value = "")
         searchThemeRef.current?.focus()
-        setThemes([])
+      
     }
 
     const handleDeleteTheme = (theme: IThemes) => {
@@ -61,42 +70,39 @@ export const SearchByThemes = ({themesList, handleClose, onSubmit}: ISearchByThe
     }
 
     return <>
-        <Modal show={true} onHide={handleClose}>
-            <Modal.Header closeButton>
-                <Modal.Title>Rechercher des thèmes</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form.Group controlId="search_theme">
-                    <Form.Label>Nom du thème</Form.Label>
-                    <Form.Control type="text" placeholder="Nom du thème" ref={searchThemeRef} onChange={searchTheme} />
-                </Form.Group>
-                <Form.Group>
+        <Dialog open={true} onClose={handleClose} fullWidth>
+            <DialogTitle id="alert-dialog-title">Rechercher des thèmes</DialogTitle>
+            <DialogContent>
+                <FormControl fullWidth>
+                    <TextField placeholder="Nom du thème" inputRef={searchThemeRef} onChange={searchTheme} />
+                </FormControl>
+                <FormControl>
                     {selectedThemes.length > 0 && <>{selectedThemes.map((t: IThemes, index: number) => <ClosableBadge element={t} elementName={t.theme} index={index} variant="dark" handleClose={handleDeleteTheme} />)}
-                        <Form.Text className="text-muted">
+                        <FormHelperText>
                             Cliquez sur un thème pour le supprimer.
-                        </Form.Text>
+                        </FormHelperText>
                     </>}
-                </Form.Group>
+                </FormControl>
                 {themes.length > 0 && themes.map((theme: IThemes, index: number) => {
-                    return <Form.Check
+                    return <>
+                    <Box>
+                    <FormControlLabel
                         key={theme._id}
-                        type="checkbox"
-                        id={theme._id}
+                        control={<Checkbox checked={selectedThemes.some((t: IThemes) => t._id == theme._id)} onChange={(e) => handleSelectTheme(e, theme)} name={`check${index}`} />}
                         label={theme.theme}
-                        custom
-                        checked={selectedThemes.some((t: IThemes) => t._id == theme._id)}
-                        onChange={(e) => handleSelectTheme(e, theme)}
                     />
+                    </Box>
+                    </>
                 })}
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleClose}>
                     Fermer
-        </Button>
-                <Button variant="outline-success" onClick={handleSaveThemes}>
+                </Button>
+                <Button color="primary" onClick={handleSaveThemes}>
                     Appliquer
-        </Button>
-            </Modal.Footer>
-        </Modal>
+                </Button>
+            </DialogActions>
+        </Dialog>
     </>
 }

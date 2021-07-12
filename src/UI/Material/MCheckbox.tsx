@@ -17,11 +17,11 @@ export const MCheckbox = ({name, control, rules, defaultValue, ...restProps}: IC
     render={(props) => (
         <>
         <Checkbox
-        {...restProps}
         checked={props.field.value}
         id="outlined-basic"
         onChange={props.field.onChange} 
         ref={props.field.ref}
+        {...restProps}
          />
          </>
     )}

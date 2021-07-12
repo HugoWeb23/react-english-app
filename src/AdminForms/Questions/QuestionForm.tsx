@@ -82,6 +82,7 @@ export const QuestionForm = (props: UseFormReturn) => {
                 control={control}
                 label="Intitulé de la question"
                 rules={{ required: "L'intitulé est obligatoire" }}
+                defaultValue=""
             />
         </FormControl>
         <FormControl className={classes.form} fullWidth>
