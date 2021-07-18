@@ -87,7 +87,6 @@ export const SearchByThemes = ({ themesList, handleClose, onSubmit }: ISearchByT
                     getOptionSelected={(value: IThemes, option: IThemes) => option._id === value._id}
                     onChange={(e, value) => handleSelectTheme(value as IThemes[])}
                     onInputChange={(e, value) => searchTheme(value)}
-                    disableCloseOnSelect={true}
                     renderInput={(params) => (
                         <TextField
                             {...params}

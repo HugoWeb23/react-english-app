@@ -1,9 +1,6 @@
-import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { ApiErrors } from '../Utils/Api'
 import { useState } from "react";
-import { IUsers } from "../Types/Interfaces";
-import { Children } from "react";
-import { JsxElement } from "typescript";
 import { toast } from "react-toastify";
 import {
   Dialog,
@@ -48,7 +45,6 @@ export const AdminModalForm = ({ handleClose, onSubmit, type, component: Compone
             message: err.message
           });
         })
-        console.log(e.globalErrors)
         e.globalErrors.forEach(err => {
           toast.error(err)
         })
@@ -57,7 +53,7 @@ export const AdminModalForm = ({ handleClose, onSubmit, type, component: Compone
     }
   }
 
-  return <Dialog open={true} onClose={() => handleClose()}>
+  return <Dialog open={true} onClose={() => handleClose()} fullWidth>
     <DialogTitle id="alert-dialog-title">{type == 'create' ? createText : editText}</DialogTitle>
     <form onSubmit={props.handleSubmit(submit)}>
       <DialogContent>

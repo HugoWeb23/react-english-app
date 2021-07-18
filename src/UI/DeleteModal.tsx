@@ -1,7 +1,14 @@
 import Modal from 'react-bootstrap/Modal'
-import Button from 'react-bootstrap/Button'
-import {useState} from 'react'
+import { useState, useContext } from 'react'
 import { toast } from 'react-toastify'
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Button
+} from '@material-ui/core'
+import { SnackBarContext } from '../Contexts/Contexts';
 
 interface IDeleteModal {
   handleClose: () => void,
@@ -11,29 +18,31 @@ interface IDeleteModal {
   deleteMessage?: string
 }
 
-export const DeleteModal = ({handleClose, onConfirm, element, alertMessage = 'Voulez-vous vraiment supprimer cet élément ?', deleteMessage = 'Élément supprimé'}: IDeleteModal) => {
-
+export const DeleteModal = ({ handleClose, onConfirm, element, alertMessage = 'Voulez-vous vraiment supprimer cet élément ?', deleteMessage = 'Élément supprimé' }: IDeleteModal) => {
+  const value = useContext(SnackBarContext)
   const [loading, setLoading] = useState(false)
 
-    const handleConfirm = async() => {
-        setLoading(true)
-        await onConfirm(element)
-        handleClose()
-        toast.success(deleteMessage)
-    }
+  const Gne = () => {
+   value.Open()
+  }
 
-return  <Modal show={true} onHide={() => handleClose()}>
-<Modal.Header closeButton>
-  <Modal.Title>Confirmation</Modal.Title>
-</Modal.Header>
-<Modal.Body>{alertMessage}</Modal.Body>
-<Modal.Footer>
-  <Button variant="secondary" onClick={() => handleClose()}>
-    Annuler
-  </Button>
-  <Button variant="danger" className={`${loading ? "progress-bar progress-bar-striped progress-bar-animated bg-danger" : null}`} disabled={loading} onClick={handleConfirm}>
-    Supprimer
-  </Button>
-</Modal.Footer>
-</Modal>
+  const handleConfirm = async () => {
+    setLoading(true)
+    await onConfirm(element)
+    handleClose()
+    Gne()
+  }
+
+  return <Dialog open={true} onClose={() => handleClose()}>
+    <DialogTitle>Confirmation</DialogTitle>
+    <DialogContent>{alertMessage}</DialogContent>
+    <DialogActions>
+      <Button color="default" onClick={() => handleClose()}>
+        Annuler
+      </Button>
+      <Button color="secondary" disabled={loading} onClick={handleConfirm}>
+        Supprimer
+      </Button>
+    </DialogActions>
+  </Dialog>
 }

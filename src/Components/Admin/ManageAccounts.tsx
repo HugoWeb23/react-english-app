@@ -1,87 +1,102 @@
-import { useEffect, useState } from 'react'
-import Table from 'react-bootstrap/Table'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { Container } from '../../UI/Container'
 import { IUsers } from '../../Types/Interfaces'
-import { apiFetch } from '../../Utils/Api'
 import { ManageUsersHook } from '../../Hooks/ManageUsersHook'
-import { Loader } from '../../UI/Loader'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import Dropdown from 'react-bootstrap/Dropdown'
 import { AdminModalForm } from '../../ModalForm/AdminModalForm'
 import { AccountForm } from '../../AdminForms/Accounts/AccountForm'
 import { DeleteModal } from '../../UI/DeleteModal'
 import { ElementsPerPage } from '../../UI/ElementsPerPage'
-import { Paginate } from '../../UI/Pagination'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Button,
+  Box,
+  Typography,
+  CircularProgress,
+  LinearProgress
+} from '@material-ui/core'
+import Pagination from '@material-ui/lab/Pagination'
+import DeleteIcon from '@material-ui/icons/Delete'
+import EditIcon from '@material-ui/icons/Edit'
 
 export const ManageAccounts = () => {
-    const {users, GetAllUsers, UpdateUser, DeleteUser, elementsPerPage, totalPages, currentPage, ChangeLimit, ChangePage} = ManageUsersHook()
-    const [loader, setLoader] = useState<boolean>(true)
+  const { loading, users, GetAllUsers, UpdateUser, DeleteUser, elementsPerPage, totalPages, currentPage, ChangeLimit, ChangePage } = ManageUsersHook()
+  const [loader, setLoader] = useState<boolean>(true)
 
-useEffect(() => {
+  useEffect(() => {
     (async () => {
-       await GetAllUsers()
-       setLoader(false)
+      await GetAllUsers()
+      setLoader(false)
     })()
-}, [])
+  }, [])
 
-return  <>
-<Container>
-<div className="d-flex justify-content-between align-items-center mb-2 mt-2">
-<h1>Gestion des comptes</h1>
-</div>
-<div className="d-flex justify-content-end mb-3">
+  return <>
+    <Container>
+      <Typography variant="h4">Gestion des comptes</Typography>
+      <div className="d-flex justify-content-end mb-3">
         <ElementsPerPage elementsPerPage={elementsPerPage} onChange={ChangeLimit} />
       </div>
-<Table striped bordered hover>
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Prénom</th>
-                <th>E-mail</th>
-                <th>Rôle</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {loader && <Loader animation="border" variant="primary"/>}
-              {users.map(user => <User user={user} key={user._id} onSubmit={UpdateUser} onDelete={DeleteUser}/>)}
-            </tbody>
-          </Table>
-          <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={ChangePage} />
-</Container>
-</>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Nom</TableCell>
+            <TableCell>Prénom</TableCell>
+            <TableCell>E-mail</TableCell>
+            <TableCell>Rôle</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {loader && <CircularProgress />}
+          {users.map(user => <User user={user} key={user._id} onSubmit={UpdateUser} onDelete={DeleteUser} />)}
+        </TableBody>
+      </Table>
+      <Box display="flex" justifyContent="flex-end" marginTop="15px">
+      <Pagination count={totalPages} page={currentPage} onChange={(e: ChangeEvent<unknown>, page: number) => ChangePage(page)} showFirstButton showLastButton />
+      </Box>
+    </Container>
+  </>
 }
 
 interface UserInterface {
-    user: IUsers,
-    onSubmit: (user: IUsers, data: IUsers) => Promise<void>,
-    onDelete: (user: IUsers) => Promise<void>
+  user: IUsers,
+  onSubmit: (user: IUsers, data: IUsers) => Promise<void>,
+  onDelete: (user: IUsers) => Promise<void>
 }
 
-const User = ({user, onSubmit, onDelete}: UserInterface) => {
-    const [editModal, setEditModal] = useState<boolean>(false)
-    const [deleteModal, setDeleteModal] = useState<boolean>(false)
+const User = ({ user, onSubmit, onDelete }: UserInterface) => {
+  const [editModal, setEditModal] = useState<boolean>(false)
+  const [deleteModal, setDeleteModal] = useState<boolean>(false)
 
-    return <>
-    <tr>
-        <td>{user.nom}</td>
-        <td>{user.prenom}</td>
-        <td>{user.email}</td>
-        <td>{user.admin === true ? 'Administrateur' : 'Utilisateur'}</td>
-        <td><DropdownButton variant="info" title="Actions">
-        <Dropdown.Item eventKey="1" onClick={() => setEditModal(true)}>Modifier</Dropdown.Item>
-        <Dropdown.Item eventKey="2" onClick={() => setDeleteModal(true)}>Supprimer</Dropdown.Item>
-      </DropdownButton></td>
-    </tr>
-    {editModal && <AdminModalForm 
-            handleClose={() => setEditModal(false)} 
-            onSubmit={data => onSubmit(user, data)} 
-            type="edit" 
-            component={AccountForm}
-            defaultValues={{...user, admin: user.admin.toString()}}
-            createText="Créer un compte"
-            editText="Éditer un compte"/>
+  return <>
+    <TableRow>
+      <TableCell>{user.nom}</TableCell>
+      <TableCell>{user.prenom}</TableCell>
+      <TableCell>{user.email}</TableCell>
+      <TableCell>{user.admin === true ? 'Administrateur' : 'Utilisateur'}</TableCell>
+      <TableCell>
+        <IconButton aria-label="edit" onClick={() => setEditModal(true)}>
+          <EditIcon fontSize="inherit" />
+        </IconButton>
+        <IconButton aria-label="delete" onClick={() => setDeleteModal(true)}>
+          <DeleteIcon fontSize="inherit" />
+        </IconButton>
+      </TableCell>
+    </TableRow>
+    {editModal && <AdminModalForm
+      handleClose={() => setEditModal(false)}
+      onSubmit={data => onSubmit(user, data)}
+      type="edit"
+      component={AccountForm}
+      defaultValues={{ ...user, admin: user.admin.toString() }}
+      createText="Créer un compte"
+      editText="Éditer un compte" />
     }
-    {deleteModal && <DeleteModal handleClose={() => setDeleteModal(false)} onConfirm={onDelete} element={user}/>}
-    </>
+    {deleteModal && <DeleteModal handleClose={() => setDeleteModal(false)} onConfirm={onDelete} element={user} />}
+  </>
 }

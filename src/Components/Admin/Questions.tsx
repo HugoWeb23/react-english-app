@@ -1,15 +1,10 @@
-import { useEffect, useState, useMemo, memo } from "react"
-import { apiFetch } from "../../Utils/Api";
+import { useEffect, useState, useMemo, memo, ChangeEvent } from "react"
 import { QuestionsHook } from '../../Hooks/QuestionsHook'
-import Badge from 'react-bootstrap/Badge'
-import { Loader } from '../../UI/Loader'
 import { DeleteModal } from "../../UI/DeleteModal"
 import { QuestionType, PropositionType } from '../../Types/Questions'
 import { QuestionFilters } from './QuestionFilters'
 import { IFiletredQuestions } from '../../Types/Interfaces'
 import { ElementsPerPage } from '../../UI/ElementsPerPage'
-import { Paginate } from '../../UI/Pagination'
-import Alert from 'react-bootstrap/Alert'
 import { Container } from "../../UI/Container"
 import { AdminModalForm } from '../../ModalForm/AdminModalForm'
 import { QuestionForm } from "../../AdminForms/Questions/QuestionForm";
@@ -24,14 +19,15 @@ import {
   Button,
   Box,
   Typography,
-  Grid
+  Grid,
+  Chip,
+  CircularProgress
 } from '@material-ui/core'
-import { flexbox } from '@material-ui/system';
 import Pagination from '@material-ui/lab/Pagination';
 import DeleteIcon from '@material-ui/icons/Delete';
 import EditIcon from '@material-ui/icons/Edit';
 import AddIcon from '@material-ui/icons/Add';
-import { ChangeEvent } from "react";
+import { Alert, AlertTitle } from '@material-ui/lab';
 
 export const Questions = () => {
   const { questions, totalPages, currentPage, elementsPerPage, getQuestions, deleteQuestion, createQuestion, updateQuestion } = QuestionsHook();
@@ -106,7 +102,7 @@ export const Questions = () => {
   return <>
     <Container>
       <Box display="flex" justifyContent="space-between" alignItems="center">
-       <Typography variant="h4">Les questions</Typography>
+        <Typography variant="h4">Les questions</Typography>
         <Button
           variant="contained"
           color="primary"
@@ -115,25 +111,25 @@ export const Questions = () => {
         >
           Créer une question
         </Button>
-        </Box>
-      <Box display="flex" justifyContent="flex-end">
+      </Box>
+      <Box display="flex" justifyContent="flex-end" marginTop="15px">
         <ElementsPerPage elementsPerPage={elementsPerPage} onChange={handleElementsChange} />
-        </Box>
+      </Box>
       {newQuestion && <CreateQuestion handleClose={() => setnewQuestion(false)} onSubmit={handleCreateQuestion} />}
-     <Grid container>
-       <Grid item xs={3}>
-         <Box marginRight="10px">
-          <QuestionFilters
-            selectedTypes={filteredQuestions.type}
-            selectedThemes={filteredQuestions.theme}
-            typeChange={handleTypeChange}
-            themeChanges={handleThemeChange}
-            textChange={handleTextChange}
-            resetFilters={resetFilters}
-          />
+      <Grid container>
+        <Grid item xs={12} sm={12} md={3}>
+          <Box marginRight="10px">
+            <QuestionFilters
+              selectedTypes={filteredQuestions.type}
+              selectedThemes={filteredQuestions.theme}
+              typeChange={handleTypeChange}
+              themeChanges={handleThemeChange}
+              textChange={handleTextChange}
+              resetFilters={resetFilters}
+            />
           </Box>
-       </Grid>
-       <Grid item xs={9}>
+        </Grid>
+        <Grid item xs={12} sm={12} md={9}>
           <Table>
             <TableHead>
               <TableRow>
@@ -145,16 +141,20 @@ export const Questions = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {loader && <Loader display="block" animation="border" variant="primary" />}
+              {loader && <CircularProgress />}
               {questions && questions.map((question: QuestionType, index: number) => <Question key={question._id} question={question} onDelete={deleteQuestion} onUpdate={updateQuestion} />)}
             </TableBody>
           </Table>
-          {(loader === false && questions.length === 0) && <Alert variant="warning">Aucun résultat</Alert>}
+          {(loader === false && questions.length === 0) && (
+            <Alert severity="info">
+              <AlertTitle>Information</AlertTitle>
+              Aucun résultat
+            </Alert>)}
           <Box marginTop="15px" display="flex" justifyContent="flex-end">
-          <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} showFirstButton showLastButton />
+            <Pagination count={totalPages} page={currentPage} onChange={handlePageChange} showFirstButton showLastButton />
           </Box>
-       </Grid>
-     </Grid>
+        </Grid>
+      </Grid>
     </Container>
   </>
 }
@@ -185,7 +185,7 @@ const Question = memo(({ question, onDelete, onUpdate }: QuestionProps) => {
     <TableCell>{question.intitule}</TableCell>
     <TableCell>{question.question}</TableCell>
     <TableCell>{question.reponse || question.propositions.map((p: PropositionType, index: number) => <p key={index} className={`mb-0 ${p.correcte ? "text-success" : "text-danger"}`}>{'[' + p.proposition + ']'}</p>)}</TableCell>
-    <TableCell>{question.type == 1 ? <Badge pill variant="primary">Réponse unique</Badge> : <Badge pill variant="secondary">Choix multiples</Badge>}</TableCell>
+    <TableCell><Chip color={question.type === 1 ? 'default' : 'primary'} size="small" label={question.type === 1 ? 'Réponse unique' : 'Choix multiples'} /></TableCell>
     <TableCell>
       <IconButton aria-label="edit" onClick={() => setEditQuestion(true)}>
         <EditIcon fontSize="inherit" />

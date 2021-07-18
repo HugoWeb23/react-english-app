@@ -12,12 +12,11 @@ import {
     MenuItem,
     createStyles,
     makeStyles,
-    Button,
-    Theme
+    Button
 } from '@material-ui/core'
 import { MTextField } from "../../UI/Material/MTextField"
 
-const useStyles = makeStyles((theme: Theme) =>
+const useStyles = makeStyles(() =>
     createStyles({
         form: {
             marginBottom: '15px'
@@ -43,7 +42,7 @@ export const QuestionForm = (props: UseFormReturn) => {
     }, [])
 
     const checkReponse = (value: string) => {
-        if (value.length == 0 && questionType == "1") {
+        if (value.length == 0 && questionType == 1) {
             return "La réponse est obligatoire"
         }
         return true
@@ -82,7 +81,6 @@ export const QuestionForm = (props: UseFormReturn) => {
                 control={control}
                 label="Intitulé de la question"
                 rules={{ required: "L'intitulé est obligatoire" }}
-                defaultValue=""
             />
         </FormControl>
         <FormControl className={classes.form} fullWidth>
@@ -99,6 +97,7 @@ export const QuestionForm = (props: UseFormReturn) => {
                     name="reponse"
                     control={control}
                     label="Réponse"
+                    defaultValue=""
                     rules={{ validate: checkReponse }}
                 />
             </FormControl>

@@ -1,48 +1,50 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { BrowserRouter as Router, Switch, Route, Link, Redirect } from "react-router-dom";
 import { Navigation } from "./Components/Navigation"
-import {userContext} from './Contexts/Contexts'
-import {UserLoader} from './Loaders/UserLoader'
-import {Login} from './Components/Login'
-import {Register} from './Components/Register'
-import {PrivateRoute} from './Components/PrivateRoute'
-import {Questions} from './Components/Admin/Questions'
-import {Themes} from './Components/Admin/Themes'
-import {apiFetch} from './Utils/Api'
-import {Part} from './Components/Part'
-import {Play} from './Components/Game/Play'
-import {UserType} from './Types/User'
-import {Results} from './Components/Game/Results'
-import {GameHistory} from './Components/GameHistory'
-import {NotFound} from './Components/404'
+import { userContext, SnackBarContext } from './Contexts/Contexts'
+import { UserLoader } from './Loaders/UserLoader'
+import { Login } from './Components/Login'
+import { Register } from './Components/Register'
+import { PrivateRoute } from './Components/PrivateRoute'
+import { Questions } from './Components/Admin/Questions'
+import { Themes } from './Components/Admin/Themes'
+import { apiFetch } from './Utils/Api'
+import { Part } from './Components/Part'
+import { Play } from './Components/Game/Play'
+import { UserType } from './Types/User'
+import { Results } from './Components/Game/Results'
+import { GameHistory } from './Components/GameHistory'
+import { NotFound } from './Components/404'
 import { Profile } from "./Components/Profile"
 import { ManageAccounts } from "./Components/Admin/ManageAccounts"
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { Notification } from "./UI/Material/Notification";
 
 export const App = () => {
-  const [user, setUser] = useState<null | UserType>(null);
-  const [loading, setLoading] = useState(true);
-  const [alertDisconnect, setAlertDisconnect] = useState(false)
+  const [user, setUser] = useState<null | UserType>(null)
+  const [loading, setLoading] = useState(true)
+  const [notificationOpen, setNotificationOpen] = useState<boolean>(false)
+  const [notificationMessage, setNotificationMessage] = useState<string | null>(null)
   useEffect(() => {
-    (async() => {
+    (async () => {
       try {
         const user = await apiFetch('/api/user', {
           method: 'GET'
         })
         setUser(user);
-      } catch(e) {
+      } catch (e) {
         setUser(null)
       }
       setTimeout(() => {
         setLoading(false)
       }, 1000)
-     
+
     })()
   }, [])
 
   const toggleUser = (user?: UserType) => {
-    if(user === undefined) {
+    if (user === undefined) {
       setUser(null)
     } else {
       setUser(user)
@@ -52,32 +54,51 @@ export const App = () => {
   const value = useMemo(() => {
     return {
       user,
-      alertDisconnect,
       loading,
       toggleUser
     }
   }, [user, toggleUser])
 
-return loading ? <UserLoader/> :
-<>
-  <Router>
-  <userContext.Provider value={value}>
-  <ToastContainer autoClose={2500}/>
-  <PrivateRoute path="/play/:id" component={Play} navigation="none"/>
-  <PrivateRoute path="/part" exact component={Part} admin={false} navigation="public"/>
-  <Route path="/404" component={NotFound}/>
-  <Route exact path="/">
-  <Redirect to="/part" />
-  </Route>
-  <PrivateRoute path="/themes" component={Themes} admin={true} navigation="admin"/>
-  <PrivateRoute path="/questions" component={Questions} admin={true} navigation="admin"/>
-  <PrivateRoute path="/manageaccounts" component={ManageAccounts} admin={true} navigation="admin"/>
-  <Route path="/login">{user ? <Redirect to="/part"/> : <Login onConnect={toggleUser}/>}</Route>
-  <Route path="/register">{user ? <Redirect to="/part"/> : <Register onConnect={toggleUser}/>}</Route>
-  <PrivateRoute path="/results/:id" exact component={Results} admin={false} navigation="public"/>
-  <PrivateRoute path="/gamehistory" exact component={GameHistory} admin={false} navigation="public"/>
-  <PrivateRoute path="/profile" exact component={Profile} admin={false} navigation="public"/>
-  </userContext.Provider>
-</Router>
-</>
+  const NotificationClose = () => {
+    setNotificationOpen(false)
+  }
+
+  const Open = () => {
+    setNotificationOpen(true)
+  }
+
+  const Notificationvalue = useMemo(() => {
+    return {
+      notificationOpen,
+      notificationMessage,
+      NotificationClose,
+      Open
+    }
+  }, [])
+
+  return loading ? <UserLoader /> :
+    <>
+      <Router>
+        <SnackBarContext.Provider value={Notificationvalue}>
+          <Notification open={notificationOpen} message={notificationMessage} />
+        </SnackBarContext.Provider>
+        <userContext.Provider value={value}>
+          <ToastContainer autoClose={2500} />
+          <PrivateRoute path="/play/:id" component={Play} navigation="none" />
+          <PrivateRoute path="/part" exact component={Part} admin={false} navigation="public" />
+          <Route path="/404" component={NotFound} />
+          <Route exact path="/">
+            <Redirect to="/part" />
+          </Route>
+          <PrivateRoute path="/themes" component={Themes} admin={true} navigation="admin" />
+          <PrivateRoute path="/questions" component={Questions} admin={true} navigation="admin" />
+          <PrivateRoute path="/manageaccounts" component={ManageAccounts} admin={true} navigation="admin" />
+          <Route path="/login">{user ? <Redirect to="/part" /> : <Login onConnect={toggleUser} />}</Route>
+          <Route path="/register">{user ? <Redirect to="/part" /> : <Register onConnect={toggleUser} />}</Route>
+          <PrivateRoute path="/results/:id" exact component={Results} admin={false} navigation="public" />
+          <PrivateRoute path="/gamehistory" exact component={GameHistory} admin={false} navigation="public" />
+          <PrivateRoute path="/profile" exact component={Profile} admin={false} navigation="public" />
+        </userContext.Provider>
+      </Router>
+    </>
 }

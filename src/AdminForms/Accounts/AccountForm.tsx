@@ -1,41 +1,76 @@
 import Form from "react-bootstrap/Form"
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, Controller } from "react-hook-form"
+import {
+    FormHelperText,
+    Select,
+    MenuItem,
+    FormControl,
+    makeStyles,
+    createStyles
+} from '@material-ui/core'
+import { MTextField } from "../../UI/Material/MTextField"
+
+const useStyles = makeStyles(() => 
+    createStyles({
+        form: {
+            marginBottom: '15px'
+        }
+    }))
 
 export const AccountForm = (props: UseFormReturn) => {
-    const {register, control, watch, formState, getValues, setValue} = props;
-    const {errors} = formState;
+    const styles = useStyles()
+    const { control } = props
 
-return <>
-<Form.Group controlId="nom">
-    <Form.Label>Nom</Form.Label>
-    <Form.Control type="text" placeholder="Intitulé de la question" isInvalid={errors.nom} {...register('nom', {required: "Le nom est obligatoire"})}/>
-    {errors.nom && <Form.Control.Feedback type="invalid">{errors.nom.message}</Form.Control.Feedback>}
-</Form.Group>
-<Form.Group controlId="prenom">
-    <Form.Label>Prénom</Form.Label>
-    <Form.Control type="text" placeholder="Intitulé de la question" isInvalid={errors.prenom} {...register('prenom', {required: "Le prénom est obligatoire"})}/>
-    {errors.prenom && <Form.Control.Feedback type="invalid">{errors.prenom.message}</Form.Control.Feedback>}
-</Form.Group>
-<Form.Group controlId="email">
-    <Form.Label>Adresse e-mail</Form.Label>
-    <Form.Control type="text" placeholder="Intitulé de la question" isInvalid={errors.email} {...register('email', {required: "L'adresse e-mail est obligatoire"})}/>
-    {errors.email && <Form.Control.Feedback type="invalid">{errors.email.message}</Form.Control.Feedback>}
-</Form.Group>
-<Form.Group controlId="pass">
-    <Form.Label>Mot de passe</Form.Label>
-    <Form.Control type="password" placeholder="Nouveau mot de passe" autoComplete="new-password" isInvalid={errors.pass} {...register('pass')}/>
-    {errors.pass && <Form.Control.Feedback type="invalid">{errors.pass.message}</Form.Control.Feedback>}
-    <Form.Text className="text-muted">
-      Laisser vide pour ne pas modifier
-    </Form.Text>
-</Form.Group>
-<Form.Group controlId="role">
-    <Form.Label>Rôle de l'utilisateur</Form.Label>
-    <Form.Control as="select" isInvalid={errors.admin} {...register('admin', {required: "Le rôle est obligatoire"})}>
-      <option value="false">Utilisateur</option>
-      <option value="true">Administrateur</option>
-    </Form.Control>
-    {errors.admin && <Form.Control.Feedback type="invalid">{errors.admin.message}</Form.Control.Feedback>}
-</Form.Group>
-</>
+    return <>
+        <FormControl className={styles.form} fullWidth>
+            <MTextField
+                name="nom"
+                control={control}
+                label="Nom"
+                rules={{ required: 'Le nom est obligatoire' }}
+            />
+        </FormControl>
+        <FormControl className={styles.form} fullWidth>
+            <MTextField
+                name="prenom"
+                control={control}
+                label="Prénom"
+                rules={{ required: 'Le prénom est obligatoire' }}
+            />
+        </FormControl>
+        <FormControl className={styles.form} fullWidth>
+            <MTextField
+                name="email"
+                control={control}
+                label="email"
+                rules={{ required: "L'email est obligatoire" }}
+            />
+        </FormControl>
+        <FormControl className={styles.form} fullWidth>
+            <MTextField
+                name="pass"
+                control={control}
+                label="Mot de passe"
+            />
+            <FormHelperText>Laisser vide pour ne pas modifier</FormHelperText>
+        </FormControl>
+        <FormControl className={styles.form} fullWidth>
+            <Controller
+                name="admin"
+                control={control}
+                defaultValue="false"
+                render={({ field: { value, onChange } }) => (
+                    <Select
+                        labelId="role"
+                        id="roles"
+                        value={value}
+                        onChange={onChange}
+                    >
+                        <MenuItem value="false">Utilisateur</MenuItem>
+                        <MenuItem value="true">Administrateur</MenuItem>
+                    </Select>
+                )}
+            />
+        </FormControl>
+    </>
 }

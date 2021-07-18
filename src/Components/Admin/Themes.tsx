@@ -1,18 +1,32 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, ChangeEvent } from "react"
 import { useThemes } from "../../Hooks/ThemesHook"
-import Button from 'react-bootstrap/Button'
-import Table from 'react-bootstrap/Table'
 import { Loader } from '../../UI/Loader'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import Dropdown from 'react-bootstrap/Dropdown'
 import { DeleteModal } from '../../UI/DeleteModal'
 import { ThemeType } from '../../Types/Themes'
 import { ElementsPerPage } from '../../UI/ElementsPerPage'
-import { Paginate } from '../../UI/Pagination'
 import { IPaginationProps } from '../../Types/Interfaces'
 import { Container } from '../../UI/Container'
 import { AdminModalForm } from '../../ModalForm/AdminModalForm'
 import { ThemeForm } from "../../AdminForms/Themes/ThemeForm";
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Button,
+  Box,
+  Typography,
+  Grid,
+  Chip
+} from '@material-ui/core'
+import Pagination from '@material-ui/lab/Pagination';
+import DeleteIcon from '@material-ui/icons/Delete';
+import EditIcon from '@material-ui/icons/Edit';
+import AddIcon from '@material-ui/icons/Add';
 
 export const Themes = () => {
   const { themes, currentPage, totalPages, elementsPerPage, getThemes, editTheme, createTheme, deleteTheme } = useThemes();
@@ -36,27 +50,29 @@ export const Themes = () => {
 
   return <>
     <Container>
-      <div className="d-flex justify-content-between align-items-center mb-2 mt-2">
-        <h1>Les thèmes</h1>
-        <Button variant="primary" onClick={() => setModalCreate(true)}>Créer un thème</Button>
-      </div>
-      <div className="d-flex justify-content-end mb-3">
+    <Box display="flex" justifyContent="space-between" alignItems="center">
+        <Typography variant="h4">Les thèmes</Typography>
+        <Button variant="contained" color="primary" onClick={() => setModalCreate(true)}>Créer un thème</Button>
+      </Box>
+      <Box display="flex" justifyContent="flex-end" marginTop="15px">
         <ElementsPerPage elementsPerPage={elementsPerPage} onChange={(page) => setPaginationProps(props => { return { ...props, elementsPerPage: page } })} />
-      </div>
+      </Box>
       {modalCreate && <CreateTheme onCreate={createTheme} handleClose={closeModalCreate} />}
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Thème</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Thème</TableCell>
+            <TableCell>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
           {loading && <Loader display="block" animation="border" variant="primary" />}
           {themes && themes.map((theme: ThemeType, index: number) => <Theme key={index} theme={theme} index={index} onEdit={editTheme} onDelete={deleteTheme} />)}
-        </tbody>
+        </TableBody>
       </Table>
-      <Paginate totalPages={totalPages} currentPage={currentPage} pageChange={(page) => setPaginationProps(props => { return { ...props, currentPage: page } })} />
+      <Box marginTop="15px" display="flex" justifyContent="flex-end">
+            <Pagination count={totalPages} page={currentPage} onChange={(e: ChangeEvent<unknown>, page: number) => setPaginationProps(props => { return { ...props, currentPage: page } })} showFirstButton showLastButton />
+          </Box>
     </Container>
   </>
 }
@@ -87,16 +103,19 @@ const Theme = ({ theme, index, onEdit, onDelete }: ThemeProps) => {
   const closeEditModal = () => {
     setEditModal(false)
   }
-  return <tr>
-    <td>{theme.theme}</td>
-    <td>
-      <DropdownButton variant="info" title="Actions" disabled={loading}>
-        <Dropdown.Item eventKey="1" onClick={() => setEditModal(true)}>Modifier</Dropdown.Item>
-        <Dropdown.Item eventKey="2" onClick={() => setDeleteModal(true)}>Supprimer</Dropdown.Item>
-      </DropdownButton></td>
+  return <TableRow key={theme._id}>
+    <TableCell>{theme.theme}</TableCell>
+    <TableCell>
+    <IconButton aria-label="edit" onClick={() => setEditModal(true)}>
+        <EditIcon fontSize="inherit" />
+      </IconButton>
+      <IconButton aria-label="delete" onClick={() => setDeleteModal(true)}>
+        <DeleteIcon fontSize="inherit" />
+      </IconButton>
+    </TableCell>
     {editModal && <EditTheme handleClose={closeEditModal} theme={theme} onEdit={editTheme} />}
     {deleteModal && <DeleteModal element={theme} handleClose={() => setDeleteModal(false)} onConfirm={deleteTheme} />}
-  </tr>
+  </TableRow>
 }
 
 interface CreateThemeProps {

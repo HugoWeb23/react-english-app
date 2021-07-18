@@ -9,7 +9,9 @@ import {
     FormControl,
     TextField,
     FormHelperText,
-    Button
+    Button,
+    Chip,
+    Box
 } from '@material-ui/core'
 
 interface IQuestionFilters {
@@ -78,10 +80,17 @@ export const QuestionFilters = ({ selectedTypes, selectedThemes, typeChange, the
             <FormControl className={classes.formControl}>
                 <p className="mb-1">Filtrer par thèmes</p>
                 {selectedThemes.map((theme: any, index: number) =>
-                    <ClosableBadge element={theme} elementName={theme.theme} index={index} variant="dark" handleClose={() => handleThemesChange(theme, 'delete')} />)}
+                    <>
+                        <Box marginBottom="5px">
+                            <Chip label={theme.theme} size="small" style={{maxWidth: 200}} onDelete={() => handleThemesChange(theme, 'delete')} color="primary" />
+                        </Box>
+                    </>
+                )}
+                <Box display="block">
                 <Button color="primary" onClick={() => setModalThemes(true)}>
                     Afficher les thèmes
                 </Button>
+                </Box>
             </FormControl>
             <form onSubmit={handleSubmit}>
                 <FormControl>
@@ -92,7 +101,10 @@ export const QuestionFilters = ({ selectedTypes, selectedThemes, typeChange, the
                 </FormControl>
             </form>
             {modalThemes && <SearchByThemes themesList={selectedThemes} handleClose={() => setModalThemes(false)} onSubmit={handleThemesChange} />}
-            {(selectedTypes.length > 0 || selectedThemes.length > 0 || (searchRef.current && searchRef.current.value.length > 0)) && <Button color="secondary" size="small" variant="outlined" onClick={() => (resetFilters(), resetTextSearch())}>Supprimer les filtres</Button>}
+            {(selectedTypes.length > 0 || selectedThemes.length > 0 || (searchRef.current && searchRef.current.value.length > 0)) &&
+            <Box marginTop="15px">
+            <Button color="secondary" size="small" variant="outlined" onClick={() => (resetFilters(), resetTextSearch())}>Supprimer les filtres</Button>
+            </Box>}
         </Paper>
     </>
 }

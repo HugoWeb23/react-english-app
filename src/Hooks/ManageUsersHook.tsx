@@ -3,6 +3,7 @@ import { IUsers } from "../Types/Interfaces"
 import { apiFetch } from "../Utils/Api"
 
 interface IState {
+    loading: boolean,
     users: IUsers[],
     totalPages: number,
     currentPage: number,
@@ -10,16 +11,20 @@ interface IState {
 }
 
 export const ManageUsersHook = () => {
-    const [state, setState] = useState<IState>({users: [], totalPages: 1, currentPage: 1, elementsPerPage: 10})
+    const [state, setState] = useState<IState>({loading: false, users: [], totalPages: 1, currentPage: 1, elementsPerPage: 10})
    
     const FetchUsers = async(page: number = 1, limit: number = 10) => {
+        setState(state => {
+            return {...state, loading: true}
+        })
         const FetchUsers = await apiFetch(`/api/users?page=${page}&limit=${limit}`);
         setState(state => {
-            return {...state, users: FetchUsers.allUsers, totalPages: FetchUsers.totalPages, currentPage: FetchUsers.currentPage, elementsPerPage: FetchUsers.elementsPerPage}
+            return {...state, loading: false, users: FetchUsers.allUsers, totalPages: FetchUsers.totalPages, currentPage: FetchUsers.currentPage, elementsPerPage: FetchUsers.elementsPerPage}
         })
     }
 
     return {
+        loading: state.loading,
         users: state.users,
         totalPages: state.totalPages,
         currentPage: state.currentPage,
