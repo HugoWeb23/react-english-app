@@ -66,6 +66,7 @@ export const QuestionsHook = () => {
                 body: JSON.stringify(question)
             })
             dispatch({ type: 'CREATE_QUESTION', payLoad: fetch });
+            localStorage.setItem('intitule', question.intitule);
         },
         updateQuestion: async (question: QuestionType, data: QuestionType) => {
             const fetch = await apiFetch(`/api/questions/${question._id}`, {

@@ -177,7 +177,8 @@ interface CreateQuestionProps {
 }
 
 const CreateQuestion = ({ handleClose, onSubmit }: CreateQuestionProps) => {
-  const defaultValues = { propositions: [{}] }
+  const intituleStorage: string | null = localStorage.getItem('intitule');
+  const defaultValues = { propositions: [{}], intitule: intituleStorage != null ? intituleStorage : "" }
   return <AdminModalForm
     handleClose={handleClose}
     onSubmit={onSubmit}
