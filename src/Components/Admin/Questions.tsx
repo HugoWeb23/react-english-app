@@ -158,7 +158,7 @@ const Question = memo(({ question, onDelete, onUpdate }: QuestionProps) => {
   return <tr>
     <td>{question.intitule}</td>
     <td>{question.question}</td>
-    <td>{question.reponse || question.propositions.map((p: PropositionType, index: number) => <p key={index} className={`mb-0 ${p.correcte ? "text-success" : "text-danger"}`}>{'[' + p.proposition + ']'}</p>)}</td>
+    <td>{question.reponses && question.reponses.map((reponse, index: number) => <p key={index} className="mb-0">{reponse}</p>) || question.propositions.map((p: PropositionType, index: number) => <p key={index} className={`mb-0 ${p.correcte ? "text-success" : "text-danger"}`}>{'[' + p.proposition + ']'}</p>)}</td>
     <td>{question.type == 1 ? <Badge pill variant="primary">Réponse unique</Badge> : <Badge pill variant="secondary">Choix multiples</Badge>}</td>
     <td>
       <DropdownButton variant="info" title="Actions" disabled={loading}>
@@ -178,7 +178,7 @@ interface CreateQuestionProps {
 
 const CreateQuestion = ({ handleClose, onSubmit }: CreateQuestionProps) => {
   const intituleStorage: string | null = localStorage.getItem('intitule');
-  const defaultValues = { propositions: [{}], intitule: intituleStorage != null ? intituleStorage : "" }
+  const defaultValues = { propositions: [{}], reponses: ["ddd", "ddd"], intitule: intituleStorage != null ? intituleStorage : "" }
   return <AdminModalForm
     handleClose={handleClose}
     onSubmit={onSubmit}
@@ -196,7 +196,7 @@ interface EditQuestionProps {
 }
 
 const EditQuestion = ({ handleClose, question, onSubmit }: EditQuestionProps) => {
-  const defaultValues = { ...question, propositions: (question.propositions === undefined ? [{}] : question.propositions), themeId: question.theme?._id }
+  const defaultValues = { ...question, propositions: (question.propositions === undefined ? [{}] : question.propositions), reponses: (question.reponses === undefined ? [""] : question.reponses), themeId: question.theme?._id }
   return <AdminModalForm
     handleClose={handleClose}
     onSubmit={onSubmit}

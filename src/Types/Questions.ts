@@ -4,7 +4,7 @@ export type QuestionType = {
     intitule: string,
     question: string,
     theme: {_id: string, theme: string},
-    reponse?: string,
+    reponses: [string],
     propositions: PropositionType[]
 }
 

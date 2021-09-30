@@ -41,7 +41,7 @@ export const apiFetch = async (endpoint: string, options = {}) => {
         ...options
     }
 
-    const response = await fetch('https://hugomongoapi.herokuapp.com' + endpoint, options)
+    const response = await fetch('http://localhost:5000' + endpoint, options)
     if (response.status == 204) {
         return null;
     }

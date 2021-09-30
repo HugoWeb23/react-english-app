@@ -1,6 +1,6 @@
 import Form from "react-bootstrap/Form"
 import Button from "react-bootstrap/Button"
-import Modal from "react-bootstrap/Modal"
+import Col from "react-bootstrap/Col"
 import { useFieldArray, UseFormReturn } from 'react-hook-form'
 import { MultiChoices } from './MultiChoices'
 import { useEffect, useState } from "react"
@@ -12,6 +12,7 @@ export const QuestionForm = (props: UseFormReturn) => {
     const { register, control, watch, formState, getValues } = props;
     const { errors } = formState;
     const { fields, append, remove } = useFieldArray({ control, name: "propositions" })
+    const { fields: answers, append: appendAnswer, remove: removeAnswer } = useFieldArray({ control, name: "reponses", keyName:"kk" })
     const [themesLoader, setThemesLoader] = useState<boolean>(true)
     const questionType = watch('type');
 
@@ -62,11 +63,21 @@ export const QuestionForm = (props: UseFormReturn) => {
         </Form.Group>
         {questionType == "1" && <>
             <Form.Group controlId="reponse">
-                <Form.Label>Réponse à la question</Form.Label>
-                <Form.Control type="text" isInvalid={errors.reponse} placeholder="Réponse" {...register('reponse', {
-                    validate: checkReponse
-                })} />
-                {errors.reponse && <Form.Control.Feedback type="invalid">{errors.reponse.message}</Form.Control.Feedback>}
+                <Form.Label>Réponse(s) à la question</Form.Label>
+                {answers.map((field, index) => {
+                    return <Form.Group key={field.kk}>
+                        <Form.Row>
+                        <Col xs={10}>
+                        <Form.Control type="text" defaultValue={getValues(`reponses[${index}]`)} isInvalid={errors.reponses && errors.reponses[index]} placeholder="Réponse" {...register(`reponses[${index}]`) } />
+                        {errors.reponses && errors.reponses[index] && <Form.Control.Feedback type="invalid">{errors.reponses.index.message}</Form.Control.Feedback>}
+                        </Col>
+                        <Col>
+                        <Button variant="danger" onClick={() => removeAnswer(index)}>X</Button>
+                        </Col>
+                        </Form.Row>
+                    </Form.Group>
+                })}
+                <Button variant="info" onClick={() => appendAnswer({})}>Ajouter une réponse</Button>
             </Form.Group>
         </>}
         {questionType == "2" && <>

@@ -76,7 +76,7 @@ export const Results = ({ match }: RouteComponentProps<TParams>) => {
                                     {question.propositions && <ListGroup>{question.propositions.map(p =>
                                         <ListGroup.Item key={p._id} className="d-flex justify-content-between align-items-center" variant={p.correcte === true ? "success" : "danger"}>{p.proposition} {question.propositionsSelect.includes(p._id) ? <Badge variant="secondary">Sélectionné</Badge> : null}</ListGroup.Item>)}
                                     </ListGroup>}
-                                    {question.reponse && <><div>Réponse attendue : {question.reponse}</div>
+                                    {question.reponses && <><div>{question.reponses.length > 2 ? "Réponses correctes" : "Réponse correcte"} : {question.reponses.map((reponse, index) => `${reponse} ${question.reponses.length > index + 1 ? ' - ' : ''}`)}</div>
                                         <div className="font-weight-bolder">Votre réponse : {question.reponseEcrite}</div></>}
                                 </Card.Body>
                             </Card>
