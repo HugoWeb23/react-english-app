@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useThemes } from "../../Hooks/ThemesHook"
+import { ThemeValidator } from "./Validators/ThemeValidator"
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
 import { Loader } from '../../UI/Loader'
@@ -110,6 +111,7 @@ const CreateTheme = ({ onCreate, handleClose }: CreateThemeProps) => {
   onSubmit={onCreate}
   type="create"
   component={ThemeForm}
+  resolver={ThemeValidator}
   createText="Créer un thème"
   editText="Éditer un thème" />
 }
@@ -127,6 +129,7 @@ const EditTheme = ({ handleClose, theme, onEdit }: EditThemeProps) => {
   type="edit"
   component={ThemeForm}
   defaultValues={theme}
+  resolver={ThemeValidator}
   createText="Créer un thème"
   editText="Éditer un thème" />
 }

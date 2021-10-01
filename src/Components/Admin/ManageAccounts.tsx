@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Table from 'react-bootstrap/Table'
+import { AccountValidator } from './Validators/AccountValidator'
 import { Container } from '../../UI/Container'
 import { IUsers } from '../../Types/Interfaces'
 import { apiFetch } from '../../Utils/Api'
@@ -78,6 +79,7 @@ const User = ({user, onSubmit, onDelete}: UserInterface) => {
             onSubmit={data => onSubmit(user, data)} 
             type="edit" 
             component={AccountForm}
+            resolver={AccountValidator}
             defaultValues={{...user, admin: user.admin.toString()}}
             createText="Créer un compte"
             editText="Éditer un compte"/>

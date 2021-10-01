@@ -41,7 +41,7 @@ export const QuestionForm = (props: UseFormReturn) => {
     return <>
         <Form.Group controlId="type">
             <Form.Label>Type de question</Form.Label>
-            <Form.Control as="select" isInvalid={errors.type} {...register('type', { required: "Le type est obligatoire", min: 1, max: 2 })}>
+            <Form.Control as="select" isInvalid={errors.type} {...register('type')}>
                 <option value="1">Réponse à écrire</option>
                 <option value="2">Choix multiples</option>
             </Form.Control>
@@ -53,12 +53,12 @@ export const QuestionForm = (props: UseFormReturn) => {
         </Form.Group>
         <Form.Group controlId="intitule">
             <Form.Label>Intitulé de la question</Form.Label>
-            <Form.Control type="text" placeholder="Intitulé de la question" isInvalid={errors.intitule} {...register('intitule', { required: "L'intitulé est obligatoire" })} />
+            <Form.Control type="text" placeholder="Intitulé de la question" isInvalid={errors.intitule} {...register('intitule')} />
             {errors.intitule && <Form.Control.Feedback type="invalid">{errors.intitule.message}</Form.Control.Feedback>}
         </Form.Group>
         <Form.Group controlId="question">
             <Form.Label>Question</Form.Label>
-            <Form.Control type="text" placeholder="Question" isInvalid={errors.question} {...register('question', { required: "La question est obligatoire" })} />
+            <Form.Control type="text" placeholder="Question" isInvalid={errors.question} {...register('question')} />
             {errors.question && <Form.Control.Feedback type="invalid">{errors.question.message}</Form.Control.Feedback>}
         </Form.Group>
         {questionType == "1" && <>
@@ -69,7 +69,7 @@ export const QuestionForm = (props: UseFormReturn) => {
                         <Form.Row>
                         <Col xs={10}>
                         <Form.Control type="text" defaultValue={getValues(`reponses[${index}]`)} isInvalid={errors.reponses && errors.reponses[index]} placeholder="Réponse" {...register(`reponses[${index}]`) } />
-                        {errors.reponses && errors.reponses[index] && <Form.Control.Feedback type="invalid">{errors.reponses.index.message}</Form.Control.Feedback>}
+                        {errors.reponses && errors.reponses[index] && <Form.Control.Feedback type="invalid">{errors.reponses[index].message}</Form.Control.Feedback>}
                         </Col>
                         <Col>
                         <Button variant="danger" onClick={() => removeAnswer(index)}>X</Button>

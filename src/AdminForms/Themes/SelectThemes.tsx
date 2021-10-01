@@ -15,7 +15,7 @@ export const SelectThemes = ({themes, name, register, errors}: ISelectedThemes) 
 
     return <>
     <Form.Group controlId="themeId">
-    <Form.Control as="select" isInvalid={errors.themeId} {...register(name, {required: "Le thème est obligatoire"})}>
+    <Form.Control as="select" isInvalid={errors.themeId} {...register(name)}>
         <option value="">Sélectionner un thème</option>
     {themes.map((theme: ThemeType, index: number) => {
         return <option key={theme._id} value={theme._id}>{theme.theme}</option>

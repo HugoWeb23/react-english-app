@@ -1,4 +1,5 @@
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
+import { yupResolver } from '@hookform/resolvers/yup'
 import Modal from 'react-bootstrap/Modal'
 import Button from 'react-bootstrap/Button'
 import { Form } from "react-bootstrap";
@@ -15,15 +16,16 @@ interface IAdminModalForm {
   type: 'edit' | 'create',
   component: any,
   defaultValues?: any,
+  resolver: any,
   editText: string,
   createText: string,
   successAlert?: string,
   errorAlert?: string
 }
 
-export const AdminModalForm = ({ handleClose, onSubmit, type, component: Component, defaultValues, editText, createText, successAlert = "Opération effectuée", errorAlert = "Une erreur est survenue" }: IAdminModalForm) => {
+export const AdminModalForm = ({ handleClose, onSubmit, type, component: Component, defaultValues, resolver, editText, createText, successAlert = "Opération effectuée", errorAlert = "Une erreur est survenue" }: IAdminModalForm) => {
   const [loading, setLoading] = useState(false)
-  const props = useForm({defaultValues: defaultValues})
+  const props = useForm({defaultValues: defaultValues, resolver: yupResolver(resolver)})
   const submit: any = async (formData: any, close: boolean) => {
     try {
       setLoading(true)

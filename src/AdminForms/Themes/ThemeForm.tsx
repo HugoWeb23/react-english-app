@@ -8,7 +8,7 @@ export const ThemeForm = (props: UseFormReturn) => {
     return <>
     <Form.Group controlId="theme">
         <Form.Label>Nom du thème</Form.Label>
-        <Form.Control type="text" placeholder="Nom du thème" isInvalid={errors.theme} {...register('theme', {required: "Le thème est obligatoire"})}/>
+        <Form.Control type="text" placeholder="Nom du thème" isInvalid={errors.theme} {...register('theme')}/>
         {errors.theme && <Form.Control.Feedback type="invalid">{errors.theme.message}</Form.Control.Feedback>}
     </Form.Group>
     </>

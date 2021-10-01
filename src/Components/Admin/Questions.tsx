@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo, memo } from "react"
 import { apiFetch } from "../../Utils/Api";
+import { QuestionFormValidator } from "./Validators/QuestionFormValidator";
 import { QuestionsHook } from '../../Hooks/QuestionsHook'
 import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
@@ -178,13 +179,14 @@ interface CreateQuestionProps {
 
 const CreateQuestion = ({ handleClose, onSubmit }: CreateQuestionProps) => {
   const intituleStorage: string | null = localStorage.getItem('intitule');
-  const defaultValues = { propositions: [{}], reponses: ["ddd", "ddd"], intitule: intituleStorage != null ? intituleStorage : "" }
+  const defaultValues = { propositions: [{}], reponses: [""], intitule: intituleStorage != null ? intituleStorage : "" }
   return <AdminModalForm
     handleClose={handleClose}
     onSubmit={onSubmit}
     type="create"
     component={QuestionForm}
     defaultValues={defaultValues}
+    resolver={QuestionFormValidator}
     createText="Créer une question"
     editText="Éditer une question" />
 }
@@ -203,6 +205,7 @@ const EditQuestion = ({ handleClose, question, onSubmit }: EditQuestionProps) =>
     type="edit"
     component={QuestionForm}
     defaultValues={defaultValues}
+    resolver={QuestionFormValidator}
     createText="Créer une question"
     editText="Éditer une question" />
 }
