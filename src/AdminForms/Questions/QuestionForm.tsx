@@ -32,6 +32,12 @@ export const QuestionForm = (props: UseFormReturn) => {
         return true
     }
 
+    const CheckRemoveAnswer = (field: any) => {
+        if(answers.length > 1) {
+            removeAnswer(field)
+        }
+    }
+
     const removeField = (field: any) => {
         if (fields.length > 1) {
             remove(field)
@@ -72,7 +78,7 @@ export const QuestionForm = (props: UseFormReturn) => {
                         {errors.reponses && errors.reponses[index] && <Form.Control.Feedback type="invalid">{errors.reponses[index].message}</Form.Control.Feedback>}
                         </Col>
                         <Col>
-                        <Button variant="danger" onClick={() => removeAnswer(index)}>X</Button>
+                        <Button variant="danger" onClick={() => CheckRemoveAnswer(index)}>X</Button>
                         </Col>
                         </Form.Row>
                     </Form.Group>
